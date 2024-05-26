@@ -25,3 +25,11 @@ With the above tooling, we can now create an agent that orchestrates certain tak
 ## Non-goals
 
 - Testing agents
+
+# TODO List
+
+- ✅ Setup boilerplate
+- Implement refresh and propagation to localStorage
+- Implement simple message with `openai` sdk
+- Test OpenAPI
+- After this works decently well, combine multiple agents using combination proxy. Orchestration agent POC.
