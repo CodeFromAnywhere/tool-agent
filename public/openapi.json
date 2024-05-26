@@ -1,0 +1,179 @@
+{
+  "x-actionschema": "0.0.1",
+  "$schema": "https://raw.githubusercontent.com/CodeFromAnywhere/ActionSchema/main/schemas/openapi.schema.json",
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Agent OpenAPI",
+    "version": "1.0",
+    "description": ""
+  },
+  "servers": [{ "url": "" }],
+  "paths": {
+    "/refreshOpenai": {
+      "post": {
+        "summary": "",
+        "operationId": "refreshOpenai",
+        "description": "Refetch Agents from OpenAI API and sync them into database.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "openaiSecretKey": {
+                    "type": "string",
+                    "description": "OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys"
+                  }
+                },
+                "required": ["openaiSecretKey"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Signup response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefreshOpenaiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/{agentSlug}/openapi.json": {
+      "get": {
+        "summary": "Get openapi for this agent alone",
+        "operationId": "renderAgentOpenapi",
+
+        "responses": {
+          "200": {
+            "description": "OpenAPI",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "https://raw.githubusercontent.com/CodeFromAnywhere/ActionSchema/main/schemas/openapi.schema.json"
+                    },
+                    {
+                      "type": "object",
+                      "required": ["isSuccessful"],
+                      "properties": {
+                        "isSuccessful": {
+                          "type": "boolean"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "agentSlug",
+          "schema": { "type": "string" },
+          "required": true
+        }
+      ]
+    },
+
+    "/{agentSlug}/message": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "agentSlug",
+          "schema": { "type": "string" },
+          "required": true
+        },
+        {
+          "in": "header",
+          "name": "Authorization",
+          "schema": { "type": "string" },
+          "required": false,
+          "description": "Bearer authorization"
+        }
+      ],
+      "post": {
+        "summary": "Run a message in a thread of an assistant",
+        "operationId": "message",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MessageContext" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OpenAPI",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MessageResponse" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RefreshOpenaiResponse": {
+        "type": "object",
+        "properties": {
+          "isSuccessful": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The agents created"
+          }
+        },
+        "required": ["isSuccessful", "message"]
+      },
+      "MessageContext": {
+        "type": "object",
+        "properties": {
+          "threadId": { "$ref": "#/components/schemas/ThreadId" },
+          "message": { "type": "string" }
+        },
+        "required": ["message"]
+      },
+      "ThreadId": { "type": "string", "description": "Can be extended" },
+
+      "MessageResponse": {
+        "type": "object",
+        "properties": {
+          "isSuccessful": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "threadId": { "type": "string" }
+        },
+        "required": ["isSuccessful", "message"]
+      }
+    }
+  }
+}
