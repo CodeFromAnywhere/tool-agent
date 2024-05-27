@@ -7,6 +7,7 @@
     "start": "next start",
     "lint": "next lint",
     "types": "npx openapi-fetch-typescript ./public/openapi.json ./app/openapi-types.ts OpenApiTypes",
+    "crud": "npx openapi-fetch-typescript https://data.actionschema.com/agent-openapi/openapi.json ./app/agent-openapi-client.ts AgentOpenapiClient",
     "watch-types": "nodemon --watch public/openapi.json --exec \"npm run types\"",
     "next-dev": "next dev",
     "init-db": "bun run app/makeRootDb.cli.ts",

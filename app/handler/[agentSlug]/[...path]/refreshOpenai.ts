@@ -22,11 +22,7 @@ export const refreshOpenai: Endpoint<"refreshOpenai"> = async (context) => {
     }
   }
 
-  // 1 - make AgentOpenapi item and create crud-openapi at https://data.actionschema.com/agent-openapi/openapi.json
-
-  // 2 - create npm script that turns the above openapi into an SDK client
-
-  // 3 - use the client and store from your api every time you hit refresh.
+  // use the client and store from your api every time you hit refresh.
 
   // Agents need to be stored:
   // - key: agentSlug
