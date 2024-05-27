@@ -65,7 +65,7 @@ export interface components {
             isSuccessful: boolean;
             message: string;
             /** @description The agents created */
-            result?: components["schemas"]["OpenaiAssistant"][];
+            result?: components["schemas"]["openai-assistant.schema"][];
         };
         MessageContext: {
             threadId?: components["schemas"]["ThreadId"];
@@ -73,7 +73,12 @@ export interface components {
         };
         /** @description Can be extended */
         ThreadId: string;
-        OpenaiAssistant: {
+        MessageResponse: {
+            isSuccessful: boolean;
+            message: string;
+            threadId?: string;
+        };
+        "openai-assistant.schema": {
             created_at: number;
             description: string | null;
             id: string;
@@ -91,11 +96,6 @@ export interface components {
             tool_resources?: unknown;
             tools: unknown[];
             top_p?: number | null;
-        };
-        MessageResponse: {
-            isSuccessful: boolean;
-            message: string;
-            threadId?: string;
         };
         Contact: {
             name?: string;
@@ -381,7 +381,6 @@ export interface operations {
 export type RefreshOpenaiResponse = components["schemas"]["RefreshOpenaiResponse"]
 export type MessageContext = components["schemas"]["MessageContext"]
 export type ThreadId = components["schemas"]["ThreadId"]
-export type OpenaiAssistant = components["schemas"]["OpenaiAssistant"]
 export type MessageResponse = components["schemas"]["MessageResponse"]
   
 export const operationUrlObject = {
