@@ -1,10 +1,11 @@
 "use client";
-
+import openapi from "../public/openapi.json";
 import { Suspense } from "react";
 import { StoreProvider } from "./store";
 import { Overview } from "./Overview";
 import { Form } from "./Form";
 import "react-openapi-form/css.css";
+import { getFormContextFromOpenapi } from "openapi-util";
 
 const HomePage = () => {
   return (

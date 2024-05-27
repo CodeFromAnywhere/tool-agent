@@ -1,6 +1,6 @@
 import { OpenapiDocument } from "openapi-util";
 import { resolveOpenapiAppRequest } from "openapi-util/build/node/resolveOpenapiAppRequest";
-import openapi from "../../../public/openapi.json";
+import openapi from "../../../../public/openapi.json";
 import { message } from "./message";
 import { renderAgentOpenapi } from "./renderAgentOpenapi";
 import { refreshOpenai } from "./refreshOpenai";

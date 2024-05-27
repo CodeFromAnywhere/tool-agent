@@ -1,8 +1,7 @@
 "use client";
 
 import { OpenapiForm } from "react-openapi-form";
-import openapi from "../../public/openapi.json";
-import { useStore } from "../store";
+import { useStore } from "../../store";
 
 export default function AgentPage(props: { params: { agentSlug: string } }) {
   const [agents, setDatabases] = useStore("agents");

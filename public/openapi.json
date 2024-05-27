@@ -9,7 +9,7 @@
   },
   "servers": [{ "url": "" }],
   "paths": {
-    "/refreshOpenai": {
+    "/api/refreshOpenai": {
       "post": {
         "summary": "",
         "operationId": "refreshOpenai",
@@ -144,7 +144,7 @@
           "result": {
             "type": "array",
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/OpenaiAssistant"
             },
             "description": "The agents created"
           }
@@ -161,6 +161,70 @@
       },
       "ThreadId": { "type": "string", "description": "Can be extended" },
 
+      "OpenaiAssistant": {
+        "type": "object",
+        "properties": {
+          "created_at": {
+            "type": "integer"
+          },
+          "description": { "type": "string", "nullable": true },
+          "id": {
+            "type": "string"
+          },
+          "instructions": {
+            "type": "string",
+            "nullable": true
+          },
+          "metadata": { "description": "Unknown metadata" },
+          "model": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "object": {
+            "type": "string"
+          },
+          "response_format": {
+            "oneOf": [
+              { "type": "string" },
+              {
+                "type": "object",
+                "properties": { "type": { "type": "string" } }
+              }
+            ],
+            "nullable": true
+          },
+          "temperature": {
+            "type": "number",
+            "nullable": true
+          },
+          "tool_resources": {
+            "description": "tools resources"
+          },
+          "tools": {
+            "type": "array",
+            "items": {},
+            "minItems": 0
+          },
+          "top_p": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "required": [
+          "created_at",
+          "description",
+          "id",
+          "instructions",
+          "metadata",
+          "model",
+          "name",
+          "object",
+          "tools"
+        ]
+      },
       "MessageResponse": {
         "type": "object",
         "properties": {

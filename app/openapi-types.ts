@@ -1,5 +1,5 @@
 export interface paths {
-    "/refreshOpenai": {
+    "/api/refreshOpenai": {
         parameters: {
             query?: never;
             header?: never;
@@ -65,7 +65,7 @@ export interface components {
             isSuccessful: boolean;
             message: string;
             /** @description The agents created */
-            result?: string[];
+            result?: components["schemas"]["OpenaiAssistant"][];
         };
         MessageContext: {
             threadId?: components["schemas"]["ThreadId"];
@@ -73,6 +73,25 @@ export interface components {
         };
         /** @description Can be extended */
         ThreadId: string;
+        OpenaiAssistant: {
+            created_at: number;
+            description: string | null;
+            id: string;
+            instructions: string | null;
+            /** @description Unknown metadata */
+            metadata: unknown;
+            model: string;
+            name: string | null;
+            object: string;
+            response_format?: (string | {
+                type?: string;
+            }) | null;
+            temperature?: number | null;
+            /** @description tools resources */
+            tool_resources?: unknown;
+            tools: unknown[];
+            top_p?: number | null;
+        };
         MessageResponse: {
             isSuccessful: boolean;
             message: string;
@@ -362,12 +381,13 @@ export interface operations {
 export type RefreshOpenaiResponse = components["schemas"]["RefreshOpenaiResponse"]
 export type MessageContext = components["schemas"]["MessageContext"]
 export type ThreadId = components["schemas"]["ThreadId"]
+export type OpenaiAssistant = components["schemas"]["OpenaiAssistant"]
 export type MessageResponse = components["schemas"]["MessageResponse"]
   
 export const operationUrlObject = {
   "refreshOpenai": {
     "method": "post",
-    "path": "/refreshOpenai"
+    "path": "/api/refreshOpenai"
   },
   "renderAgentOpenapi": {
     "method": "get",

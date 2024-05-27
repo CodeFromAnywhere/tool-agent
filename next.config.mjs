@@ -1,5 +1,22 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: "/:id/:path*",
+        destination: "/handler/:id/:path*", // Adjust the destination to your handler
+      },
+    ];
+  },
+  async redirects() {
+    return [
+      {
+        source: "/_next/static/:path*",
+        destination: "/_next/static/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

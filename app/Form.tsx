@@ -5,9 +5,10 @@ import openapi from "../public/openapi.json";
 import { useStore } from "./store";
 import { useRouter } from "next/navigation";
 import { RefreshOpenaiResponse } from "./openapi-types";
+import { fileSlugify, kebabCase } from "from-anywhere";
 
 export const Form = () => {
-  const [databases, setDatabases] = useStore("agents");
+  const [agents, setAgents] = useStore("agents");
   const router = useRouter();
   return (
     <div>
@@ -16,7 +17,7 @@ export const Form = () => {
       <div className="my-10">
         <OpenapiForm
           openapi={openapi}
-          path="/refreshOpenai"
+          path="/api/refreshOpenai"
           method="post"
           uiSchema={{}}
           withResponse={(response) => {
@@ -32,6 +33,20 @@ export const Form = () => {
             const requestResponse = response.response as
               | RefreshOpenaiResponse
               | undefined;
+
+            if (!requestResponse?.isSuccessful || !requestResponse.result) {
+              alert(requestResponse?.message);
+              return;
+            }
+
+            const agents = requestResponse.result.map((item) => ({
+              id: item.id,
+              agentSlug: fileSlugify(item.name || item.id).toLowerCase(),
+              assistant: item,
+            }));
+
+            console.log({ agents });
+            setAgents(agents);
           }}
         />
       </div>

@@ -4,7 +4,7 @@ import { OpenapiSchemaObject } from "from-anywhere/types";
 import { JSONSchema7 } from "json-schema";
 import { SchemaObject } from "openapi-typescript";
 import { resolveSchemaRecursive } from "openapi-util/build/resolveSchemaRecursive";
-import openapi from "../../../public/openapi.json";
+import openapi from "../../../../public/openapi.json";
 import { OpenapiDocument } from "openapi-util";
 
 export const withoutProperties = (
