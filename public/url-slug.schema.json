@@ -1,0 +1,9 @@
+{
+  "$comment": "THIS DOESNT WORK YET (REFERING THIS FILE). BUT IT WOULD BE VERY USEFUL TO CROSS REFERENCE EXTERNAL SCHEMAS IN OPENAPIS BECAUSE OTHERWISE WE WILL HAVE LOTS OF DUPLICATION. THE PROPER WAY WOULD BE TO MAKE REFERENCING WORK FULLY IN ALL USED TOOLS. WE Preferably just do '$ref': 'url-slug.schema.json' to refer to it, or use the HTTPS-URL if it's a different project",
+  "$schema": "https://raw.githubusercontent.com/CodeFromAnywhere/ActionSchema/main/schemas/action-schema.schema.json",
+  "type": "string",
+  "pattern": "^[a-zA-Z0-9._~-]+$",
+  "minLength": 1,
+  "maxLength": 64,
+  "description": "Slug compatible with URLs"
+}

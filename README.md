@@ -29,7 +29,10 @@ With the above tooling, we can now create an agent that orchestrates certain tak
 # TODO List
 
 - ✅ Setup boilerplate
-- Implement refresh and propagation to localStorage
+- ✅ Fix routing issues
+- ✅ Implement refresh propagation to localStorage
+- ✅ change pattern data.actionschema to allow for '-\_~.AZ' and ensure it goes lowercase upon creation
+- Implement refresh storage
 - Implement simple message with `openai` sdk
 - Test OpenAPI
 - After this works decently well, combine multiple agents using combination proxy. Orchestration agent POC.

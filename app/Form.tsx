@@ -9,7 +9,7 @@ import { fileSlugify, kebabCase } from "from-anywhere";
 
 export const Form = () => {
   const [agents, setAgents] = useStore("agents");
-  const router = useRouter();
+  const [openaiSecretKey, setOpenaiSecretKey] = useStore("openaiSecretKey");
   return (
     <div>
       <b>Authenticate</b>
@@ -19,7 +19,8 @@ export const Form = () => {
           openapi={openapi}
           path="/api/refreshOpenai"
           method="post"
-          uiSchema={{}}
+          initialData={{ openaiSecretKey }}
+          uiSchema={{ openaiSecretKey: { "ui:widget": "password" } }}
           withResponse={(response) => {
             const {
               statusCode,
@@ -44,6 +45,8 @@ export const Form = () => {
               agentSlug: fileSlugify(item.name || item.id).toLowerCase(),
               assistant: item,
             }));
+
+            setOpenaiSecretKey(bodyData?.openaiSecretKey);
 
             console.log({ agents });
             setAgents(agents);

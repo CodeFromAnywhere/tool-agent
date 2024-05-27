@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/CodeFromAnywhere/ActionSchema/main/schemas/action-schema.schema.json",
+  "type": "object",
+  "description": "AgentOpenapi item that represents 1 agent that is served as OpenAPI.",
+
+  "properties": {
+    "openaiSecretKey": { "type": "string" },
+    "authToken": { "type": "string" },
+    "assistant": {
+      "$ref": "https://agent.actionschema.com/agent-openapi.schema.json"
+    },
+    "metadata": {}
+  }
+}
