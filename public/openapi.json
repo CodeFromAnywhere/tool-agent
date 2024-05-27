@@ -144,7 +144,7 @@
           "result": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OpenaiAssistant"
+              "$ref": "https://agent.actionschema.com/openai-assistant.schema.json"
             },
             "description": "The agents created"
           }
