@@ -9,6 +9,6 @@
     "assistant": {
       "$ref": "https://agent.actionschema.com/openai-assistant.schema.json"
     },
-    "metadata": {}
+    "metadata": { "additionalProperties": true }
   }
 }
