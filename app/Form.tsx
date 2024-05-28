@@ -3,9 +3,7 @@
 import { OpenapiForm } from "react-openapi-form";
 import openapi from "../public/openapi.json";
 import { useStore } from "./store";
-import { useRouter } from "next/navigation";
 import { RefreshOpenaiResponse } from "./openapi-types";
-import { fileSlugify, kebabCase } from "from-anywhere";
 
 export const Form = () => {
   const [agents, setAgents] = useStore("agents");
@@ -40,15 +38,9 @@ export const Form = () => {
               return;
             }
 
-            const agents = requestResponse.result.map((item) => ({
-              id: item.id,
-              agentSlug: fileSlugify(item.name || item.id).toLowerCase(),
-              assistant: item,
-            }));
-
+            const agents = requestResponse.result;
             setOpenaiSecretKey(bodyData?.openaiSecretKey);
-
-            console.log({ agents });
+            //@ts-ignore
             setAgents(agents);
           }}
         />

@@ -65,7 +65,7 @@ export interface components {
             isSuccessful: boolean;
             message: string;
             /** @description The agents created */
-            result?: components["schemas"]["openai-assistant.schema"][];
+            result?: components["schemas"]["agent-openapi.schema"][];
         };
         MessageContext: {
             threadId?: components["schemas"]["ThreadId"];
@@ -96,6 +96,15 @@ export interface components {
             tool_resources?: unknown;
             tools: unknown[];
             top_p?: number | null;
+        };
+        /** @description AgentOpenapi item that represents 1 agent that is served as OpenAPI. */
+        "agent-openapi.schema": {
+            openaiSecretKey?: string;
+            authToken?: string;
+            assistant?: components["schemas"]["openai-assistant.schema"];
+            metadata?: {
+                [key: string]: unknown;
+            };
         };
         Contact: {
             name?: string;

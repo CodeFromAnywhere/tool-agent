@@ -3,6 +3,7 @@ import * as React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { components } from "./openapi-types";
+import { AgentOpenapiSchema } from "./schemas/agent-openapi.schema";
 
 /**
  * If you don't have access to the `useStore` hook, maybe because you're doing something outside of react... you can directly use the storage with javascript using this function
@@ -125,8 +126,8 @@ const StoreContextProvider = <TStore extends object, K extends Keys<TStore>>({
       store !== undefined
         ? store
         : defaultValue !== undefined
-        ? defaultValue
-        : null;
+          ? defaultValue
+          : null;
 
     const dispatch: (value: TStore[K2]) => Promise<void> = async (value) => {
       //should do a deep equal here, and only set the store and item if the value actually has changed
@@ -277,7 +278,7 @@ export const createStore = <K extends object>(initialValues: K) => {
 const store = createStore({
   openaiSecretKey: "",
   agents: [],
-} as { openaiSecretKey: string; agents: { id: string; agentSlug: string; assistant: components["schemas"]["openai-assistant.schema"] }[] });
+} as { openaiSecretKey: string; agents: AgentOpenapiSchema[] });
 
 export const StoreProvider = store.StoreProvider;
 export const useStore = store.useStore;

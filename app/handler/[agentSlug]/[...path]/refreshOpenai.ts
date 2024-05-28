@@ -1,8 +1,9 @@
 import { agentOpenapi } from "@/crud-client";
-import { Endpoint, client } from "@/client";
+import { Endpoint } from "@/client";
 import OpenAI from "openai";
-import { FromSchema } from "json-schema-to-ts";
-import { components } from "@/openapi-types";
+import { AgentOpenapiSchema } from "@/schemas/agent-openapi.schema";
+import { OpenaiAssistantSchema } from "@/schemas/openai-assistant.schema";
+import { hashCode } from "from-anywhere";
 
 export const refreshOpenai: Endpoint<"refreshOpenai"> = async (context) => {
   const { openaiSecretKey } = context;
@@ -26,17 +27,23 @@ export const refreshOpenai: Endpoint<"refreshOpenai"> = async (context) => {
   }
 
   // use the client and store from your api every time you hit refresh.
-  assistants.map((item) => ({
-    assistant: item,
-    metadata: {},
-  }));
-  // Agents need to be stored:
-  // - key: agentSlug
-  // - value:{openaiSecretKey,authToken,assistant,metadata}
+  const items: AgentOpenapiSchema[] = assistants.map((item) => {
+    return {
+      agentSlug: item.id,
+      assistant: item as OpenaiAssistantSchema,
+      authToken: `t${hashCode(openaiSecretKey)}`,
+      openaiSecretKey,
+      metadata: {},
+    };
+  });
 
+  // Agents need to be stored:
+  const created = await agentOpenapi("create", { items });
+
+  console.log({ created });
   return {
     isSuccessful: true,
     message: `Found ${assistants.length} assistants`,
-    result: assistants,
+    result: items,
   };
 };

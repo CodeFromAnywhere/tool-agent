@@ -15,9 +15,8 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
   : never;
 
 // Typescript magic from: https://stackoverflow.com/questions/63542526/merge-discriminated-union-of-object-types-in-typescript
-type MergeIntersection<U> = UnionToIntersection<U> extends infer O
-  ? { [K in keyof O]: O[K] }
-  : never;
+type MergeIntersection<U> =
+  UnionToIntersection<U> extends infer O ? { [K in keyof O]: O[K] } : never;
 
 type MergeParameters<P> = MergeIntersection<Extract<P, {}>>;
 
@@ -79,6 +78,7 @@ export const createClient = (config: {
         (config.timeoutSeconds || 30) * 1000,
       );
 
+      console.log({ fullUrl });
       const response = await fetch(fullUrl, {
         method: details.method,
         signal: abortController.signal,
@@ -149,7 +149,7 @@ export const createClient = (config: {
 
 /** NB: Contains secret! To only be used in backend */
 export const agentOpenapi = createClient({
-  baseUrl: "http://localhost:3000",
+  baseUrl: "https://data.actionschema.com/agent-openapi",
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
@@ -157,3 +157,4 @@ export const agentOpenapi = createClient({
   },
   timeoutSeconds: 60,
 });
+////agentOpenapi("create", { items: [] }).then((res) => console.log(res));
