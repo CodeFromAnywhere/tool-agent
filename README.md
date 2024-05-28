@@ -31,10 +31,11 @@ With the above tooling, we can now create an agent that orchestrates certain tak
 - ✅ Setup boilerplate
 - ✅ Fix routing issues
 - ✅ Implement refresh propagation to localStorage
-- ✅ change pattern data.actionschema to allow for '-\_~.AZ' and ensure it goes lowercase upon creation
+- ✅ change pattern data.actionschema to allow for `-_~.AZ`
 - ✅ make AgentOpenapi item and create crud-openapi at https://data.actionschema.com/agent-openapi/openapi.json
 - ✅ create npm script that turns openapi into an SDK client
-- Fix bug so the script actually works
+- ✅ ensure `databaseId` goes lowercase upon creation
+- Fix bug so the script `npm run crud` actually works
 - Implement refresh storage
 - Implement simple message with `openai` sdk
 - Test OpenAPI
