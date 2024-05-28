@@ -99,6 +99,7 @@ export interface components {
         };
         /** @description AgentOpenapi item that represents 1 agent that is served as OpenAPI. */
         "agent-openapi.schema": {
+            agentSlug?: string;
             openaiSecretKey?: string;
             authToken?: string;
             assistant?: components["schemas"]["openai-assistant.schema"];

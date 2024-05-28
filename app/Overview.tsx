@@ -13,7 +13,7 @@ export const Overview = () => {
               return (
                 <li
                   className="ml-2 list-inside list-disc list-item"
-                  key={item.id}
+                  key={item.agentSlug}
                 >
                   <p>
                     <a href={`/${item.agentSlug}`}>{item.agentSlug}</a>
