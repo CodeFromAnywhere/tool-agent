@@ -2,7 +2,7 @@
 
 import { OpenapiForm } from "react-openapi-form";
 import { useStore } from "../../store";
-
+import openapi from "../../../public/openapi.json";
 export default function AgentPage(props: { params: { agentSlug: string } }) {
   const [agents, setDatabases] = useStore("agents");
   const agent = agents?.find((x) => x.agentSlug === props.params.agentSlug);
@@ -64,7 +64,22 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
           );
         })}
       </div>
-      <div></div>
+
+      <div>
+        <OpenapiForm
+          openapi={openapi}
+          path="/{agentSlug}/message"
+          method="post"
+          initialData={{
+            agentSlug: props.params.agentSlug,
+            Authorization: agent?.authToken,
+          }}
+          // uiSchema={{ message: { "ui:widget": "textarea" } }}
+          withResponse={(response) => {
+            console.log({ response });
+          }}
+        />
+      </div>
     </div>
   );
 }

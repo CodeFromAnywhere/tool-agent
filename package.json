@@ -27,7 +27,7 @@
     "qs": "^6.12.1",
     "react": "^18",
     "react-dom": "^18",
-    "react-openapi-form": "^0.0.15"
+    "react-openapi-form": "^0.0.17"
   },
   "devDependencies": {
     "@types/ajv": "^1.0.0",
