@@ -101,19 +101,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["isSuccessful"],
-                  "properties": {
-                    "isSuccessful": {
-                      "type": "boolean"
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "isSuccessful": {
+                          "type": "boolean"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
                     },
-                    "message": {
-                      "type": "string"
-                    },
-                    "result": {
+                    {
                       "$ref": "https://agent.actionschema.com/schemas/agent-openapi.schema.json"
                     }
-                  }
+                  ]
                 }
               }
             }

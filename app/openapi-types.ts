@@ -390,10 +390,9 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        isSuccessful: boolean;
+                        isSuccessful?: boolean;
                         message?: string;
-                        result?: components["schemas"]["agent-openapi.schema"];
-                    };
+                    } | components["schemas"]["agent-openapi.schema"];
                 };
             };
         };

@@ -11,4 +11,7 @@
 - ✅ Implement refresh storage
 - ✅ Implement OpenAPI
 
-#
+# June 2024
+
+- ✅ Implement simple `agent.actionschema.com/asst_xxxx/message` with `openai` SDK
+- ✅ Expose `agent.actionschema.com/asst_xxxx/agent.json` with instructions & tools taken from openai's API.

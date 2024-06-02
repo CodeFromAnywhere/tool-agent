@@ -1,8 +1,4 @@
 import { Endpoint, ResponseType } from "@/client";
-import { O, removeOptionalKeysFromObjectStrings } from "from-anywhere";
-import { resolveSchemaRecursive } from "openapi-util/build/resolveSchemaRecursive";
-import openapi from "../../../../public/openapi.json";
-import { OpenapiDocument } from "openapi-util";
 import { agentOpenapi } from "@/crud-client";
 
 export const renderAgentDetails: Endpoint<"renderAgentDetails"> = async (
@@ -30,9 +26,5 @@ export const renderAgentDetails: Endpoint<"renderAgentDetails"> = async (
     };
   }
 
-  return {
-    isSuccessful: true,
-    message: "Got details",
-    result: details as any,
-  } satisfies ResponseType<"renderAgentDetails">;
+  return details as ResponseType<"renderAgentDetails">;
 };
