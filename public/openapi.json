@@ -90,6 +90,46 @@
       ]
     },
 
+    "/{agentSlug}/details.json": {
+      "get": {
+        "summary": "Get details for this agent",
+        "operationId": "renderAgentDetails",
+
+        "responses": {
+          "200": {
+            "description": "Details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["isSuccessful"],
+                  "properties": {
+                    "isSuccessful": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "result": {
+                      "$ref": "https://agent.actionschema.com/schemas/agent-openapi.schema.json"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "agentSlug",
+          "schema": { "type": "string" },
+          "required": true
+        }
+      ]
+    },
+
     "/{agentSlug}/message": {
       "parameters": [
         {
@@ -154,12 +194,10 @@
       "MessageContext": {
         "type": "object",
         "properties": {
-          "threadId": { "$ref": "#/components/schemas/ThreadId" },
           "message": { "type": "string" }
         },
         "required": ["message"]
       },
-      "ThreadId": { "type": "string", "description": "Can be extended" },
 
       "MessageResponse": {
         "type": "object",

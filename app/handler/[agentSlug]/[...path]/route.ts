@@ -4,6 +4,7 @@ import openapi from "../../../../public/openapi.json";
 import { message } from "./message";
 import { renderAgentOpenapi } from "./renderAgentOpenapi";
 import { refreshOpenai } from "./refreshOpenai";
+import { renderAgentDetails } from "./renderAgentDetails";
 
 /** function creator to DRY */
 const getHandler = (method: string) => (request: Request) =>
@@ -11,6 +12,7 @@ const getHandler = (method: string) => (request: Request) =>
     openapi: openapi as OpenapiDocument,
     functions: {
       message,
+      renderAgentDetails,
       renderAgentOpenapi,
       refreshOpenai,
     },

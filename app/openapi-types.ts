@@ -35,6 +35,25 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/{agentSlug}/details.json": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agentSlug: string;
+            };
+            cookie?: never;
+        };
+        /** Get details for this agent */
+        get: operations["renderAgentDetails"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/{agentSlug}/message": {
         parameters: {
             query?: never;
@@ -68,11 +87,8 @@ export interface components {
             result?: components["schemas"]["agent-openapi.schema"][];
         };
         MessageContext: {
-            threadId?: components["schemas"]["ThreadId"];
             message: string;
         };
-        /** @description Can be extended */
-        ThreadId: string;
         MessageResponse: {
             isSuccessful: boolean;
             message: string;
@@ -356,6 +372,32 @@ export interface operations {
             };
         };
     };
+    renderAgentDetails: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agentSlug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        isSuccessful: boolean;
+                        message?: string;
+                        result?: components["schemas"]["agent-openapi.schema"];
+                    };
+                };
+            };
+        };
+    };
     message: {
         parameters: {
             query?: never;
@@ -390,7 +432,6 @@ export interface operations {
 
 export type RefreshOpenaiResponse = components["schemas"]["RefreshOpenaiResponse"]
 export type MessageContext = components["schemas"]["MessageContext"]
-export type ThreadId = components["schemas"]["ThreadId"]
 export type MessageResponse = components["schemas"]["MessageResponse"]
   
 export const operationUrlObject = {
@@ -401,6 +442,10 @@ export const operationUrlObject = {
   "renderAgentOpenapi": {
     "method": "get",
     "path": "/{agentSlug}/openapi.json"
+  },
+  "renderAgentDetails": {
+    "method": "get",
+    "path": "/{agentSlug}/details.json"
   },
   "message": {
     "method": "post",

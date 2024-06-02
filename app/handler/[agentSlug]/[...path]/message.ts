@@ -8,7 +8,7 @@ import { TextContentBlock } from "openai/resources/beta/threads/messages.mjs";
 
  */
 export const message: Endpoint<"message"> = async (context) => {
-  const { agentSlug, message, threadId, Authorization } = context;
+  const { agentSlug, message, Authorization } = context;
 
   const result = await agentOpenapi("read", { rowIds: [agentSlug] });
   const first = result.items?.[agentSlug];
@@ -43,7 +43,8 @@ export const message: Endpoint<"message"> = async (context) => {
 
   const messages = await openai.beta.threads.messages.list(thread.id);
 
-  const responseMessageItem = messages.data.pop();
+  console.log({ messages: messages.data.map((x) => x.content) });
+  const responseMessageItem = messages.data.shift();
 
   const responseMessage = (
     responseMessageItem?.content?.find((x) => x.type === "text") as
