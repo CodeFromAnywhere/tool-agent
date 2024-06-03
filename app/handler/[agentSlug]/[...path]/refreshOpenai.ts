@@ -29,6 +29,7 @@ export const refreshOpenai: Endpoint<"refreshOpenai"> = async (context) => {
   // use the client and store from your api every time you hit refresh.
   const items: AgentOpenapiSchema[] = assistants.map((item) => {
     return {
+      __id: item.id,
       agentSlug: item.id,
       assistant: item as OpenaiAssistantSchema,
       authToken: `t${hashCode(openaiSecretKey)}`,
@@ -40,7 +41,7 @@ export const refreshOpenai: Endpoint<"refreshOpenai"> = async (context) => {
   // Agents need to be stored:
   const created = await agentOpenapi("create", { items });
 
-  console.log({ created });
+  console.log({ items, created });
   return {
     isSuccessful: true,
     message: `Found ${assistants.length} assistants`,
