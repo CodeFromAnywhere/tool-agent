@@ -5,7 +5,11 @@ import OpenAI from "openai";
 import { TextContentBlock } from "openai/resources/beta/threads/messages.mjs";
 
 /**
+TODO: 
 
+- Ensure it can also handle files by url
+- Ensure the response can also handle more than just text
+- Support for threads
  */
 export const message: Endpoint<"message"> = async (context) => {
   const { agentSlug, message, Authorization } = context;
@@ -24,6 +28,7 @@ export const message: Endpoint<"message"> = async (context) => {
   });
 
   const assistant = await openai.beta.assistants.retrieve(agentSlug);
+
   if (!assistant) {
     return { isSuccessful: false, message: "Assistant invalid" };
   }
@@ -39,6 +44,7 @@ export const message: Endpoint<"message"> = async (context) => {
 
   const run = await openai.beta.threads.runs.createAndPoll(thread.id, {
     assistant_id: assistant.id,
+    // tools,
   });
 
   const messages = await openai.beta.threads.messages.list(thread.id);
