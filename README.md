@@ -1,6 +1,6 @@
 # Agent OpenAPI
 
-Serverless Tool that serves all your Agents as OpenAPIs
+Turn your agents into tools for other agents.
 
 ## Getting started
 
