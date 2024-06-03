@@ -44,7 +44,7 @@ export const message: Endpoint<"message"> = async (context) => {
 
   const run = await openai.beta.threads.runs.createAndPoll(thread.id, {
     assistant_id: assistant.id,
-    // tools,
+    //  tools,
   });
 
   const messages = await openai.beta.threads.messages.list(thread.id);

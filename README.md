@@ -16,19 +16,21 @@ The Agent OpenAPI serves an OpenAPI for talking to an agent, so it can be discov
 
 ## Orchestration Agent
 
-With the above tooling, we can now create an agent that orchestrates certain taks to downstream agents. Taking response time limitations out of the equation, this "agent stacking" pattern can be done with infinite recursion.
+With the above tooling, we can now create an agent that orchestrates certain taks to downstream agents. Taking response time limitations out of the equation, this "agent stacking" pattern can be done in a deeply nested way.
 
 ![](orchestration-agent.drawio.png)
 
 ![](agent-stacking.drawio.png)
 
+## Goals
+
+- Easy maintenance of your agents
+- API access to your agents
+- Provide an openapi, and details for each agent
+- Provide message api that executes the tools
+- High degree of modularity
+
 ## Non-goals
 
 - Testing agents
-
-# Future goals
-
-After this works decently well...
-
-- combine multiple agents using combination proxy. Orchestration agent POC.
-- implement the same idea for twilio (twilio-relay + openhuman) where all phone numbers in your twilio become accessible through their own openapi.
+- Support for propriatary features like openai code-interpreter or file-search
