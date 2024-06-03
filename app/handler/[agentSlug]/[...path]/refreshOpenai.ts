@@ -41,7 +41,10 @@ export const refreshOpenai: Endpoint<"refreshOpenai"> = async (context) => {
   // Agents need to be stored:
   const created = await agentOpenapi("create", { items });
 
-  console.log({ items, created });
+  if (!created.isSuccessful) {
+    return { isSuccessful: false, message: created.message };
+  }
+
   return {
     isSuccessful: true,
     message: `Found ${assistants.length} assistants`,
