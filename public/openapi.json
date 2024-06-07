@@ -248,7 +248,12 @@
       "MessageContext": {
         "type": "object",
         "properties": {
-          "message": { "type": "string" }
+          "message": { "type": "string" },
+          "attachmentUrls": {
+            "description": "For now, only images are supported",
+            "type": "array",
+            "items": { "type": "string" }
+          }
         },
         "required": ["message"]
       },

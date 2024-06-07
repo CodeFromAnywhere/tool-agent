@@ -10,13 +10,14 @@ import { resolveSchemaRecursive } from "openapi-util/build/resolveSchemaRecursiv
 import { getOperations } from "openapi-util/build/getOperations";
 import { O, notEmpty, tryParseJson } from "from-anywhere";
 import {
+  ChatCompletionContentPart,
   ChatCompletionMessageParam,
   ChatCompletionTool,
   ChatCompletionToolMessageParam,
 } from "openai/resources/index.mjs";
 
 export const message: Endpoint<"message"> = async (context) => {
-  const { agentSlug, message, Authorization } = context;
+  const { agentSlug, message, Authorization, attachmentUrls } = context;
 
   const result = await agentOpenapi("read", { rowIds: [agentSlug] });
   const agent = result.items?.[agentSlug];
@@ -72,10 +73,20 @@ export const message: Endpoint<"message"> = async (context) => {
     }))
     .filter(notEmpty);
 
+  let content: ChatCompletionContentPart[] = [{ text: message, type: "text" }];
+
+  if (attachmentUrls) {
+    // NB: attach attachments
+    content = content.concat(
+      attachmentUrls.map((url) => ({ type: "image_url", image_url: { url } })),
+    );
+  }
+
   let messages: ChatCompletionMessageParam[] = [
     { role: "system", content: instructions },
-    { content: message, role: "user" },
+    { content, role: "user" },
   ];
+
   const completion = await openai.chat.completions.create({
     model: model || "gpt-4o",
     tools,

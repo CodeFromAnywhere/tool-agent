@@ -109,6 +109,8 @@ export interface components {
         };
         MessageContext: {
             message: string;
+            /** @description For now, only images are supported */
+            attachmentUrls?: string[];
         };
         MessageResponse: {
             isSuccessful: boolean;
