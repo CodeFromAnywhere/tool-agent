@@ -1,16 +1,8 @@
-import { O, getSubsetFromObject, objectMapSync } from "from-anywhere";
 import { Endpoint } from "@/client";
 import { agentOpenapi } from "@/crud-client";
 import OpenAI from "openai";
 import { TextContentBlock } from "openai/resources/beta/threads/messages.mjs";
 
-/**
-TODO: 
-
-- Ensure it can also handle files by url
-- Ensure the response can also handle more than just text
-- Support for threads
- */
 export const message: Endpoint<"message"> = async (context) => {
   const { agentSlug, message, Authorization } = context;
 

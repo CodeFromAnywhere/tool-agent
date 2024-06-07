@@ -29,8 +29,18 @@ With the above tooling, we can now create an agent that orchestrates certain tak
 - Provide an openapi, and details for each agent
 - Provide message api that executes the tools
 - High degree of modularity
+- Remove need for adding an agent; as long as you provide the openapi, the agent should be made available with some default instructions.
 
 ## Non-goals
 
 - Testing agents
 - Support for propriatary features like openai code-interpreter or file-search
+
+## Future ideas
+
+### Assistant Aggregator
+
+- Get all assistant OpenAPIs
+- Normalise them into an overarching datastructure
+- Use that as client instead of "openai"
+- Let the user decide wich assistant api to use (and ability to use their own)

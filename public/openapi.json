@@ -9,25 +9,16 @@
   },
   "servers": [{ "url": "" }],
   "paths": {
-    "/api/refreshOpenai": {
+    "/api/createAgent": {
       "post": {
         "summary": "",
-        "operationId": "refreshOpenai",
-        "description": "Refetch Agents from OpenAI API and sync them into database.",
+        "operationId": "createAgent",
+        "description": "Creates a new agent.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "openaiSecretKey": {
-                    "type": "string",
-                    "description": "OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys"
-                  }
-                },
-                "required": ["openaiSecretKey"]
-              }
+              "schema": { "$ref": "#/components/schemas/ToolAgent" }
             }
           }
         },
@@ -37,7 +28,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RefreshOpenaiResponse"
+                  "$ref": "#/components/schemas/CreateAgentResponse"
                 }
               }
             }
@@ -90,11 +81,19 @@
       ]
     },
 
-    "/{agentSlug}/details.json": {
+    "/{agentSlug}/details": {
       "get": {
         "summary": "Get details for this agent",
         "operationId": "renderAgentDetails",
-
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Bearer authorization"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Details",
@@ -175,7 +174,67 @@
   },
   "components": {
     "schemas": {
-      "RefreshOpenaiResponse": {
+      "ToolAgent": {
+        "type": "object",
+        "properties": {
+          "agentSlug": {
+            "type": "string",
+            "title": "Unique name",
+            "$ref": "#/components/schemas/UrlSlug"
+          },
+
+          "instructions": {
+            "type": "string"
+          },
+
+          "openapiUrl": {
+            "type": "string",
+            "description": "Used for tools for the agent"
+          },
+
+          "openapiAuthToken": {
+            "type": "string",
+            "description": "Used to authenticate to the OpenAPI to use tools"
+          },
+
+          "openaiSecretKey": {
+            "type": "string",
+            "description": "OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys"
+          },
+
+          "deepgramToken": {
+            "type": "string",
+            "description": "Deepgram token for voice capabilities"
+          },
+
+          "authToken": {
+            "type": "string",
+            "description": "Token needed for authorizing to the agent openapi. Not required."
+          },
+
+          "model": {
+            "type": "string"
+          },
+
+          "top_p": {
+            "type": "number"
+          },
+
+          "temperature": {
+            "type": "number"
+          }
+        },
+        "required": ["agentSlug", "instructions", "openaiSecretKey"]
+      },
+
+      "UrlSlug": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9._~-]+$",
+        "minLength": 1,
+        "maxLength": 64,
+        "description": "Slug compatible with URLs"
+      },
+      "CreateAgentResponse": {
         "type": "object",
         "properties": {
           "isSuccessful": {
@@ -183,13 +242,6 @@
           },
           "message": {
             "type": "string"
-          },
-          "result": {
-            "type": "array",
-            "items": {
-              "$ref": "https://agent.actionschema.com/schemas/agent-openapi.schema.json"
-            },
-            "description": "The agents created"
           }
         },
         "required": ["isSuccessful", "message"]

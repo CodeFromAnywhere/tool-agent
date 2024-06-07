@@ -3,7 +3,6 @@ import * as React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { components } from "./openapi-types";
-import { AgentOpenapiSchema } from "./schemas/agent-openapi.schema";
 
 /**
  * If you don't have access to the `useStore` hook, maybe because you're doing something outside of react... you can directly use the storage with javascript using this function

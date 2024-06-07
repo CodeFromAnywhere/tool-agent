@@ -1,5 +1,5 @@
 export interface paths {
-    "/api/refreshOpenai": {
+    "/api/createAgent": {
         parameters: {
             query?: never;
             header?: never;
@@ -8,8 +8,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Refetch Agents from OpenAI API and sync them into database. */
-        post: operations["refreshOpenai"];
+        /** @description Creates a new agent. */
+        post: operations["createAgent"];
         delete?: never;
         options?: never;
         head?: never;
@@ -35,7 +35,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/{agentSlug}/details.json": {
+    "/{agentSlug}/details": {
         parameters: {
             query?: never;
             header?: never;
@@ -80,11 +80,29 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        RefreshOpenaiResponse: {
+        ToolAgent: {
+            /** Unique name */
+            agentSlug: components["schemas"]["UrlSlug"];
+            instructions: string;
+            /** @description Used for tools for the agent */
+            openapiUrl?: string;
+            /** @description Used to authenticate to the OpenAPI to use tools */
+            openapiAuthToken?: string;
+            /** @description OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys */
+            openaiSecretKey: string;
+            /** @description Deepgram token for voice capabilities */
+            deepgramToken?: string;
+            /** @description Token needed for authorizing to the agent openapi. Not required. */
+            authToken?: string;
+            model?: string;
+            top_p?: number;
+            temperature?: number;
+        };
+        /** @description Slug compatible with URLs */
+        UrlSlug: string;
+        CreateAgentResponse: {
             isSuccessful: boolean;
             message: string;
-            /** @description The agents created */
-            result?: components["schemas"]["agent-openapi.schema"][];
         };
         MessageContext: {
             message: string;
@@ -93,35 +111,6 @@ export interface components {
             isSuccessful: boolean;
             message: string;
             threadId?: string;
-        };
-        "openai-assistant.schema": {
-            created_at: number;
-            description: string | null;
-            id: string;
-            instructions: string | null;
-            /** @description Unknown metadata */
-            metadata: unknown;
-            model: string;
-            name: string | null;
-            object: string;
-            response_format?: (string | {
-                type?: string;
-            }) | null;
-            temperature?: number | null;
-            /** @description tools resources */
-            tool_resources?: unknown;
-            tools: unknown[];
-            top_p?: number | null;
-        };
-        /** @description AgentOpenapi item that represents 1 agent that is served as OpenAPI. */
-        "agent-openapi.schema": {
-            agentSlug?: string;
-            openaiSecretKey?: string;
-            authToken?: string;
-            assistant?: components["schemas"]["openai-assistant.schema"];
-            metadata?: {
-                [key: string]: unknown;
-            };
         };
         Contact: {
             name?: string;
@@ -311,6 +300,35 @@ export interface components {
             /** @description An element to hold various schemas for the specification. */
             components?: components["schemas"]["Components"];
         };
+        "openai-assistant.schema": {
+            created_at: number;
+            description: string | null;
+            id: string;
+            instructions: string | null;
+            /** @description Unknown metadata */
+            metadata: unknown;
+            model: string;
+            name: string | null;
+            object: string;
+            response_format?: (string | {
+                type?: string;
+            }) | null;
+            temperature?: number | null;
+            /** @description tools resources */
+            tool_resources?: unknown;
+            tools: unknown[];
+            top_p?: number | null;
+        };
+        /** @description AgentOpenapi item that represents 1 agent that is served as OpenAPI. */
+        "agent-openapi.schema": {
+            agentSlug?: string;
+            openaiSecretKey?: string;
+            authToken?: string;
+            assistant?: components["schemas"]["openai-assistant.schema"];
+            metadata?: {
+                [key: string]: unknown;
+            };
+        };
     };
     responses: never;
     parameters: never;
@@ -320,7 +338,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    refreshOpenai: {
+    createAgent: {
         parameters: {
             query?: never;
             header?: never;
@@ -329,10 +347,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    /** @description OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys */
-                    openaiSecretKey: string;
-                };
+                "application/json": components["schemas"]["ToolAgent"];
             };
         };
         responses: {
@@ -342,7 +357,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RefreshOpenaiResponse"];
+                    "application/json": components["schemas"]["CreateAgentResponse"];
                 };
             };
         };
@@ -375,7 +390,10 @@ export interface operations {
     renderAgentDetails: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                /** @description Bearer authorization */
+                Authorization: string;
+            };
             path: {
                 agentSlug: string;
             };
@@ -429,14 +447,16 @@ export interface operations {
 }
 
 
-export type RefreshOpenaiResponse = components["schemas"]["RefreshOpenaiResponse"]
+export type ToolAgent = components["schemas"]["ToolAgent"]
+export type UrlSlug = components["schemas"]["UrlSlug"]
+export type CreateAgentResponse = components["schemas"]["CreateAgentResponse"]
 export type MessageContext = components["schemas"]["MessageContext"]
 export type MessageResponse = components["schemas"]["MessageResponse"]
   
 export const operationUrlObject = {
-  "refreshOpenai": {
+  "createAgent": {
     "method": "post",
-    "path": "/api/refreshOpenai"
+    "path": "/api/createAgent"
   },
   "renderAgentOpenapi": {
     "method": "get",
@@ -444,7 +464,7 @@ export const operationUrlObject = {
   },
   "renderAgentDetails": {
     "method": "get",
-    "path": "/{agentSlug}/details.json"
+    "path": "/{agentSlug}/details"
   },
   "message": {
     "method": "post",

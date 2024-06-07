@@ -17,3 +17,7 @@ First I've tried to make openai assistants api the source of truth, because it w
 3. many people want to use something that is not OpenAI. we should support the entire ecosystem to a certain extent.
 
 Therefore, the source of truth must now come from an **openapi** accompanied with instructions and some other config. This will only make one agent at once.
+
+# Public Agents?
+
+Not prio since this is 'trying to get public' rather than real utility. At some point I need it for self-play and testing but for this it doesn't seem like anything innovative.
