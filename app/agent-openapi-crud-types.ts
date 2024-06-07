@@ -86,30 +86,26 @@ export interface operations {
             content: {
                 "application/json": {
                     items: {
-                        openaiSecretKey?: string;
+                        /**
+                         * Unique name
+                         * @description Slug compatible with URLs
+                         */
+                        agentSlug: string;
+                        instructions: string;
+                        /** @description Used for tools for the agent */
+                        openapiUrl?: string;
+                        /** @description Used to authenticate to the OpenAPI to use tools */
+                        openapiAuthToken?: string;
+                        /** @description OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys */
+                        openaiSecretKey: string;
+                        /** @description Deepgram token for voice capabilities */
+                        deepgramToken?: string;
+                        /** @description Token needed for authorizing to the agent openapi. Not required. */
                         authToken?: string;
-                        assistant?: {
-                            created_at: number;
-                            description: string | null;
-                            id: string;
-                            instructions: string | null;
-                            /** @description Unknown metadata */
-                            metadata: unknown;
-                            model: string;
-                            name: string | null;
-                            object: string;
-                            response_format?: (string | {
-                                type?: string;
-                            }) | null;
-                            temperature?: number | null;
-                            /** @description tools resources */
-                            tool_resources?: unknown;
-                            tools: unknown[];
-                            top_p?: number | null;
-                        };
-                        metadata?: {
-                            [key: string]: unknown;
-                        };
+                        adminAuthToken?: string;
+                        model?: string;
+                        top_p?: number;
+                        temperature?: number;
                     }[];
                 };
             };
@@ -142,6 +138,12 @@ export interface operations {
             content: {
                 "application/json": {
                     search?: string;
+                    vectorSearch?: {
+                        propertyKey: string;
+                        input: string;
+                        topK: number;
+                        minimumSimilarity: number;
+                    };
                     rowIds?: string[];
                     startFromIndex?: number;
                     maxRows?: number;
@@ -174,30 +176,26 @@ export interface operations {
                         $schema?: string;
                         items?: {
                             [key: string]: {
-                                openaiSecretKey?: string;
+                                /**
+                                 * Unique name
+                                 * @description Slug compatible with URLs
+                                 */
+                                agentSlug: string;
+                                instructions: string;
+                                /** @description Used for tools for the agent */
+                                openapiUrl?: string;
+                                /** @description Used to authenticate to the OpenAPI to use tools */
+                                openapiAuthToken?: string;
+                                /** @description OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys */
+                                openaiSecretKey: string;
+                                /** @description Deepgram token for voice capabilities */
+                                deepgramToken?: string;
+                                /** @description Token needed for authorizing to the agent openapi. Not required. */
                                 authToken?: string;
-                                assistant?: {
-                                    created_at: number;
-                                    description: string | null;
-                                    id: string;
-                                    instructions: string | null;
-                                    /** @description Unknown metadata */
-                                    metadata: unknown;
-                                    model: string;
-                                    name: string | null;
-                                    object: string;
-                                    response_format?: (string | {
-                                        type?: string;
-                                    }) | null;
-                                    temperature?: number | null;
-                                    /** @description tools resources */
-                                    tool_resources?: unknown;
-                                    tools: unknown[];
-                                    top_p?: number | null;
-                                };
-                                metadata?: {
-                                    [key: string]: unknown;
-                                };
+                                adminAuthToken?: string;
+                                model?: string;
+                                top_p?: number;
+                                temperature?: number;
                             } | undefined;
                         };
                         schema?: {
@@ -222,32 +220,28 @@ export interface operations {
                 "application/json": {
                     /** @description The id (indexed key) of the item to update. Update that functions as upsert. If the id didn't exist, it will be created. */
                     id: string;
-                    /** @description AgentOpenapi item that represents 1 agent that is served as OpenAPI. */
+                    /** @description New (partial) value of the item. Will update all keys provided here. Please note that it cannot be set to 'undefined' as this doesn't transfer over JSON, but if you set it to 'null', the value will be removed from the database. */
                     partialItem: {
-                        openaiSecretKey?: string;
+                        /**
+                         * Unique name
+                         * @description Slug compatible with URLs
+                         */
+                        agentSlug: string;
+                        instructions: string;
+                        /** @description Used for tools for the agent */
+                        openapiUrl?: string;
+                        /** @description Used to authenticate to the OpenAPI to use tools */
+                        openapiAuthToken?: string;
+                        /** @description OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys */
+                        openaiSecretKey: string;
+                        /** @description Deepgram token for voice capabilities */
+                        deepgramToken?: string;
+                        /** @description Token needed for authorizing to the agent openapi. Not required. */
                         authToken?: string;
-                        assistant?: {
-                            created_at: number;
-                            description: string | null;
-                            id: string;
-                            instructions: string | null;
-                            /** @description Unknown metadata */
-                            metadata: unknown;
-                            model: string;
-                            name: string | null;
-                            object: string;
-                            response_format?: (string | {
-                                type?: string;
-                            }) | null;
-                            temperature?: number | null;
-                            /** @description tools resources */
-                            tool_resources?: unknown;
-                            tools: unknown[];
-                            top_p?: number | null;
-                        };
-                        metadata?: {
-                            [key: string]: unknown;
-                        };
+                        adminAuthToken?: string;
+                        model?: string;
+                        top_p?: number;
+                        temperature?: number;
                     };
                 };
             };

@@ -3,7 +3,7 @@ import { resolveOpenapiAppRequest } from "openapi-util/build/node/resolveOpenapi
 import openapi from "../../../../public/openapi.json";
 import { message } from "./message";
 import { renderAgentOpenapi } from "./renderAgentOpenapi";
-import { refreshOpenai } from "./refreshOpenai";
+import { upsertToolAgent } from "./upsertToolAgent";
 import { renderAgentDetails } from "./renderAgentDetails";
 
 /** function creator to DRY */
@@ -14,7 +14,7 @@ const getHandler = (method: string) => (request: Request) =>
       message,
       renderAgentDetails,
       renderAgentOpenapi,
-      refreshOpenai,
+      upsertToolAgent,
     },
   });
 

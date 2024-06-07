@@ -25,7 +25,9 @@
 
 ✅ Rename `details.json` to `GET details` and ensure it provides all details including `openapiAuth` only if `Authorization` header is set to match authToken.
 
-Refactor `/message`. To support functions, it needs to call the OpenAPI based on something returned as step.
+✅ Refactor `/message` to not use an assistant
+
+✅ To support functions, it needs to call the OpenAPI based on something returned as step. https://platform.openai.com/docs/assistants/tools/function-calling/quickstart
 
 Confirm an agent with people-openapi tool works.
 

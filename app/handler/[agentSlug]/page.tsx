@@ -1,19 +1,18 @@
 "use client";
 
-import { OpenapiForm } from "react-openapi-form";
+import { OpenapiForms } from "openapi-for-humans-react";
 import { useStore } from "../../store";
 import openapi from "../../../public/openapi.json";
 export default function AgentPage(props: { params: { agentSlug: string } }) {
   const [agents, setDatabases] = useStore("agents");
   const agent = agents?.find((x) => x.agentSlug === props.params.agentSlug);
 
-  /*This is not possible: process.env.NODE_ENV === "development"
+  /*This is not possible: that will provide mixed-content problems:Possible mixed-content issue? The page was loaded over https:// but a http:// URL was specified. Check that you are not attempting to load mixed content.
+   */
+  const origin =
+    process.env.NODE_ENV === "development"
       ? `http://localhost:3000`
-      : `https://data.actionschema.com` 
-      
-      that will provide mixed-content problems:Possible mixed-content issue? The page was loaded over https:// but a http:// URL was specified. Check that you are not attempting to load mixed content.
-*/
-  const origin = `https://agent.actionschema.com`;
+      : `https://agent.actionschema.com`;
   const openapiUrl = `${origin}/${props.params.agentSlug}/openapi.json`;
 
   const links = [
@@ -66,7 +65,11 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
       </div>
 
       <div>
-        <OpenapiForm
+        <OpenapiForms
+          url={openapiUrl}
+          initialData={{ httpBearerToken: agent?.authToken }}
+        />
+        {/* <OpenapiForm
           openapi={openapi}
           path="/{agentSlug}/message"
           method="post"
@@ -78,7 +81,7 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
           withResponse={(response) => {
             console.log({ response });
           }}
-        />
+        /> */}
       </div>
     </div>
   );

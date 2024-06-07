@@ -2,7 +2,7 @@ import { Keys } from "from-anywhere";
 import * as React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { components } from "./openapi-types";
+import { ToolAgent, components } from "./openapi-types";
 
 /**
  * If you don't have access to the `useStore` hook, maybe because you're doing something outside of react... you can directly use the storage with javascript using this function
@@ -275,9 +275,9 @@ export const createStore = <K extends object>(initialValues: K) => {
 };
 
 const store = createStore({
-  openaiSecretKey: "",
+  adminAuthToken: "",
   agents: [],
-} as { openaiSecretKey: string; agents: AgentOpenapiSchema[] });
+} as { adminAuthToken: string; agents: ToolAgent[] });
 
 export const StoreProvider = store.StoreProvider;
 export const useStore = store.useStore;

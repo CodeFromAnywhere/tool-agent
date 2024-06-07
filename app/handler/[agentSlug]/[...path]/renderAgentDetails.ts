@@ -4,7 +4,7 @@ import { agentOpenapi } from "@/crud-client";
 export const renderAgentDetails: Endpoint<"renderAgentDetails"> = async (
   context,
 ) => {
-  const { agentSlug } = context;
+  const { agentSlug, Authorization } = context;
 
   // NB: no auth needed for this endpoint.
 
@@ -15,14 +15,25 @@ export const renderAgentDetails: Endpoint<"renderAgentDetails"> = async (
     };
   }
 
-  const details = (await agentOpenapi("read", { rowIds: [agentSlug] })).items?.[
-    agentSlug
-  ]?.assistant;
+  const details = (
+    await agentOpenapi("read", { rowIds: [agentSlug.toLowerCase()] })
+  ).items?.[agentSlug];
 
   if (!details) {
     return {
       isSuccessful: false,
       message: "Couldn't find details for agent " + agentSlug,
+    };
+  }
+
+  if (
+    details.adminAuthToken &&
+    details.adminAuthToken.length >= 32 &&
+    details.adminAuthToken !== Authorization
+  ) {
+    return {
+      isSuccessful: false,
+      message: "Unauthorized",
     };
   }
 

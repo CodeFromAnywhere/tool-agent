@@ -9,10 +9,10 @@
   },
   "servers": [{ "url": "" }],
   "paths": {
-    "/api/createAgent": {
+    "/api/upsertToolAgent": {
       "post": {
         "summary": "",
-        "operationId": "createAgent",
+        "operationId": "upsertToolAgent",
         "description": "Creates a new agent.",
         "requestBody": {
           "required": true,
@@ -28,7 +28,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateAgentResponse"
+                  "$ref": "#/components/schemas/UpsertToolAgentResponse"
                 }
               }
             }
@@ -176,6 +176,8 @@
     "schemas": {
       "ToolAgent": {
         "type": "object",
+        "additionalProperties": false,
+        "required": ["agentSlug", "instructions", "openaiSecretKey"],
         "properties": {
           "agentSlug": {
             "type": "string",
@@ -211,6 +213,10 @@
             "type": "string",
             "description": "Token needed for authorizing to the agent openapi. Not required."
           },
+          "adminAuthToken": {
+            "type": "string",
+            "description": "Token needed for authorizing as admin to alter or remove the agent."
+          },
 
           "model": {
             "type": "string"
@@ -223,8 +229,7 @@
           "temperature": {
             "type": "number"
           }
-        },
-        "required": ["agentSlug", "instructions", "openaiSecretKey"]
+        }
       },
 
       "UrlSlug": {
@@ -234,7 +239,7 @@
         "maxLength": 64,
         "description": "Slug compatible with URLs"
       },
-      "CreateAgentResponse": {
+      "UpsertToolAgentResponse": {
         "type": "object",
         "properties": {
           "isSuccessful": {
@@ -242,7 +247,8 @@
           },
           "message": {
             "type": "string"
-          }
+          },
+          "result": { "$ref": "#/components/schemas/ToolAgent" }
         },
         "required": ["isSuccessful", "message"]
       },

@@ -3,22 +3,26 @@
 import { OpenapiForm } from "react-openapi-form";
 import openapi from "../public/openapi.json";
 import { useStore } from "./store";
-import { RefreshOpenaiResponse } from "./openapi-types";
+import { UpsertToolAgentResponse } from "./openapi-types";
+import { useRouter } from "next/navigation";
 
 export const Form = () => {
+  const router = useRouter();
   const [agents, setAgents] = useStore("agents");
-  const [openaiSecretKey, setOpenaiSecretKey] = useStore("openaiSecretKey");
+  const [adminAuthToken, setAdminAuthToken] = useStore("adminAuthToken");
   return (
     <div>
-      <b>Authenticate</b>
-      <p>Please provide an authorized OpenAI secret key to get started.</p>
+      <b>Create an agent</b>
       <div className="my-10">
         <OpenapiForm
           openapi={openapi}
-          path="/api/refreshOpenai"
+          path="/api/upsertToolAgent"
           method="post"
-          initialData={{ openaiSecretKey }}
-          uiSchema={{ openaiSecretKey: { "ui:widget": "password" } }}
+          initialData={{ adminAuthToken }}
+          uiSchema={{
+            adminAuthToken: { "ui:widget": "password" },
+            instructions: { "ui:widget": "textarea" },
+          }}
           withResponse={(response) => {
             const {
               statusCode,
@@ -30,7 +34,7 @@ export const Form = () => {
               url,
             } = response;
             const requestResponse = response.response as
-              | RefreshOpenaiResponse
+              | UpsertToolAgentResponse
               | undefined;
 
             if (!requestResponse?.isSuccessful || !requestResponse.result) {
@@ -38,10 +42,17 @@ export const Form = () => {
               return;
             }
 
-            const agents = requestResponse.result;
-            setOpenaiSecretKey(bodyData?.openaiSecretKey);
-            //@ts-ignore
-            setAgents(agents);
+            setAgents(
+              agents
+                .filter((x) => x.agentSlug !== bodyData?.agentSlug)
+                .concat(requestResponse.result),
+            );
+
+            if (bodyData?.adminAuthToken) {
+              setAdminAuthToken(bodyData.adminAuthToken);
+            }
+
+            router.push(`/${bodyData?.agentSlug}`);
           }}
         />
       </div>

@@ -1,5 +1,5 @@
 export interface paths {
-    "/api/createAgent": {
+    "/api/upsertToolAgent": {
         parameters: {
             query?: never;
             header?: never;
@@ -9,7 +9,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description Creates a new agent. */
-        post: operations["createAgent"];
+        post: operations["upsertToolAgent"];
         delete?: never;
         options?: never;
         head?: never;
@@ -94,15 +94,18 @@ export interface components {
             deepgramToken?: string;
             /** @description Token needed for authorizing to the agent openapi. Not required. */
             authToken?: string;
+            /** @description Token needed for authorizing as admin to alter or remove the agent. */
+            adminAuthToken?: string;
             model?: string;
             top_p?: number;
             temperature?: number;
         };
         /** @description Slug compatible with URLs */
         UrlSlug: string;
-        CreateAgentResponse: {
+        UpsertToolAgentResponse: {
             isSuccessful: boolean;
             message: string;
+            result?: components["schemas"]["ToolAgent"];
         };
         MessageContext: {
             message: string;
@@ -338,7 +341,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    createAgent: {
+    upsertToolAgent: {
         parameters: {
             query?: never;
             header?: never;
@@ -357,7 +360,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["CreateAgentResponse"];
+                    "application/json": components["schemas"]["UpsertToolAgentResponse"];
                 };
             };
         };
@@ -449,14 +452,14 @@ export interface operations {
 
 export type ToolAgent = components["schemas"]["ToolAgent"]
 export type UrlSlug = components["schemas"]["UrlSlug"]
-export type CreateAgentResponse = components["schemas"]["CreateAgentResponse"]
+export type UpsertToolAgentResponse = components["schemas"]["UpsertToolAgentResponse"]
 export type MessageContext = components["schemas"]["MessageContext"]
 export type MessageResponse = components["schemas"]["MessageResponse"]
   
 export const operationUrlObject = {
-  "createAgent": {
+  "upsertToolAgent": {
     "method": "post",
-    "path": "/api/createAgent"
+    "path": "/api/upsertToolAgent"
   },
   "renderAgentOpenapi": {
     "method": "get",
