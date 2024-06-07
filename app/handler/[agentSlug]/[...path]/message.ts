@@ -168,5 +168,7 @@ export const message: Endpoint<"message"> = async (context) => {
 
   // 'completion' is not needing tool_calls anymore
 
-  return { isSuccessful: true, message: "Responded", messages };
+  const responses = messages.slice(2);
+
+  return { isSuccessful: true, message: "Responded", messages: responses };
 };
