@@ -6,8 +6,10 @@ import { generateRandomString } from "from-anywhere";
 export const upsertToolAgent: Endpoint<"upsertToolAgent"> = async (context) => {
   const { adminAuthToken, agentSlug, ...rest } = context;
 
-  const { openaiSecretKey } = rest;
+  const { authToken } = rest;
   const realAgentSlug = agentSlug.toLowerCase();
+  const realAuthToken =
+    !authToken || authToken.length < 32 ? generateRandomString(32) : authToken;
 
   const already = (await agentOpenapi("read", { rowIds: [realAgentSlug] }))
     .items?.[agentSlug];
@@ -29,6 +31,7 @@ export const upsertToolAgent: Endpoint<"upsertToolAgent"> = async (context) => {
 
   const partialItem = {
     agentSlug: realAgentSlug,
+    authToken: realAuthToken,
     adminAuthToken:
       adminAuthToken && adminAuthToken.length >= 32
         ? adminAuthToken

@@ -1,11 +1,19 @@
 import { Endpoint } from "@/client";
 import { agentOpenapi } from "@/crud-client";
 import OpenAI from "openai";
-import { TextContentBlock } from "openai/resources/beta/threads/messages.mjs";
-import { OpenapiDocument } from "openapi-util";
+import {
+  OpenapiDocument,
+  getFormContextFromOpenapi,
+  getOperationRequestInit,
+} from "openapi-util";
 import { resolveSchemaRecursive } from "openapi-util/build/resolveSchemaRecursive";
 import { getOperations } from "openapi-util/build/getOperations";
-import { notEmpty } from "from-anywhere";
+import { O, notEmpty, tryParseJson } from "from-anywhere";
+import {
+  ChatCompletionMessageParam,
+  ChatCompletionTool,
+  ChatCompletionToolMessageParam,
+} from "openai/resources/index.mjs";
 
 export const message: Endpoint<"message"> = async (context) => {
   const { agentSlug, message, Authorization } = context;
@@ -13,7 +21,12 @@ export const message: Endpoint<"message"> = async (context) => {
   const result = await agentOpenapi("read", { rowIds: [agentSlug] });
   const agent = result.items?.[agentSlug];
 
-  if (!agent || !Authorization || Authorization !== agent.authToken) {
+  console.log({ agent, Authorization });
+  if (
+    !agent ||
+    !Authorization ||
+    Authorization !== `Bearer ${agent.authToken}`
+  ) {
     return { isSuccessful: false, message: "Unauthorized" };
   }
 
@@ -21,21 +34,6 @@ export const message: Endpoint<"message"> = async (context) => {
 
   const openai = new OpenAI({
     apiKey: openaiSecretKey,
-  });
-
-  // const assistant = await openai.beta.assistants.retrieve(agentSlug);
-
-  // if (!assistant) {
-  //   return { isSuccessful: false, message: "Assistant invalid" };
-  // }
-
-  const thread = await openai.beta.threads.create({
-    messages: [{ content: message, role: "user" }],
-  });
-
-  const openaiMessage = await openai.beta.threads.messages.create(thread.id, {
-    content: message,
-    role: "user",
   });
 
   const {
@@ -63,7 +61,7 @@ export const message: Endpoint<"message"> = async (context) => {
     : undefined;
 
   // @ts-ignore
-  const tools: OpenAI.Beta.Assistants.AssistantTool[] | undefined = operations
+  const tools: ChatCompletionTool[] | undefined = operations
     ?.map((item) => ({
       type: "function",
       function: {
@@ -74,59 +72,101 @@ export const message: Endpoint<"message"> = async (context) => {
     }))
     .filter(notEmpty);
 
-  let run = await openai.beta.threads.runs.createAndPoll(thread.id, {
-    instructions,
-    model,
-    //@ts-ignore
-    assistant_id: undefined,
+  let messages: ChatCompletionMessageParam[] = [
+    { role: "system", content: instructions },
+    { content: message, role: "user" },
+  ];
+  const completion = await openai.chat.completions.create({
+    model: model || "gpt-4o",
+    tools,
+    messages,
     temperature,
     top_p,
-    tools,
   });
+
+  let completionMessage = completion.choices[0]?.message;
+
+  if (!completionMessage) {
+    return { isSuccessful: false, message: "No response" };
+  }
+
+  messages.push(completionMessage);
 
   // perform all actions
-  while (run.status === "requires_action" && run.required_action) {
-    const tool_outputs =
-      await run.required_action.submit_tool_outputs.tool_calls.map((tool) => {
-        // TODO: run `tool.function.name` with proper arguments
+  while (completionMessage.tool_calls) {
+    console.log("TOOLCALL REQ:", completionMessage.tool_calls);
+    const tool_outputs = (
+      await Promise.all(
+        completionMessage.tool_calls.map(async (tool) => {
+          // TODO: run `tool.function.name` with proper arguments
+          const operationId = tool.function.name;
+          const operation = operations?.find((x) => x.id === operationId);
+          if (!operation) {
+            return;
+          }
 
-        return {
-          tool_call_id: tool.id,
-          output: '{ isSuccessful: false, message: "TBD" }',
-        };
-      });
+          const { method, path } = operation;
+          const formContext = getFormContextFromOpenapi({
+            //@ts-ignore
 
-    run = await openai.beta.threads.runs.submitToolOutputsAndPoll(
-      thread.id,
-      run.id,
-      {
-        tool_outputs,
-        stream: false,
-      },
-    );
+            method,
+            path,
+            openapi: dereferenced,
+          });
+          const { parameters, servers, securitySchemes } = formContext;
+
+          const bodyData = tryParseJson<O>(tool.function.arguments);
+
+          const data = { httpBearerToken: openapiAuthToken, ...bodyData };
+
+          const { fetchRequestInit, url } = getOperationRequestInit({
+            path,
+            method,
+            //@ts-ignore
+            servers,
+            data,
+            parameters,
+            securitySchemes,
+          });
+
+          const response = await fetch(url, fetchRequestInit)
+            .then(async (response) => {
+              const text = await response.text();
+              return text;
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+
+          // TODO: check how to call an operation with parameters, also providing Auth. See 'openapi-form'
+
+          return {
+            tool_call_id: tool.id,
+            role: "tool",
+            content: response || "ERROR (no response)",
+          } satisfies ChatCompletionToolMessageParam;
+        }),
+      )
+    ).filter(notEmpty);
+
+    messages = messages.concat(tool_outputs);
+
+    console.log({ messages });
+
+    const completion = await openai.chat.completions.create({
+      model: model || "gpt-4o",
+      tools,
+      messages,
+      temperature,
+      top_p,
+    });
+
+    completionMessage = completion.choices[0]?.message;
+
+    messages.push(completionMessage);
   }
 
-  // 'run' is not requires_action anymore
+  // 'completion' is not needing tool_calls anymore
 
-  const messages = await openai.beta.threads.messages.list(thread.id);
-
-  // TODO: only get the required messages
-  console.log({
-    messages: messages.data.map((x) =>
-      x.content.map((x) => (x.type === "text" ? x.text.value : x)),
-    ),
-  });
-  const responseMessageItem = messages.data.shift();
-
-  const responseMessage = (
-    responseMessageItem?.content?.find((x) => x.type === "text") as
-      | TextContentBlock
-      | undefined
-  )?.text?.value;
-
-  if (!responseMessage) {
-    return { isSuccessful: false, message: "Couldn't get message back" };
-  }
-
-  return { isSuccessful: true, message: responseMessage };
+  return { isSuccessful: true, message: "Responded", messages };
 };

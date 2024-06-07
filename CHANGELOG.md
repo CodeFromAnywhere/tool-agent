@@ -29,6 +29,8 @@
 
 ✅ To support functions, it needs to call the OpenAPI based on something returned as step. https://platform.openai.com/docs/assistants/tools/function-calling/quickstart
 
+Allow for optional authorization token for `agent-openapi` and ensure this translates into no security mechanism incase this is true.
+
 Confirm an agent with people-openapi tool works.
 
 Ensure `message` can also handle files by url

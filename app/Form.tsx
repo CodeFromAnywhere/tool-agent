@@ -44,7 +44,9 @@ export const Form = () => {
 
             setAgents(
               agents
-                .filter((x) => x.agentSlug !== bodyData?.agentSlug)
+                .filter(
+                  (x) => x.agentSlug !== requestResponse.result?.agentSlug,
+                )
                 .concat(requestResponse.result),
             );
 
@@ -52,7 +54,7 @@ export const Form = () => {
               setAdminAuthToken(bodyData.adminAuthToken);
             }
 
-            router.push(`/${bodyData?.agentSlug}`);
+            router.push(`/${requestResponse.result?.agentSlug}`);
           }}
         />
       </div>

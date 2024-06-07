@@ -112,7 +112,7 @@ export interface components {
         };
         MessageResponse: {
             isSuccessful: boolean;
-            message: string;
+            messages?: unknown[];
             threadId?: string;
         };
         Contact: {
@@ -303,35 +303,6 @@ export interface components {
             /** @description An element to hold various schemas for the specification. */
             components?: components["schemas"]["Components"];
         };
-        "openai-assistant.schema": {
-            created_at: number;
-            description: string | null;
-            id: string;
-            instructions: string | null;
-            /** @description Unknown metadata */
-            metadata: unknown;
-            model: string;
-            name: string | null;
-            object: string;
-            response_format?: (string | {
-                type?: string;
-            }) | null;
-            temperature?: number | null;
-            /** @description tools resources */
-            tool_resources?: unknown;
-            tools: unknown[];
-            top_p?: number | null;
-        };
-        /** @description AgentOpenapi item that represents 1 agent that is served as OpenAPI. */
-        "agent-openapi.schema": {
-            agentSlug?: string;
-            openaiSecretKey?: string;
-            authToken?: string;
-            assistant?: components["schemas"]["openai-assistant.schema"];
-            metadata?: {
-                [key: string]: unknown;
-            };
-        };
     };
     responses: never;
     parameters: never;
@@ -413,7 +384,7 @@ export interface operations {
                     "application/json": {
                         isSuccessful?: boolean;
                         message?: string;
-                    } | components["schemas"]["agent-openapi.schema"];
+                    };
                 };
             };
         };

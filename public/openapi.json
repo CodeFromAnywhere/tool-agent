@@ -100,22 +100,15 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "isSuccessful": {
-                          "type": "boolean"
-                        },
-                        "message": {
-                          "type": "string"
-                        }
-                      }
+                  "type": "object",
+                  "properties": {
+                    "isSuccessful": {
+                      "type": "boolean"
                     },
-                    {
-                      "$ref": "https://agent.actionschema.com/schemas/agent-openapi.schema.json"
+                    "message": {
+                      "type": "string"
                     }
-                  ]
+                  }
                 }
               }
             }
@@ -266,8 +259,8 @@
           "isSuccessful": {
             "type": "boolean"
           },
-          "message": {
-            "type": "string"
+          "messages": {
+            "type": "array"
           },
           "threadId": { "type": "string" }
         },
