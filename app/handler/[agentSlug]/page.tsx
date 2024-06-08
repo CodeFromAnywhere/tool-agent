@@ -65,6 +65,14 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
       </div>
 
       <div>
+        <p>
+          Twilio Call URL:{" "}
+          <input
+            className="border border-black"
+            value={`https://twilio-sts-agent.actionschema.workers.dev/${agent?.adminAuthToken}/${agent?.deepgramToken}/agent.actionschema.com/${agent?.agentSlug}/details`}
+          />
+        </p>
+
         <OpenapiForms
           url={openapiUrl}
           initialData={{ httpBearerToken: agent?.authToken }}
