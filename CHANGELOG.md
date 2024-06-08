@@ -59,6 +59,11 @@
 
   - url is incorrect (debug this)
   - test `/message` and confirm it works
+  - After tools work in message, test if the tool works in deepgram as well
+
+After this all works well, test with Bruna/Milan/Rutger
+
+Now integrate whatsapp.
 
 # LATER
 

@@ -71,12 +71,27 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
             className="border border-black rounded-md p-2 cursor-pointer"
             onClick={async () => {
               let deepgramToken = prompt("Please provide your deepgram token");
+
               const link = `https://twilio-sts-agent.actionschema.workers.dev/${agent?.adminAuthToken}/${deepgramToken}/agent.actionschema.com/${agent?.agentSlug}/details`;
               await navigator.clipboard.writeText(link);
               alert("Copied to clipboard");
             }}
           >
             Get Twilio Call Webhook
+          </div>
+
+          <div
+            className="border border-black rounded-md p-2 cursor-pointer"
+            onClick={async () => {
+              let twilioAuthToken = prompt(
+                "Please provide your twilio authtoken",
+              );
+              const link = `https://twilio-sts-agent.actionschema.workers.dev/whatsapp?adminAuthToken=${agent?.adminAuthToken}&agentUrl=agent.actionschema.com/${agent?.agentSlug}/details&twilioAuthToken=${twilioAuthToken}`;
+              await navigator.clipboard.writeText(link);
+              alert("Copied to clipboard");
+            }}
+          >
+            Get Twilio Whatsapp Webhook
           </div>
 
           <div
