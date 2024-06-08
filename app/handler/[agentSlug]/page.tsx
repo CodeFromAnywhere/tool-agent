@@ -91,7 +91,21 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
               alert("Copied to clipboard");
             }}
           >
-            Get Twilio Whatsapp Webhook
+            Get Twilio Message Webhook
+          </div>
+
+          <div
+            className="border border-black rounded-md p-2 cursor-pointer"
+            onClick={async () => {
+              let sendgridAuthToken = prompt(
+                "Please provide your sendgrid authtoken",
+              );
+              const link = `https://twilio-sts-agent.actionschema.workers.dev/email?adminAuthToken=${agent?.adminAuthToken}&agentUrl=agent.actionschema.com/${agent?.agentSlug}/details&sendgridAuthToken=${sendgridAuthToken}`;
+              await navigator.clipboard.writeText(link);
+              alert("Copied to clipboard");
+            }}
+          >
+            Get Sendgrid Email Webhook
           </div>
 
           <div
