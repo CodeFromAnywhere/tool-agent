@@ -29,7 +29,7 @@ export const renderAgentDetails: Endpoint<"renderAgentDetails"> = async (
   if (
     details.adminAuthToken &&
     details.adminAuthToken.length >= 32 &&
-    details.adminAuthToken !== Authorization
+    `Bearer ${details.adminAuthToken}` !== Authorization
   ) {
     return {
       isSuccessful: false,

@@ -33,10 +33,13 @@
 
 ✅ Confirm an agent with people-openapi tool works.
 
-Ensure `message` can also handle files by url
+✅ Ensure `message` can also handle images by url
 
-Ensure `message` response can also handle more than just text
+❌ Chat Completions doesn't support other files, so let's leave it at this for now. We could add logic we had in whatsapp-twilio stuff to also handle other types of files, but it's probably better to leave this and have a broader set of models that we support without increasing somplexity.
 
-`/message` support for threads
+✅ Ensure `message` response can also handle more than just text
 
-Support for streaming via `/streamMessage`
+# TODO
+
+- Support for threads
+- Support for streaming via `/streamMessage`
