@@ -3,10 +3,11 @@
 import { OpenapiForms } from "openapi-for-humans-react";
 import { useStore } from "../../store";
 import openapi from "../../../public/openapi.json";
+import { useRouter } from "next/navigation";
 export default function AgentPage(props: { params: { agentSlug: string } }) {
   const [agents, setDatabases] = useStore("agents");
   const agent = agents?.find((x) => x.agentSlug === props.params.agentSlug);
-
+  const router = useRouter();
   /*This is not possible: that will provide mixed-content problems:Possible mixed-content issue? The page was loaded over https:// but a http:// URL was specified. Check that you are not attempting to load mixed content.
    */
   const origin =
@@ -64,17 +65,28 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
         })}
       </div>
 
-      <div className="flex flex-col items-start flex-1">
-        <div
-          className="border border-black rounded-md p-2 cursor-pointer"
-          onClick={async () => {
-            let deepgramToken = prompt("Please provide your deepgram token");
-            const link = `https://twilio-sts-agent.actionschema.workers.dev/${agent?.adminAuthToken}/${deepgramToken}/agent.actionschema.com/${agent?.agentSlug}/details`;
-            await navigator.clipboard.writeText(link);
-            alert("Copied to clipboard");
-          }}
-        >
-          Get Twilio Call Webhook
+      <div className="">
+        <div className="flex flex-row gap-2">
+          <div
+            className="border border-black rounded-md p-2 cursor-pointer"
+            onClick={async () => {
+              let deepgramToken = prompt("Please provide your deepgram token");
+              const link = `https://twilio-sts-agent.actionschema.workers.dev/${agent?.adminAuthToken}/${deepgramToken}/agent.actionschema.com/${agent?.agentSlug}/details`;
+              await navigator.clipboard.writeText(link);
+              alert("Copied to clipboard");
+            }}
+          >
+            Get Twilio Call Webhook
+          </div>
+
+          <div
+            className="border border-black rounded-md p-2 cursor-pointer"
+            onClick={async () => {
+              router.push(`/?agentSlug=${agent?.agentSlug}`);
+            }}
+          >
+            Update
+          </div>
         </div>
 
         <OpenapiForms
