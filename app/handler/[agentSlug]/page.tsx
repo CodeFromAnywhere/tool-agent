@@ -64,14 +64,18 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
         })}
       </div>
 
-      <div>
-        <p>
-          Twilio Call URL:{" "}
-          <input
-            className="border border-black"
-            value={`https://twilio-sts-agent.actionschema.workers.dev/${agent?.adminAuthToken}/${agent?.deepgramToken}/agent.actionschema.com/${agent?.agentSlug}/details`}
-          />
-        </p>
+      <div className="flex flex-col items-start flex-1">
+        <div
+          className="border border-black rounded-md p-2 cursor-pointer"
+          onClick={async () => {
+            let deepgramToken = prompt("Please provide your deepgram token");
+            const link = `https://twilio-sts-agent.actionschema.workers.dev/${agent?.adminAuthToken}/${deepgramToken}/agent.actionschema.com/${agent?.agentSlug}/details`;
+            await navigator.clipboard.writeText(link);
+            alert("Copied to clipboard");
+          }}
+        >
+          Get Twilio Call Webhook
+        </div>
 
         <OpenapiForms
           key={openapiUrl}

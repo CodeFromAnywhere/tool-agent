@@ -50,10 +50,10 @@
 - Fix `<OpenapiForms>`
 
   - url is incorrect (debug this)
-  - `/message` input should be a textarea
-  - make a button to generate a twilio url: `prompt(deepgramToken)`
-  - make the textareas a bit bigger
   - test `/message` and confirm it works, also with functions
+  - ✅ `/message` input should be a textarea
+  - ✅ make a button to generate a twilio url: `prompt(deepgramToken)`
+  - ✅ make the textareas a bit bigger
 
 - Allow updating an agent: link "Update" to prefil form with existing agent
 
