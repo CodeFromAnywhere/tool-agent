@@ -88,7 +88,9 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
               );
               const link = `https://twilio-sts-agent.actionschema.workers.dev/whatsapp?adminAuthToken=${agent?.adminAuthToken}&agentUrl=agent.actionschema.com/${agent?.agentSlug}/details&twilioAuthToken=${twilioAuthToken}`;
               await navigator.clipboard.writeText(link);
-              alert("Copied to clipboard");
+              alert(
+                "Copied to clipboard. Can be used for Whatsapp, SMS, Messenger",
+              );
             }}
           >
             Get Twilio Message Webhook

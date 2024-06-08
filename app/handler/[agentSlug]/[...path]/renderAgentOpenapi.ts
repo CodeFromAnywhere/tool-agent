@@ -84,7 +84,7 @@ export const renderAgentOpenapi: Endpoint<"renderAgentOpenapi"> = async (
   const origin =
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000"
-      : "https://data.actionschema.com";
+      : "https://agent.actionschema.com";
 
   const improved = {
     ...openapi,
