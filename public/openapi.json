@@ -82,7 +82,7 @@
     },
 
     "/{agentSlug}/details": {
-      "get": {
+      "post": {
         "summary": "Get details for this agent",
         "operationId": "renderAgentDetails",
         "parameters": [
@@ -92,6 +92,12 @@
             "required": true,
             "schema": { "type": "string" },
             "description": "Bearer authorization"
+          },
+          {
+            "in": "path",
+            "name": "agentSlug",
+            "schema": { "type": "string" },
+            "required": true
           }
         ],
         "responses": {
@@ -114,15 +120,7 @@
             }
           }
         }
-      },
-      "parameters": [
-        {
-          "in": "path",
-          "name": "agentSlug",
-          "schema": { "type": "string" },
-          "required": true
-        }
-      ]
+      }
     },
 
     "/{agentSlug}/message": {

@@ -39,15 +39,13 @@ export interface paths {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                agentSlug: string;
-            };
+            path?: never;
             cookie?: never;
         };
-        /** Get details for this agent */
-        get: operations["renderAgentDetails"];
+        get?: never;
         put?: never;
-        post?: never;
+        /** Get details for this agent */
+        post: operations["renderAgentDetails"];
         delete?: never;
         options?: never;
         head?: never;
@@ -439,7 +437,7 @@ export const operationUrlObject = {
     "path": "/{agentSlug}/openapi.json"
   },
   "renderAgentDetails": {
-    "method": "get",
+    "method": "post",
     "path": "/{agentSlug}/details"
   },
   "message": {

@@ -26,6 +26,7 @@ export const renderAgentDetails: Endpoint<"renderAgentDetails"> = async (
     };
   }
 
+  console.log({ details, Authorization });
   if (
     details.adminAuthToken &&
     details.adminAuthToken.length >= 32 &&
