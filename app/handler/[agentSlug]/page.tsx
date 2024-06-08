@@ -83,10 +83,13 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
           <div
             className="border border-black rounded-md p-2 cursor-pointer"
             onClick={async () => {
+              let twilioAccountSid = prompt(
+                "Please provide your twilio account sid",
+              );
               let twilioAuthToken = prompt(
                 "Please provide your twilio authtoken",
               );
-              const link = `https://twilio-sts-agent.actionschema.workers.dev/whatsapp?adminAuthToken=${agent?.adminAuthToken}&agentUrl=agent.actionschema.com/${agent?.agentSlug}/details&twilioAuthToken=${twilioAuthToken}`;
+              const link = `https://twilio-sts-agent.actionschema.workers.dev/twilio?agentSlug=${agent?.agentSlug}&authToken=${agent?.authToken}&twilioAccountSid=${twilioAccountSid}&twilioAuthToken=${twilioAuthToken}`;
               await navigator.clipboard.writeText(link);
               alert(
                 "Copied to clipboard. Can be used for Whatsapp, SMS, Messenger",
@@ -102,7 +105,7 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
               let sendgridAuthToken = prompt(
                 "Please provide your sendgrid authtoken",
               );
-              const link = `https://twilio-sts-agent.actionschema.workers.dev/email?adminAuthToken=${agent?.adminAuthToken}&agentUrl=agent.actionschema.com/${agent?.agentSlug}/details&sendgridAuthToken=${sendgridAuthToken}`;
+              const link = `https://twilio-sts-agent.actionschema.workers.dev/sendgrid?adminAuthToken=${agent?.adminAuthToken}&agentUrl=agent.actionschema.com/${agent?.agentSlug}/details&sendgridAuthToken=${sendgridAuthToken}`;
               await navigator.clipboard.writeText(link);
               alert("Copied to clipboard");
             }}
