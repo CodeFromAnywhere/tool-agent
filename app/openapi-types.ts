@@ -82,19 +82,18 @@ export interface components {
             /** Unique name */
             agentSlug: components["schemas"]["UrlSlug"];
             instructions: string;
+            /** @description OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys */
+            openaiSecretKey: string;
             /** @description Used for tools for the agent */
             openapiUrl?: string;
             /** @description Used to authenticate to the OpenAPI to use tools */
             openapiAuthToken?: string;
-            /** @description OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys */
-            openaiSecretKey: string;
-            /** @description Deepgram token for voice capabilities */
-            deepgramToken?: string;
             /** @description Token needed for authorizing to the agent openapi. Not required. */
             authToken?: string;
             /** @description Token needed for authorizing as admin to alter or remove the agent. */
             adminAuthToken?: string;
-            model?: string;
+            /** @enum {string} */
+            model?: "gpt-4o" | "gpt-3.5-turbo" | "gpt-3.5-turbo-16k";
             top_p?: number;
             temperature?: number;
         };

@@ -41,5 +41,21 @@
 
 # TODO
 
+- Fix openapi
+
+  - ✅ remove `deepgramToken` from openapi for making an agent.
+  - ✅ also change order: required first!
+  - ✅ model should have some options only
+
+- Fix `<OpenapiForms>`
+
+  - url is incorrect (debug this)
+  - `/message` input should be a textarea
+  - make a button to generate a twilio url: `prompt(deepgramToken)`
+  - make the textareas a bit bigger
+  - test `/message` and confirm it works, also with functions
+
+- Allow updating an agent: link "Update" to prefil form with existing agent
+
 - Support for threads
 - Support for streaming via `/streamMessage`
