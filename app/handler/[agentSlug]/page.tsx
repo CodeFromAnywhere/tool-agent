@@ -71,95 +71,12 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
         })}
       </div>
 
-      {/* <div className="">
-        <div className="flex flex-row gap-2">
-          <div
-            className="border border-black rounded-md p-2 cursor-pointer"
-            onClick={async () => {
-              let deepgramToken = prompt("Please provide your deepgram token");
-
-              const link = `${baseUrl}/sts/${agent?.adminAuthToken}/${deepgramToken}/agent.actionschema.com/${agent?.agentSlug}/details`;
-              await navigator.clipboard.writeText(link);
-              alert("Copied to clipboard");
-            }}
-          >
-            Get Twilio Call Webhook
-          </div>
-
-          <div
-            className="border border-black rounded-md p-2 cursor-pointer"
-            onClick={async () => {
-              let twilioAccountSid = prompt(
-                "Please provide your twilio account sid",
-              );
-              let twilioAuthToken = prompt(
-                "Please provide your twilio authtoken",
-              );
-              const link = `${baseUrl}/twilio?agentSlug=${agent?.agentSlug}&authToken=${agent?.authToken}&twilioAccountSid=${twilioAccountSid}&twilioAuthToken=${twilioAuthToken}`;
-              await navigator.clipboard.writeText(link);
-              alert(
-                "Copied to clipboard. Can be used for Whatsapp, SMS, Messenger",
-              );
-            }}
-          >
-            Get Twilio Message Webhook
-          </div>
-
-          <div
-            className="border border-black rounded-md p-2 cursor-pointer"
-            onClick={async () => {
-              let sendgridAuthToken = prompt(
-                "Please provide your sendgrid authtoken",
-              );
-              const link = `${baseUrl}/sendgrid?adminAuthToken=${agent?.adminAuthToken}&agentUrl=agent.actionschema.com/${agent?.agentSlug}/details&sendgridAuthToken=${sendgridAuthToken}`;
-              await navigator.clipboard.writeText(link);
-              alert("Copied to clipboard");
-            }}
-          >
-            Get Sendgrid Email Webhook
-          </div>
-
-          <div
-            className="border border-black rounded-md p-2 cursor-pointer"
-            onClick={async () => {
-              let deepgramToken = prompt("Please provide your deepgram token");
-              const link = `${baseUrl}/?agentUrl=agent.actionschema.com/${agent?.agentSlug}/details&adminAuthToken=${agent?.adminAuthToken}&deepgramToken=${deepgramToken}`;
-
-              window.open(link, "_blank");
-            }}
-          >
-            Start voicecall in-browser
-          </div>
-
-          <div
-            className="border border-black rounded-md p-2 cursor-pointer"
-            onClick={async () => {
-              router.push(`/?agentSlug=${agent?.agentSlug}`);
-            }}
-          >
-            Update
-          </div>
-        </div> */}
-
       <OpenapiForms
         key={openapiUrl}
         url={openapiUrl}
         initialData={{ httpBearerToken: agent?.authToken }}
         uiSchema={{ message: { "ui:widget": "textarea" } }}
       />
-      {/* <OpenapiForm
-          openapi={openapi}
-          path="/{agentSlug}/message"
-          method="post"
-          initialData={{
-            agentSlug: props.params.agentSlug,
-            Authorization: agent?.authToken,
-          }}
-          // uiSchema={{ message: { "ui:widget": "textarea" } }}
-          withResponse={(response) => {
-            console.log({ response });
-          }}
-        /> */}
     </div>
   );
 }
