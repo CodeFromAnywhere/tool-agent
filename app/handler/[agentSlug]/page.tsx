@@ -52,8 +52,6 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
     { title: "Update", url: `/?agentSlug=${agent?.agentSlug}` },
   ];
 
-  const baseUrl = `https://agent-relay.actionschema.workers.dev`;
-
   return (
     <div className="p-10">
       <div className="flex flex-wrap flex-row gap-4 py-10 items-center">
