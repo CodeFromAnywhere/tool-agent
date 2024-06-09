@@ -35,18 +35,21 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
     },
 
     {
-      title: "ActionSchema Combination Proxy",
+      title: "Source",
+      url: openapiUrl,
+    },
+
+    {
+      title: "Combine",
       url: `https://proxy.actionschema.com/?url=${openapiUrl}`,
     },
 
     {
-      title: "Source",
-      url: openapiUrl,
-    },
-    {
       title: "Agent Relay",
       url: `https://agent-relay.actionschema.workers.dev?adminAuthToken=${agent?.adminAuthToken}&agentUrl=agent.actionschema.com/${agent?.agentSlug}/details`,
     },
+
+    { title: "Update", url: `/?agentSlug=${agent?.agentSlug}` },
   ];
 
   const baseUrl = `https://agent-relay.actionschema.workers.dev`;
