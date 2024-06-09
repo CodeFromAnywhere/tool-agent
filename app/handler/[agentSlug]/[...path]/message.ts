@@ -128,7 +128,11 @@ export const message: Endpoint<"message"> = async (context) => {
 
           const bodyData = tryParseJson<O>(tool.function.arguments);
 
-          const data = { httpBearerToken: openapiAuthToken, ...bodyData };
+          const data = {
+            httpBearerToken:
+              openapiAuthToken === "" ? undefined : openapiAuthToken,
+            ...bodyData,
+          };
 
           const { fetchRequestInit, url } = getOperationRequestInit({
             path,
