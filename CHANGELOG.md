@@ -57,15 +57,10 @@
 
 - ✅ When seeing an agent on /[agentSlug], add twilio-phone-callback and twilio-message-callback URLs so its easy to setup
 
-# LATER
+# Make tools work
 
 Fix when using openapi tools
 
-- url is incorrect (debug this)
-- test `/message` and confirm it works
-- After tools work in message, test if the tool works in deepgram as well
-
-More cool stuff
-
-- Support for threads
-- Support for streaming via `/streamMessage`
+- ✅ url is incorrect (debug this)
+- ✅ test `/message` and confirm it works
+- ✅ After tools work in message, test if the tool works in deepgram as well
