@@ -45,6 +45,7 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
     },
   ];
 
+  const baseUrl = `https://agent-relay.actionschema.workers.dev`;
   return (
     <div className="p-10">
       <div className="flex flex-wrap flex-row gap-4 py-10 items-center">
@@ -72,7 +73,7 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
             onClick={async () => {
               let deepgramToken = prompt("Please provide your deepgram token");
 
-              const link = `https://agent-relay.actionschema.workers.dev/sts/${agent?.adminAuthToken}/${deepgramToken}/agent.actionschema.com/${agent?.agentSlug}/details`;
+              const link = `${baseUrl}/sts/${agent?.adminAuthToken}/${deepgramToken}/agent.actionschema.com/${agent?.agentSlug}/details`;
               await navigator.clipboard.writeText(link);
               alert("Copied to clipboard");
             }}
@@ -89,7 +90,7 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
               let twilioAuthToken = prompt(
                 "Please provide your twilio authtoken",
               );
-              const link = `https://agent-relay.actionschema.workers.dev/twilio?agentSlug=${agent?.agentSlug}&authToken=${agent?.authToken}&twilioAccountSid=${twilioAccountSid}&twilioAuthToken=${twilioAuthToken}`;
+              const link = `${baseUrl}/twilio?agentSlug=${agent?.agentSlug}&authToken=${agent?.authToken}&twilioAccountSid=${twilioAccountSid}&twilioAuthToken=${twilioAuthToken}`;
               await navigator.clipboard.writeText(link);
               alert(
                 "Copied to clipboard. Can be used for Whatsapp, SMS, Messenger",
@@ -105,7 +106,7 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
               let sendgridAuthToken = prompt(
                 "Please provide your sendgrid authtoken",
               );
-              const link = `https://agent-relay.actionschema.workers.dev/sendgrid?adminAuthToken=${agent?.adminAuthToken}&agentUrl=agent.actionschema.com/${agent?.agentSlug}/details&sendgridAuthToken=${sendgridAuthToken}`;
+              const link = `${baseUrl}/sendgrid?adminAuthToken=${agent?.adminAuthToken}&agentUrl=agent.actionschema.com/${agent?.agentSlug}/details&sendgridAuthToken=${sendgridAuthToken}`;
               await navigator.clipboard.writeText(link);
               alert("Copied to clipboard");
             }}
@@ -117,7 +118,7 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
             className="border border-black rounded-md p-2 cursor-pointer"
             onClick={async () => {
               let deepgramToken = prompt("Please provide your deepgram token");
-              const link = `https://agent-relay.actionschema.workers.dev/?agentUrl=agent.actionschema.com/${agent?.agentSlug}/details&adminAuthToken=${agent?.adminAuthToken}&deepgramToken=${deepgramToken}`;
+              const link = `${baseUrl}/?agentUrl=agent.actionschema.com/${agent?.agentSlug}/details&adminAuthToken=${agent?.adminAuthToken}&deepgramToken=${deepgramToken}`;
 
               window.open(link, "_blank");
             }}
