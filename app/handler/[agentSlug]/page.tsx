@@ -43,9 +43,14 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
       title: "Source",
       url: openapiUrl,
     },
+    {
+      title: "Agent Relay",
+      url: `https://agent-relay.actionschema.workers.dev?adminAuthToken=${agent?.adminAuthToken}&agentUrl=agent.actionschema.com/${agent?.agentSlug}/details`,
+    },
   ];
 
   const baseUrl = `https://agent-relay.actionschema.workers.dev`;
+
   return (
     <div className="p-10">
       <div className="flex flex-wrap flex-row gap-4 py-10 items-center">
@@ -66,7 +71,7 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
         })}
       </div>
 
-      <div className="">
+      {/* <div className="">
         <div className="flex flex-row gap-2">
           <div
             className="border border-black rounded-md p-2 cursor-pointer"
@@ -134,15 +139,15 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
           >
             Update
           </div>
-        </div>
+        </div> */}
 
-        <OpenapiForms
-          key={openapiUrl}
-          url={openapiUrl}
-          initialData={{ httpBearerToken: agent?.authToken }}
-          uiSchema={{ message: { "ui:widget": "textarea" } }}
-        />
-        {/* <OpenapiForm
+      <OpenapiForms
+        key={openapiUrl}
+        url={openapiUrl}
+        initialData={{ httpBearerToken: agent?.authToken }}
+        uiSchema={{ message: { "ui:widget": "textarea" } }}
+      />
+      {/* <OpenapiForm
           openapi={openapi}
           path="/{agentSlug}/message"
           method="post"
@@ -155,7 +160,6 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
             console.log({ response });
           }}
         /> */}
-      </div>
     </div>
   );
 }
