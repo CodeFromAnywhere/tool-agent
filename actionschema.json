@@ -1,0 +1,13 @@
+{
+  "$schema": "https://migrate.actionschema.com/migration-context.schema.json",
+  "relativeCrudSchemaBasePath": "public/data",
+  "crudSlugPrefix": "migrate-",
+  "relativeOutputPath": "app/sdk",
+  "openapis": [
+    {
+      "openapiUrl": "public/openapi.json",
+      "envKeyName": "AGENT_OPENAPI_AUTH",
+      "slug": "agent-openapi"
+    }
+  ]
+}

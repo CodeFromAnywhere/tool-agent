@@ -7,12 +7,10 @@
     "start": "next start",
     "lint": "next lint",
     "types": "npx openapi-fetch-typescript ./public/openapi.json ./app/openapi-types.ts OpenApiTypes",
-    "crud": "npx openapi-fetch-typescript https://data.actionschema.com/agent-openapi/openapi.json ./app/agent-openapi-crud-types.ts AgentOpenapiClient",
-    "watch-types": "nodemon --watch public --exec \"npm run types && npm run schemas\"",
+    "watch-types": "nodemon --watch public --exec \"npm run types\"",
     "next-dev": "next dev",
-    "init-db": "bun run app/makeRootDb.cli.ts",
-    "dev": "concurrently \"next dev\" \"npm:watch-types\"",
-    "schemas": "cd public/schemas && json2ts -i . -o ../../app/schemas --unknownAny=false"
+    "sdk": "bunx actionschema-migrate@0.0.11",
+    "dev": "concurrently \"next dev\" \"npm:watch-types\""
   },
   "dependencies": {
     "ajv": "^8.12.0",
@@ -24,7 +22,7 @@
     "openapi-for-humans-react": "0.0.50",
     "openapi-types": "^12.1.3",
     "openapi-typescript": "^6.7.5",
-    "openapi-util": "^0.0.50",
+    "openapi-util": "0.0.68",
     "qs": "^6.12.1",
     "react": "^18",
     "react-dom": "^18",
@@ -32,6 +30,7 @@
   },
   "devDependencies": {
     "@types/ajv": "^1.0.0",
+    "@types/bun": "^1.1.6",
     "@types/json-schema": "^7.0.15",
     "@types/node": "^20",
     "@types/qs": "^6.9.15",

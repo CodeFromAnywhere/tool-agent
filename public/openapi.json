@@ -7,7 +7,7 @@
     "version": "1.0",
     "description": ""
   },
-  "servers": [{ "url": "" }],
+  "servers": [{ "url": "https://agent.actionschema.com" }],
   "paths": {
     "/api/upsertToolAgent": {
       "post": {
@@ -29,6 +29,49 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UpsertToolAgentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/{agentSlug}/oauth2Callback": {
+      "get": {
+        "summary": "Callback for oauth",
+        "operationId": "oauth2Callback",
+        "description": "Callback for oauth2",
+
+        "parameters": [
+          {
+            "in": "path",
+            "name": "agentSlug",
+            "schema": { "type": "string" },
+            "required": true
+          },
+          {
+            "description": "The code that can be used to call the access token url",
+            "in": "query",
+            "name": "code",
+            "schema": { "type": "string" },
+            "required": false
+          }
+        ],
+
+        "responses": {
+          "200": {
+            "description": "OAuth2 Callback Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": { "type": "string" },
+                    "token_type": { "type": "string" },
+                    "scope": { "type": "string" },
+                    "error": { "type": "string" }
+                  }
                 }
               }
             }
@@ -83,16 +126,11 @@
 
     "/{agentSlug}/details": {
       "post": {
+        "security": [{ "apiKey": [] }],
+
         "summary": "Get details for this agent",
         "operationId": "renderAgentDetails",
         "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true,
-            "schema": { "type": "string" },
-            "description": "Bearer authorization"
-          },
           {
             "in": "path",
             "name": "agentSlug",
@@ -133,13 +171,22 @@
         },
         {
           "in": "header",
-          "name": "Authorization",
+          "name": "X_AGENT_AUTH_TOKEN",
           "schema": { "type": "string" },
-          "required": false,
-          "description": "Bearer authorization"
+          "required": true,
+          "description": "Agent-wide authorization token to prevent runaway token usage."
+        },
+        {
+          "in": "header",
+          "name": "Authorization",
+          "schema": { "type": "string", "minLength": 64 },
+          "required": true,
+          "description": "User-level authorization that can be retreived via the signup endpoint"
         }
       ],
       "post": {
+        "security": [{ "apiKey": [] }],
+
         "summary": "Run a message in a thread of an assistant",
         "operationId": "message",
         "requestBody": {
@@ -161,14 +208,57 @@
           }
         }
       }
+    },
+
+    "/{agentSlug}/userSignup": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "agentSlug",
+          "schema": { "type": "string" },
+          "required": true
+        }
+      ],
+
+      "post": {
+        "summary": "Signup as a user to this agent. Generates an authToken to which login credentials can be stored.",
+        "operationId": "signup",
+        "responses": {
+          "200": {
+            "description": "Authorization Token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "authToken": { "type": "string", "minLength": 64 }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
+    "securitySchemes": {
+      "apiKey": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Access token that needs to be provided to get access to any endpoint."
+      }
+    },
     "schemas": {
       "ToolAgent": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["agentSlug", "instructions", "openaiSecretKey"],
+        "required": [
+          "agentSlug",
+          "instructions",
+          "openaiSecretKey",
+          "authToken"
+        ],
         "properties": {
           "agentSlug": {
             "type": "string",
@@ -185,19 +275,11 @@
             "description": "OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys"
           },
 
-          "openapiUrl": {
+          "agentAuthToken": {
             "type": "string",
-            "description": "Used for tools for the agent"
-          },
-
-          "openapiAuthToken": {
-            "type": "string",
-            "description": "Used to authenticate to the OpenAPI to use tools"
-          },
-
-          "authToken": {
-            "type": "string",
-            "description": "Token needed for authorizing to the agent openapi. Not required."
+            "description": "Agent-wide token needed for authorizing to the agent openapi. Useful to prevent people to use your LLM for free.",
+            "minLength": 64,
+            "maxLength": 128
           },
 
           "adminAuthToken": {
@@ -210,12 +292,14 @@
             "enum": ["gpt-4o", "gpt-3.5-turbo", "gpt-3.5-turbo-16k"]
           },
 
-          "top_p": {
-            "type": "number"
+          "openapiUrl": {
+            "type": "string",
+            "description": "Used for tools for the agent"
           },
 
-          "temperature": {
-            "type": "number"
+          "openapiAuthToken": {
+            "type": "string",
+            "description": "Used to authenticate to the OpenAPI to use tools"
           }
         }
       },
@@ -227,6 +311,7 @@
         "maxLength": 64,
         "description": "Slug compatible with URLs"
       },
+
       "UpsertToolAgentResponse": {
         "type": "object",
         "properties": {
@@ -240,12 +325,21 @@
         },
         "required": ["isSuccessful", "message"]
       },
+
       "MessageContext": {
         "type": "object",
         "properties": {
           "message": { "type": "string" },
+          "threadId": {
+            "type": "string",
+            "description": "Can be specified to open a specific thread without history, and continue on that thread upon consequent messages. If no threadId is specified, will take the history of the first thread"
+          },
+          "disableHistory": {
+            "type": "boolean",
+            "description": "If given, will not use thread history messages regardless of the threadId."
+          },
           "attachmentUrls": {
-            "description": "For now, only images are supported",
+            "description": "Urls to files. Not all models support all file types.",
             "type": "array",
             "items": { "type": "string" }
           }
@@ -259,9 +353,20 @@
           "isSuccessful": {
             "type": "boolean"
           },
+
           "messages": {
-            "type": "array"
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "content": { "type": "string" },
+                "role": { "type": "string" },
+                "function_call": { "type": "object" },
+                "tool_calls": { "type": "array" }
+              }
+            }
           },
+
           "threadId": { "type": "string" }
         },
         "required": ["isSuccessful", "message"]

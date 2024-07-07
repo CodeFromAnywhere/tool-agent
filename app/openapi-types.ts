@@ -16,6 +16,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/{agentSlug}/oauth2Callback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Callback for oauth
+         * @description Callback for oauth2
+         */
+        get: operations["oauth2Callback"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/{agentSlug}/openapi.json": {
         parameters: {
             query?: never;
@@ -55,9 +75,11 @@ export interface paths {
     "/{agentSlug}/message": {
         parameters: {
             query?: never;
-            header?: {
-                /** @description Bearer authorization */
-                Authorization?: string;
+            header: {
+                /** @description Agent-wide authorization token to prevent runaway token usage. */
+                X_AGENT_AUTH_TOKEN: string;
+                /** @description User-level authorization that can be retreived via the signup endpoint */
+                Authorization: string;
             };
             path: {
                 agentSlug: string;
@@ -74,6 +96,25 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/{agentSlug}/userSignup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agentSlug: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Signup as a user to this agent. Generates an authToken to which login credentials can be stored. */
+        post: operations["signup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -84,18 +125,16 @@ export interface components {
             instructions: string;
             /** @description OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys */
             openaiSecretKey: string;
-            /** @description Used for tools for the agent */
-            openapiUrl?: string;
-            /** @description Used to authenticate to the OpenAPI to use tools */
-            openapiAuthToken?: string;
-            /** @description Token needed for authorizing to the agent openapi. Not required. */
-            authToken?: string;
+            /** @description Agent-wide token needed for authorizing to the agent openapi. Useful to prevent people to use your LLM for free. */
+            agentAuthToken?: string;
             /** @description Token needed for authorizing as admin to alter or remove the agent. */
             adminAuthToken?: string;
             /** @enum {string} */
             model?: "gpt-4o" | "gpt-3.5-turbo" | "gpt-3.5-turbo-16k";
-            top_p?: number;
-            temperature?: number;
+            /** @description Used for tools for the agent */
+            openapiUrl?: string;
+            /** @description Used to authenticate to the OpenAPI to use tools */
+            openapiAuthToken?: string;
         };
         /** @description Slug compatible with URLs */
         UrlSlug: string;
@@ -106,12 +145,21 @@ export interface components {
         };
         MessageContext: {
             message: string;
-            /** @description For now, only images are supported */
+            /** @description Can be specified to open a specific thread without history, and continue on that thread upon consequent messages. If no threadId is specified, will take the history of the first thread */
+            threadId?: string;
+            /** @description If given, will not use thread history messages regardless of the threadId. */
+            disableHistory?: boolean;
+            /** @description Urls to files. Not all models support all file types. */
             attachmentUrls?: string[];
         };
         MessageResponse: {
             isSuccessful: boolean;
-            messages?: unknown[];
+            messages?: {
+                content?: string;
+                role?: string;
+                function_call?: Record<string, never>;
+                tool_calls?: unknown[];
+            }[];
             threadId?: string;
         };
         Contact: {
@@ -200,7 +248,7 @@ export interface components {
             /** @description General latency info. */
             "x-latency"?: unknown;
             /** @description Link to other openapis that could be good alternatives. */
-            "x-alternatives"?: unknown[];
+            "x-alternatives"?: string[];
             /** @description Logo metadata. Standard taken from https://apis.guru */
             "x-logo"?: {
                 /**
@@ -283,7 +331,15 @@ export interface components {
             /** @description An array of Server Objects, indicating the original servers. Useful when defining a proxy. */
             "x-origin-servers"?: components["schemas"]["Server"][];
             /**
-             * @description A declaration of which security mechanisms can be used across the API. The list of values includes alternative security requirement objects that can be used. Only one of the security requirement objects need to be satisfied to authorize a request. Individual operations can override this definition. To make security optional, an empty security requirement ({}) can be included in the array.
+             * @description Security Requirement Object (https://spec.openapis.org/oas/latest.html#security-requirement-object)
+             *
+             *     Lists the required security schemes to execute this operation. The name used for each property MUST correspond to a security scheme declared in the Security Schemes under the Components Object.
+             *
+             *     Security Requirement Objects that contain multiple schemes require that all schemes MUST be satisfied for a request to be authorized. This enables support for scenarios where multiple query parameters or HTTP headers are required to convey security information.
+             *
+             *     When a list of Security Requirement Objects is defined on the OpenAPI Object or Operation Object, only one of the Security Requirement Objects in the list needs to be satisfied to authorize the request.
+             *
+             *     A declaration of which security mechanisms can be used across the API. The list of values includes alternative security requirement objects that can be used. Only one of the security requirement objects need to be satisfied to authorize a request. Individual operations can override this definition. To make security optional, an empty security requirement ({}) can be included in the array.
              *
              *     Please note: Every item in this array is an object with keys being the scheme names (can be anything). These names should then also be defined in components.securitySchemes.
              * @default [
@@ -335,6 +391,36 @@ export interface operations {
             };
         };
     };
+    oauth2Callback: {
+        parameters: {
+            query?: {
+                /** @description The code that can be used to call the access token url */
+                code?: string;
+            };
+            header?: never;
+            path: {
+                agentSlug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OAuth2 Callback Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        access_token?: string;
+                        token_type?: string;
+                        scope?: string;
+                        error?: string;
+                    };
+                };
+            };
+        };
+    };
     renderAgentOpenapi: {
         parameters: {
             query?: never;
@@ -363,10 +449,7 @@ export interface operations {
     renderAgentDetails: {
         parameters: {
             query?: never;
-            header: {
-                /** @description Bearer authorization */
-                Authorization: string;
-            };
+            header?: never;
             path: {
                 agentSlug: string;
             };
@@ -391,9 +474,11 @@ export interface operations {
     message: {
         parameters: {
             query?: never;
-            header?: {
-                /** @description Bearer authorization */
-                Authorization?: string;
+            header: {
+                /** @description Agent-wide authorization token to prevent runaway token usage. */
+                X_AGENT_AUTH_TOKEN: string;
+                /** @description User-level authorization that can be retreived via the signup endpoint */
+                Authorization: string;
             };
             path: {
                 agentSlug: string;
@@ -417,6 +502,30 @@ export interface operations {
             };
         };
     };
+    signup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agentSlug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Authorization Token */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        authToken?: string;
+                    };
+                };
+            };
+        };
+    };
 }
 
 
@@ -431,6 +540,10 @@ export const operationUrlObject = {
     "method": "post",
     "path": "/api/upsertToolAgent"
   },
+  "oauth2Callback": {
+    "method": "get",
+    "path": "/{agentSlug}/oauth2Callback"
+  },
   "renderAgentOpenapi": {
     "method": "get",
     "path": "/{agentSlug}/openapi.json"
@@ -442,6 +555,10 @@ export const operationUrlObject = {
   "message": {
     "method": "post",
     "path": "/{agentSlug}/message"
+  },
+  "signup": {
+    "method": "post",
+    "path": "/{agentSlug}/userSignup"
   }
 }
 export const operationKeys = Object.keys(operationUrlObject);

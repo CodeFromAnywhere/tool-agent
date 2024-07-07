@@ -1,10 +1,10 @@
 import { Endpoint, ResponseType } from "@/client";
-import { agentOpenapi } from "@/crud-client";
+import { agentOpenapi } from "@/sdk/client";
 
 export const renderAgentDetails: Endpoint<"renderAgentDetails"> = async (
   context,
 ) => {
-  const { agentSlug, Authorization } = context;
+  const { agentSlug } = context;
 
   // NB: no auth needed for this endpoint.
 
@@ -26,11 +26,11 @@ export const renderAgentDetails: Endpoint<"renderAgentDetails"> = async (
     };
   }
 
-  console.log({ details, Authorization });
+  console.log({ details });
   if (
-    details.adminAuthToken &&
-    details.adminAuthToken.length >= 32 &&
-    `Bearer ${details.adminAuthToken}` !== Authorization
+    !details.adminAuthToken // &&
+    // details.adminAuthToken.length >= 32 &&
+    // `Bearer ${details.adminAuthToken}` !== Authorization
   ) {
     return {
       isSuccessful: false,

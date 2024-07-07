@@ -1,0 +1,33 @@
+{
+  "$schema": "https://raw.githubusercontent.com/CodeFromAnywhere/ActionSchema/main/schemas/action-schema.schema.json",
+  "type": "object",
+  "description": "Model where admin-level authorization tokens and oauth details can be stored. As there is only one such setting per admin, the key of this model is the admin authtoken. Maybe rename this to more generic 'oauth-admin' as it's not just for agents.",
+  "additionalProperties": false,
+  "required": [],
+  "properties": {
+    "openapis": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "Authorization": { "type": "string" }
+        },
+        "required": ["url"],
+        "additionalProperties": false
+      }
+    },
+    "oauthDetails": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "service": { "type": "string" },
+          "securitySchemeKey": { "type": "string" },
+          "appId": { "type": "string" },
+          "appSecret": { "type": "string" }
+        }
+      }
+    }
+  }
+}

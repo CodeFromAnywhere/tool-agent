@@ -1,15 +1,15 @@
-import { agentOpenapi } from "@/crud-client";
+import { agentAdmin, agentOpenapi } from "@/sdk/client";
 import { Endpoint } from "@/client";
-// import OpenAI from "openai";
 import { generateRandomString } from "from-anywhere";
 
 export const upsertToolAgent: Endpoint<"upsertToolAgent"> = async (context) => {
-  const { adminAuthToken, agentSlug, ...rest } = context;
+  const { adminAuthToken, agentSlug, agentAuthToken, ...rest } = context;
 
-  const { authToken } = rest;
   const realAgentSlug = agentSlug.toLowerCase();
   const realAuthToken =
-    !authToken || authToken.length < 32 ? generateRandomString(32) : authToken;
+    !agentAuthToken || agentAuthToken.length < 64
+      ? generateRandomString(64)
+      : agentAuthToken;
 
   const already = (await agentOpenapi("read", { rowIds: [realAgentSlug] }))
     .items?.[agentSlug];
@@ -25,24 +25,28 @@ export const upsertToolAgent: Endpoint<"upsertToolAgent"> = async (context) => {
     };
   }
 
-  // const openai = new OpenAI({
-  //   apiKey: openaiSecretKey,
-  // });
+  const realAdminAuthToken =
+    adminAuthToken && adminAuthToken.length >= 32
+      ? adminAuthToken
+      : generateRandomString(32);
 
   const partialItem = {
     agentSlug: realAgentSlug,
     authToken: realAuthToken,
-    adminAuthToken:
-      adminAuthToken && adminAuthToken.length >= 32
-        ? adminAuthToken
-        : generateRandomString(32),
+    adminAuthToken: realAdminAuthToken,
     ...rest,
   };
 
-  const updated = await agentOpenapi("update", { id: agentSlug, partialItem });
+  // let's not take to long.
+  const [_, updatedAgent] = await Promise.all([
+    agentOpenapi("update", { id: agentSlug, partialItem }),
+    // at least create it, don't need to set stuff here.
+    // an idea would be to also add the created agent to openapis...?
+    agentAdmin("update", { id: realAdminAuthToken!, partialItem: {} }),
+  ]);
 
-  if (!updated.isSuccessful) {
-    return { isSuccessful: false, message: updated.message };
+  if (!updatedAgent.isSuccessful) {
+    return { isSuccessful: false, message: updatedAgent.message };
   }
 
   return {

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://raw.githubusercontent.com/CodeFromAnywhere/ActionSchema/main/schemas/action-schema.schema.json",
+  "type": "object",
+  "description": "Agent User contains one row per user. The store cannot be seen by admins and contains all secrets for all oauth apps and regular Authorizations, the user has logged into.",
+  "$comment": "Maybe it'd be better to keep a separate store of users per admin to allow them to see login statistics and keep separation of data. However, for now let's KISS. Another option would be to merge agent-user and agent-admin as it can be one person too.",
+  "properties": {
+    "keys": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "appId": { "type": "string" },
+          "openapiUrl": { "type": "string" },
+          "secret": { "type": "string" }
+        },
+        "required": ["openapiUrl", "secret"],
+        "$comment": "NB: Potentially going to be more comprehensive in the future as there are many authorization methods. We don't want to store openapi specific info inhere, but not sure if some of them require multiple datapoints."
+      },
+      "properties": {}
+    },
+    "threadIds": { "type": "array", "items": { "type": "string" } }
+  }
+}

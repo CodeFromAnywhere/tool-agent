@@ -86,26 +86,16 @@ export interface operations {
             content: {
                 "application/json": {
                     items: {
-                        /**
-                         * Unique name
-                         * @description Slug compatible with URLs
-                         */
-                        agentSlug: string;
-                        instructions: string;
-                        /** @description Used for tools for the agent */
-                        openapiUrl?: string;
-                        /** @description Used to authenticate to the OpenAPI to use tools */
-                        openapiAuthToken?: string;
-                        /** @description OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys */
-                        openaiSecretKey: string;
-                        /** @description Deepgram token for voice capabilities */
-                        deepgramToken?: string;
-                        /** @description Token needed for authorizing to the agent openapi. Not required. */
-                        authToken?: string;
-                        adminAuthToken?: string;
-                        model?: string;
-                        top_p?: number;
-                        temperature?: number;
+                        openapis?: {
+                            url: string;
+                            Authorization?: string;
+                        }[];
+                        oauthDetails?: {
+                            service?: string;
+                            securitySchemeKey?: string;
+                            appId?: string;
+                            appSecret?: string;
+                        }[];
                     }[];
                 };
             };
@@ -176,26 +166,16 @@ export interface operations {
                         $schema?: string;
                         items?: {
                             [key: string]: {
-                                /**
-                                 * Unique name
-                                 * @description Slug compatible with URLs
-                                 */
-                                agentSlug: string;
-                                instructions: string;
-                                /** @description Used for tools for the agent */
-                                openapiUrl?: string;
-                                /** @description Used to authenticate to the OpenAPI to use tools */
-                                openapiAuthToken?: string;
-                                /** @description OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys */
-                                openaiSecretKey: string;
-                                /** @description Deepgram token for voice capabilities */
-                                deepgramToken?: string;
-                                /** @description Token needed for authorizing to the agent openapi. Not required. */
-                                authToken?: string;
-                                adminAuthToken?: string;
-                                model?: string;
-                                top_p?: number;
-                                temperature?: number;
+                                openapis?: {
+                                    url: string;
+                                    Authorization?: string;
+                                }[];
+                                oauthDetails?: {
+                                    service?: string;
+                                    securitySchemeKey?: string;
+                                    appId?: string;
+                                    appSecret?: string;
+                                }[];
                             } | undefined;
                         };
                         schema?: {
@@ -220,28 +200,18 @@ export interface operations {
                 "application/json": {
                     /** @description The id (indexed key) of the item to update. Update that functions as upsert. If the id didn't exist, it will be created. */
                     id: string;
-                    /** @description New (partial) value of the item. Will update all keys provided here. Please note that it cannot be set to 'undefined' as this doesn't transfer over JSON, but if you set it to 'null', the value will be removed from the database. */
+                    /** @description Model where admin-level authorization tokens and oauth details can be stored. As there is only one such setting per admin, the key of this model is the admin authtoken. Maybe rename this to more generic 'oauth-admin' as it's not just for agents. */
                     partialItem: {
-                        /**
-                         * Unique name
-                         * @description Slug compatible with URLs
-                         */
-                        agentSlug: string;
-                        instructions: string;
-                        /** @description Used for tools for the agent */
-                        openapiUrl?: string;
-                        /** @description Used to authenticate to the OpenAPI to use tools */
-                        openapiAuthToken?: string;
-                        /** @description OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys */
-                        openaiSecretKey: string;
-                        /** @description Deepgram token for voice capabilities */
-                        deepgramToken?: string;
-                        /** @description Token needed for authorizing to the agent openapi. Not required. */
-                        authToken?: string;
-                        adminAuthToken?: string;
-                        model?: string;
-                        top_p?: number;
-                        temperature?: number;
+                        openapis?: {
+                            url: string;
+                            Authorization?: string;
+                        }[];
+                        oauthDetails?: {
+                            service?: string;
+                            securitySchemeKey?: string;
+                            appId?: string;
+                            appSecret?: string;
+                        }[];
                     };
                 };
             };

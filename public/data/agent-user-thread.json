@@ -1,0 +1,39 @@
+{
+  "$schema": "https://raw.githubusercontent.com/CodeFromAnywhere/ActionSchema/main/schemas/action-schema.schema.json",
+  "type": "object",
+  "properties": {
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["content", "role"],
+        "properties": {
+          "content": {
+            "oneOf": [
+              { "type": "string" },
+              { "type": "null" },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["type", "image_url"],
+                  "properties": {
+                    "type": { "type": "string", "enum": ["image_url"] },
+                    "image_url": { "type": "string" }
+                  }
+                }
+              }
+            ]
+          },
+          "role": {
+            "type": "string",
+            "enum": ["system", "user", "tool", "assistant", "function"]
+          },
+          "name": { "type": "string" },
+          "function_call": { "type": "object" },
+          "tool_calls": { "type": "array" }
+        }
+      }
+    }
+  }
+}

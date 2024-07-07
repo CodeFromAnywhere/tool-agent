@@ -1,57 +1,71 @@
-import { operationUrlObject, operations } from "./agent-openapi-crud-types";
 
-export type PromiseOrNot<T> = Promise<T> | T;
 
-export type GetParameters<K extends keyof operations> =
-  | operations[K]["parameters"]["cookie"]
-  | operations[K]["parameters"]["header"]
-  | operations[K]["parameters"]["path"]
-  | operations[K]["parameters"]["query"];
+export const createClient = <
+  operations extends {
+    [key: string]: {
+      parameters: { [key: string]: any };
+      requestBody: { [key: string]: any };
+      responses: { [key: string]: any };
+    };
+  },
+>(
+  operationUrlObject: {
+    [operationId in keyof operations]: { method: string; path: string };
+  },
+  config: {
+    timeoutSeconds?: number;
+    /**
+     * Server URL without slash at the end
+     */
+    baseUrl?: string;
+    headers: { [key: string]: string };
+  },
+) => {
+  type PromiseOrNot<T> = Promise<T> | T;
 
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
-  k: infer I,
-) => void
-  ? I
-  : never;
+  type GetParameters<K extends keyof operations> =
+    | operations[K]["parameters"]["cookie"]
+    | operations[K]["parameters"]["header"]
+    | operations[K]["parameters"]["path"]
+    | operations[K]["parameters"]["query"];
 
-// Typescript magic from: https://stackoverflow.com/questions/63542526/merge-discriminated-union-of-object-types-in-typescript
-type MergeIntersection<U> =
-  UnionToIntersection<U> extends infer O ? { [K in keyof O]: O[K] } : never;
+  type UnionToIntersection<U> = (
+    U extends any ? (k: U) => void : never
+  ) extends (k: infer I) => void
+    ? I
+    : never;
 
-type MergeParameters<P> = MergeIntersection<Extract<P, {}>>;
+  // Typescript magic from: https://stackoverflow.com/questions/63542526/merge-discriminated-union-of-object-types-in-typescript
+  type MergeIntersection<U> = UnionToIntersection<U> extends infer O
+    ? { [K in keyof O]: O[K] }
+    : never;
 
-export type EndpointBody<T extends keyof operations> =
-  (operations[T]["requestBody"] extends {}
-    ? operations[T]["requestBody"]["content"]["application/json"]
-    : {}) &
-    MergeParameters<GetParameters<T>>;
+  type MergeParameters<P> = MergeIntersection<Extract<P, {}>>;
 
-export type EndpointContext<K extends keyof operations> =
-  (operations[K]["requestBody"] extends {}
-    ? operations[K]["requestBody"]["content"]["application/json"]
-    : {}) &
-    MergeParameters<GetParameters<K>>;
+  type EndpointBody<T extends keyof operations> =
+    (operations[T]["requestBody"] extends {}
+      ? operations[T]["requestBody"]["content"]["application/json"]
+      : {}) &
+      MergeParameters<GetParameters<T>>;
 
-export type ResponseType<T extends keyof operations> =
-  operations[T]["responses"][200]["content"]["application/json"];
+  type Endpoint<T extends keyof operations> = (
+    context: EndpointContext<T>,
+  ) => PromiseOrNot<ResponseType<T>>;
 
-export type Endpoint<T extends keyof operations> = (
-  context: EndpointContext<T>,
-) => PromiseOrNot<ResponseType<T>>;
+  type EndpointContext<K extends keyof operations> =
+    (operations[K]["requestBody"] extends {}
+      ? operations[K]["requestBody"]["content"]["application/json"]
+      : {}) &
+      MergeParameters<GetParameters<K>>;
 
-export const createClient = (config: {
-  timeoutSeconds?: number;
-  /**
-   * Server URL without slash at the end
-   */
-  baseUrl?: string;
-  headers: { [key: string]: string };
-}) => {
+  type ResponseType<T extends keyof operations> =
+    operations[T]["responses"][200]["content"]["application/json"];
+
   const client = async <K extends keyof operations>(
     operation: K,
     body?: EndpointContext<K>,
 
-    /** NB: always use `getPersonConfig` for this! */
+    /** NB: always use getPersonConfig for this! */
     customConfiguration?: {
       baseUrl?: string;
       headers?: { [key: string]: string };
@@ -63,13 +77,13 @@ export const createClient = (config: {
     const { headers, baseUrl } = customConfiguration || config;
 
     if (!details) {
-      throw new Error(`No details found for operation: ${operation}`);
+      throw new Error("No details found for operation:" + String(operation));
     }
     if (!baseUrl) {
       throw new Error("No baseUrl found");
     }
 
-    const fullUrl = `${baseUrl}${details.path}`;
+    const fullUrl = baseUrl + details.path;
 
     try {
       const abortController = new AbortController();
@@ -78,7 +92,6 @@ export const createClient = (config: {
         (config.timeoutSeconds || 30) * 1000,
       );
 
-      console.log({ fullUrl });
       const response = await fetch(fullUrl, {
         method: details.method,
         signal: abortController.signal,
@@ -105,7 +118,7 @@ export const createClient = (config: {
           try {
             return JSON.parse(responseText);
           } catch (e) {
-            console.log(`couldn't parse JSON`, {
+            console.log("couldn't parse JSON", {
               responseText,
               operation,
               body,
@@ -115,7 +128,8 @@ export const createClient = (config: {
         })
         .catch((error) => {
           console.log({
-            explanation: `Your request could not be executed, you may be disconnected or the server may not be available. `,
+            explanation:
+              "Your request could not be executed, you may be disconnected or the server may not be available. ",
             error,
             errorStatus: error.status,
             errorString: String(error),
@@ -147,14 +161,4 @@ export const createClient = (config: {
   return client;
 };
 
-/** NB: Contains secret! To only be used in backend */
-export const agentOpenapi = createClient({
-  baseUrl: "https://data.actionschema.com/agent-openapi",
-  headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${process.env.AGENT_OPENAPI_CRUD_AUTH_TOKEN}`,
-  },
-  timeoutSeconds: 60,
-});
-////agentOpenapi("create", { items: [] }).then((res) => console.log(res));
+//</script>

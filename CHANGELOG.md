@@ -64,3 +64,47 @@ Fix when using openapi tools
 - ✅ url is incorrect (debug this)
 - ✅ test `/message` and confirm it works
 - ✅ After tools work in message, test if the tool works in deepgram as well
+
+# 25 june 2024
+
+- Learning: oAuth2 is user-based authorization. Therefore if we need an agent to execute tools with this security mechanism, we need a user authtoken, which is an extra datastructure that we need to store.
+- There isn't a straightforward solution to this. Ideally we want to make it as generic as possible. Let's take some time to think this through.
+- Every operation in an OpenAPI will be a tool. Also we may make things dynamic. Users can authenticate to tools on a need-to-know basis, meaning there may always be tools we didn't authorize to yet.
+- OpenAI only supports 1 securitySchema, which is problematic. Technically however, it's possible to have unlimited amount of security schemas, and a different security setting per operation/endpoint.
+- The end-client can be a web-browser, chatgpt, a phonecall, whatsapp, or an API.
+- Clerk isn't the way because it allows us to login in third-party apps but it doesn't give us api access. That's not what it's for. And we want to have the ability to have no login at all in some cases.
+
+Before I continue, let's explore GPTs a bit more. Can I make one work with oauth2? https://www.youtube.com/watch?v=6HFp0ISO4XI . Should I compromise on features and only support what GPTs support, or just go all out and build the best one possible for myself?
+
+# june 29, 2024
+
+Today was a historic day. I've 80% done with tool use with support for oauth2! This is something that - in my opinion - should be part of any LLM.
+
+## Datastructures
+
+- ✅ Create a `agent-user-thread` CRUD (a thread is all messages)
+- ✅ Create a `agent-user` CRUD `{ [userAuthToken]: { threadIds:string[], keys: {[securitySchemeKey]:string}}}`
+- ✅ Create a `agent-admin` CRUD: `{ [adminAuthToken]:{ openapis: {url:string,Authorization?:string}[], oauthDetails: {service,securitySchemeKey,appId,appSecret}[] } }`
+- ✅ Now that I am using 4 cruds, better make a single `migration.sh` script upserting + installing them.
+- ✅ Create a function `generateSdk(openapi[])` that responds with a string containing a typescript SDK for that api.
+
+## Datastructure implementation
+
+- ✅ Use `agent-admin` properly at `upsertAgent`
+- ✅ Ensure to retreive the securityScheme object and threadIds based on the `agent-user`
+- ✅ Ensure to retreive the thread
+
+## Extra message functionality
+
+- ✅ add thread to the messages.
+- ✅ store response in thread, respond with threadId
+- ✅ File support: simply put the url in the message if the model doesnt support it, so it can enact tools.
+
+## OAuth tool use 👨‍🍳
+
+- ✅ Break tool-loop up into 2 maps: preperation/auth-step, and execution
+- ✅ Split up the main message function into multiple composed responsibilities. Composition over inheritance.
+- ✅ In the preparation step, break out put the break-out logic right.
+- ✅ If one tool is missing, let's break out of the tool-loop and respond with login url(s)
+
+Almost done with oauth2-based tool use. The whole thing will be a lot more complex as we'll have datastructures for admins, users, agents, and threads, which is needed due to the fact that we need proper tool use.

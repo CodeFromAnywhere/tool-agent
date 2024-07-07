@@ -1,0 +1,49 @@
+{
+  "$schema": "https://raw.githubusercontent.com/CodeFromAnywhere/ActionSchema/main/schemas/action-schema.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["agentSlug", "instructions", "openaiSecretKey"],
+  "properties": {
+    "agentSlug": {
+      "type": "string",
+      "title": "Unique name",
+      "$ref": "https://agent.actionschema.com/schemas/url-slug.schema.json#"
+    },
+
+    "instructions": {
+      "type": "string"
+    },
+
+    "openaiSecretKey": {
+      "type": "string",
+      "description": "OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys"
+    },
+
+    "authToken": {
+      "type": "string",
+      "description": "Token needed for authorizing to the agent openapi. Useful to prevent people to use your LLM for free.",
+      "minLength": 64,
+      "maxLength": 128
+    },
+
+    "adminAuthToken": {
+      "type": "string",
+      "description": "Token needed for authorizing as admin to alter or remove the agent."
+    },
+
+    "model": {
+      "type": "string",
+      "enum": ["gpt-4o", "gpt-3.5-turbo", "gpt-3.5-turbo-16k"]
+    },
+
+    "openapiUrl": {
+      "type": "string",
+      "description": "Used for tools for the agent"
+    },
+
+    "openapiAuthToken": {
+      "type": "string",
+      "description": "Used to authenticate to the OpenAPI to use tools"
+    }
+  }
+}

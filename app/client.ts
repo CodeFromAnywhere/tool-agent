@@ -15,9 +15,8 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
   : never;
 
 // Typescript magic from: https://stackoverflow.com/questions/63542526/merge-discriminated-union-of-object-types-in-typescript
-type MergeIntersection<U> = UnionToIntersection<U> extends infer O
-  ? { [K in keyof O]: O[K] }
-  : never;
+type MergeIntersection<U> =
+  UnionToIntersection<U> extends infer O ? { [K in keyof O]: O[K] } : never;
 
 type MergeParameters<P> = MergeIntersection<Extract<P, {}>>;
 
