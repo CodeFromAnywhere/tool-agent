@@ -286,11 +286,9 @@ export const message: Endpoint<"message"> = async (context) => {
   const { oauthDetails, openapis } = adminResult;
 
   // this should move to admin, right?
-
   const { instructions, model, openapiUrl } = agent;
 
   // NB: if we have a thread with messages already, use that, otherwise, start with the system prompt
-
   const threadMessages =
     aThreadId && !disableHistory
       ? ((await agentUserThread("read", { rowIds: [aThreadId] })).items?.[
