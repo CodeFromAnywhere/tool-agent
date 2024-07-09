@@ -6,7 +6,7 @@ import { renderAgentOpenapi } from "./renderAgentOpenapi";
 import { upsertToolAgent } from "./upsertToolAgent";
 import { renderAgentDetails } from "./renderAgentDetails";
 
-/** function creator to DRY */
+/** function creator to DRY ...*/
 const getHandler = (method: string) => (request: Request) =>
   resolveOpenapiAppRequest(request, method, {
     openapi: openapi as OpenapiDocument,
