@@ -291,7 +291,9 @@
 
           "adminAuthToken": {
             "type": "string",
-            "description": "Token needed for authorizing as admin to alter or remove the agent."
+            "description": "Token needed for authorizing as admin to alter or remove the agent.",
+            "minLength": 64,
+            "maxLength": 128
           },
 
           "model": {

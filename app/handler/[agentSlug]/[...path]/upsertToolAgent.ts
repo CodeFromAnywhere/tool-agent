@@ -26,13 +26,13 @@ export const upsertToolAgent: Endpoint<"upsertToolAgent"> = async (context) => {
   }
 
   const realAdminAuthToken =
-    adminAuthToken && adminAuthToken.length >= 32
+    adminAuthToken && adminAuthToken.length >= 64
       ? adminAuthToken
-      : generateRandomString(32);
+      : generateRandomString(64);
 
   const partialItem = {
     agentSlug: realAgentSlug,
-    authToken: realAuthToken,
+    agentAuthToken: realAuthToken,
     adminAuthToken: realAdminAuthToken,
     ...rest,
   };
