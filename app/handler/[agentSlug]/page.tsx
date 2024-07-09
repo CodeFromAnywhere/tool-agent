@@ -75,7 +75,7 @@ export default function AgentPage(props: { params: { agentSlug: string } }) {
       <OpenapiForms
         key={openapiUrl}
         url={openapiUrl}
-        initialData={{ httpBearerToken: agent?.agentAuthToken }}
+        initialData={{ X_AGENT_AUTH_TOKEN: agent?.agentAuthToken }}
         uiSchema={{ message: { "ui:widget": "textarea" } }}
       />
     </div>

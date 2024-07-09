@@ -79,6 +79,10 @@ export const renderAgentOpenapi: Endpoint<"renderAgentOpenapi"> = async (
       openapi.paths["/{agentSlug}/message"],
       ["parameters"],
     ),
+    "/userSignup": removeOptionalKeysFromObjectStrings(
+      openapi.paths["/{agentSlug}/userSignup"],
+      ["parameters"],
+    ),
   };
 
   const origin =
@@ -93,6 +97,8 @@ export const renderAgentOpenapi: Endpoint<"renderAgentOpenapi"> = async (
       schemas: {
         ...openapi.components.schemas,
       },
+
+      // TODO: make it do oauth2 here instead,
       securitySchemes: {
         bearerAuth: {
           type: "http",
