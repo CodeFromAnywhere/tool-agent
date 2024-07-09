@@ -241,6 +241,12 @@
       }
     }
   },
+  "security": [
+    {
+      "apiKey": []
+    },
+    {}
+  ],
   "components": {
     "securitySchemes": {
       "apiKey": {
@@ -257,7 +263,8 @@
           "agentSlug",
           "instructions",
           "openaiSecretKey",
-          "authToken"
+          "agentAuthToken",
+          "adminAuthToken"
         ],
         "properties": {
           "agentSlug": {
@@ -277,7 +284,7 @@
 
           "agentAuthToken": {
             "type": "string",
-            "description": "Agent-wide token needed for authorizing to the agent openapi. Useful to prevent people to use your LLM for free.",
+            "description": "Agent-wide token needed for authorizing to the agent openapi.",
             "minLength": 64,
             "maxLength": 128
           },
