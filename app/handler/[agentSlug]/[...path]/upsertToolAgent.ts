@@ -8,7 +8,7 @@ export const upsertToolAgent: Endpoint<"upsertToolAgent"> = async (context) => {
   // no transformation
   const realAgentSlug = agentSlug;
 
-  const realAuthToken =
+  const realAgentAuthToken =
     !agentAuthToken || agentAuthToken.length < 64
       ? generateRandomString(64)
       : agentAuthToken;
@@ -34,25 +34,32 @@ export const upsertToolAgent: Endpoint<"upsertToolAgent"> = async (context) => {
 
   const partialItem = {
     agentSlug: realAgentSlug,
-    agentAuthToken: realAuthToken,
+    agentAuthToken: realAgentAuthToken,
     adminAuthToken: realAdminAuthToken,
     ...rest,
   };
 
   // let's not take to long.
-  const [_, updatedAgent] = await Promise.all([
+  const [updatedAgent, updatedAdmin] = await Promise.all([
     agentOpenapi("update", { id: realAgentSlug, partialItem }),
     // at least create it, don't need to set stuff here.
     // an idea would be to also add the created agent to openapis...?
-    agentAdmin("update", { id: realAdminAuthToken!, partialItem: {} }),
+    agentAdmin("update", { id: realAdminAuthToken, partialItem: {} }),
   ]);
 
   if (!updatedAgent.isSuccessful) {
     // to be done
-    // return {
-    //   isSuccessful: false,
-    //   message: `Failed updating agent:${updatedAgent.message}`,
-    // };
+    return {
+      isSuccessful: false,
+      message: `Failed updating agent:${updatedAgent.message}`,
+    };
+  }
+  if (!updatedAdmin.isSuccessful) {
+    // to be done
+    return {
+      isSuccessful: false,
+      message: `Failed updating admin:${updatedAdmin.message}`,
+    };
   }
 
   return {
