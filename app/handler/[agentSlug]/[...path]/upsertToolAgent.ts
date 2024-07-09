@@ -5,14 +5,16 @@ import { generateRandomString } from "from-anywhere";
 export const upsertToolAgent: Endpoint<"upsertToolAgent"> = async (context) => {
   const { adminAuthToken, agentSlug, agentAuthToken, ...rest } = context;
 
-  const realAgentSlug = agentSlug.toLowerCase();
+  // no transformation
+  const realAgentSlug = agentSlug;
+
   const realAuthToken =
     !agentAuthToken || agentAuthToken.length < 64
       ? generateRandomString(64)
       : agentAuthToken;
 
   const already = (await agentOpenapi("read", { rowIds: [realAgentSlug] }))
-    .items?.[agentSlug];
+    .items?.[realAgentSlug];
 
   if (
     already &&
@@ -21,7 +23,7 @@ export const upsertToolAgent: Endpoint<"upsertToolAgent"> = async (context) => {
   ) {
     return {
       isSuccessful: false,
-      message: `Unauthorized`,
+      message: `Unauthorized for slug '${realAgentSlug}'. Incorrect authToken`,
     };
   }
 
@@ -39,7 +41,7 @@ export const upsertToolAgent: Endpoint<"upsertToolAgent"> = async (context) => {
 
   // let's not take to long.
   const [_, updatedAgent] = await Promise.all([
-    agentOpenapi("update", { id: agentSlug, partialItem }),
+    agentOpenapi("update", { id: realAgentSlug, partialItem }),
     // at least create it, don't need to set stuff here.
     // an idea would be to also add the created agent to openapis...?
     agentAdmin("update", { id: realAdminAuthToken!, partialItem: {} }),
