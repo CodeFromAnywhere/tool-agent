@@ -231,12 +231,18 @@ export const message: Endpoint<"message"> = async (context) => {
     threadId,
     disableHistory,
   } = context;
+
   const result = await agentOpenapi("read", { rowIds: [agentSlug] });
   const agent = result.items?.[agentSlug];
 
+  if (!agent || !agent.adminAuthToken) {
+    return {
+      isSuccessful: false,
+      message: `Couldn't find agent/admintoken. agentSlug:${agentSlug}`,
+    };
+  }
+
   if (
-    !agent ||
-    !agent.adminAuthToken ||
     !Authorization ||
     Authorization.length < 64 ||
     Authorization.length > 128
