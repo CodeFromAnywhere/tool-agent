@@ -125,10 +125,10 @@ export interface components {
             instructions: string;
             /** @description OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys */
             openaiSecretKey: string;
-            /** @description Agent-wide token needed for authorizing to the agent openapi. Useful to prevent people to use your LLM for free. */
-            agentAuthToken?: string;
+            /** @description Agent-wide token needed for authorizing to the agent openapi. */
+            agentAuthToken: string;
             /** @description Token needed for authorizing as admin to alter or remove the agent. */
-            adminAuthToken?: string;
+            adminAuthToken: string;
             /** @enum {string} */
             model?: "gpt-4o" | "gpt-3.5-turbo" | "gpt-3.5-turbo-16k";
             /** @description Used for tools for the agent */
