@@ -222,7 +222,7 @@
 
       "post": {
         "summary": "Signup as a user to this agent. Generates an authToken to which login credentials can be stored.",
-        "operationId": "signup",
+        "operationId": "userSignup",
         "responses": {
           "200": {
             "description": "Authorization Token",
