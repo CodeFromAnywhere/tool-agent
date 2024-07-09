@@ -2,6 +2,7 @@ import { OpenapiDocument } from "openapi-util";
 import { resolveOpenapiAppRequest } from "openapi-util/build/node/resolveOpenapiAppRequest";
 import openapi from "../../../../public/openapi.json";
 import { message } from "./message";
+import { userSignup } from "./userSignup";
 import { renderAgentOpenapi } from "./renderAgentOpenapi";
 import { upsertToolAgent } from "./upsertToolAgent";
 import { renderAgentDetails } from "./renderAgentDetails";
@@ -13,6 +14,7 @@ const getHandler = (method: string) => (request: Request) =>
     functions: {
       message,
       renderAgentDetails,
+      userSignup,
       renderAgentOpenapi,
       upsertToolAgent,
     },
