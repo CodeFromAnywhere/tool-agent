@@ -235,10 +235,17 @@ export const message: Endpoint<"message"> = async (context) => {
   const result = await agentOpenapi("read", { rowIds: [agentSlug] });
   const agent = result.items?.[agentSlug];
 
-  if (!agent || !agent.adminAuthToken) {
+  if (!agent) {
     return {
       isSuccessful: false,
-      message: `Couldn't find agent/admintoken. agentSlug:${agentSlug}`,
+      message: `Couldn't find agent agentSlug:${agentSlug}`,
+    };
+  }
+
+  if (!agent.adminAuthToken) {
+    return {
+      isSuccessful: false,
+      message: `Couldn't find admintoken. agentSlug:${agentSlug}`,
     };
   }
 
