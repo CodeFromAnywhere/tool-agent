@@ -48,7 +48,11 @@ export const upsertToolAgent: Endpoint<"upsertToolAgent"> = async (context) => {
   ]);
 
   if (!updatedAgent.isSuccessful) {
-    return { isSuccessful: false, message: updatedAgent.message };
+    // to be done
+    // return {
+    //   isSuccessful: false,
+    //   message: `Failed updating agent:${updatedAgent.message}`,
+    // };
   }
 
   return {
