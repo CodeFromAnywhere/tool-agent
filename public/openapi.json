@@ -371,8 +371,16 @@
             }
           },
 
-          "threadId": { "type": "string" }
+          "threadId": {
+            "type": "string",
+            "description": "threadId to keep talking in the same thread"
+          },
+          "newAuthToken": {
+            "type": "string",
+            "description": "In case you didn't sign up before, this is now your Authorization token. Can be used in conjunction with the threadId"
+          }
         },
+        "additionalProperties": false,
         "required": ["isSuccessful", "message"]
       }
     }

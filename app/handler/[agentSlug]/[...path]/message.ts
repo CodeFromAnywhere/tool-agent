@@ -242,16 +242,23 @@ export const message: Endpoint<"message"> = async (context) => {
     };
   }
 
-  if (
-    !Authorization ||
-    Authorization.length < 64 ||
-    Authorization.length > 128
-  ) {
-    return {
-      isSuccessful: false,
-      message:
-        "Unauthorized. Please provide an authToken. You can get one by signing up.",
-    };
+  const validAuthorization =
+    !Authorization || Authorization.length < 64 || Authorization.length > 128;
+
+  const userResult = validAuthorization
+    ? (await agentUser("read", { rowIds: [Authorization] })).items?.[
+        Authorization
+      ]
+    : undefined;
+
+  const newAuthToken = !userResult ? generateRandomString(64) : undefined;
+
+  if (newAuthToken) {
+    // sign up
+    await agentUser("update", {
+      id: newAuthToken,
+      partialItem: {},
+    });
   }
 
   if (agent.authToken !== X_AGENT_AUTH_TOKEN) {
@@ -271,9 +278,6 @@ export const message: Endpoint<"message"> = async (context) => {
       message: "Unauthorized. Couldn't find admin.",
     };
   }
-
-  const userResult = (await agentUser("read", { rowIds: [Authorization] }))
-    .items?.[Authorization];
 
   const firstThreadId = userResult?.threadIds?.[0];
 
@@ -491,6 +495,7 @@ export const message: Endpoint<"message"> = async (context) => {
     isSuccessful: true,
     message: "Responded",
     threadId: finalThreadId,
+    newAuthToken,
     // NB: return only the responses
     messages: messages.slice(threadWithRequest.length) as any,
   };
