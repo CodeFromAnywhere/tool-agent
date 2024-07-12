@@ -16,7 +16,10 @@ export const upsertToolAgent: Endpoint<"upsertToolAgent"> = async (context) => {
   const alreadyResult = await agentOpenapi("read", { rowIds: [realAgentSlug] });
 
   if (!alreadyResult.isSuccessful) {
-    return { isSuccessful: false, message: "Couldn't read AgentOpenapi crud" };
+    return {
+      isSuccessful: false,
+      message: "Couldn't read AgentOpenapi crud:" + alreadyResult.message,
+    };
   }
   const already = alreadyResult.items?.[realAgentSlug];
 
