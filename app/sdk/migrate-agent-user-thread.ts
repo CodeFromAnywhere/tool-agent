@@ -129,21 +129,18 @@ export interface components {
             message: string;
         };
         ModelItem: {
-            /** Unique name */
-            agentSlug: components["schemas"]["url-slug.schema"];
-            instructions: string;
-            /** @description OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys */
-            openaiSecretKey: string;
-            /** @description Token needed for authorizing to the agent openapi. Useful to prevent people to use your LLM for free. */
-            authToken?: string;
-            /** @description Token needed for authorizing as admin to alter or remove the agent. */
-            adminAuthToken?: string;
-            /** @enum {string} */
-            model?: "gpt-4o" | "gpt-3.5-turbo" | "gpt-3.5-turbo-16k";
-            /** @description Used for tools for the agent */
-            openapiUrl?: string;
-            /** @description Used to authenticate to the OpenAPI to use tools */
-            openapiAuthToken?: string;
+            messages?: {
+                content: string | null | {
+                    /** @enum {string} */
+                    type: "image_url";
+                    image_url: string;
+                }[];
+                /** @enum {string} */
+                role: "system" | "user" | "tool" | "assistant" | "function";
+                name?: string;
+                function_call?: Record<string, never>;
+                tool_calls?: unknown[];
+            }[];
         };
         RemoveContext: {
             /** @description Which IDs should be removed */
@@ -160,7 +157,6 @@ export interface components {
             message?: string;
             authToken?: string;
             adminAuthToken?: string;
-            databaseSlug?: string;
             openapiUrl?: string;
         };
         /** @description A list of vector indexes to be created for several columns in your schema */
@@ -175,12 +171,11 @@ export interface components {
             similarity_function: "COSINE" | "EUCLIDIAN" | "DOT_PRODUCT";
         }[];
         StandardResponse: {
+            status?: number;
             isSuccessful: boolean;
             message?: string;
             priceCredit?: number;
         };
-        /** @description Slug compatible with URLs */
-        "url-slug.schema": string;
     };
     responses: never;
     parameters: never;

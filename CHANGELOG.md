@@ -108,3 +108,15 @@ Today was a historic day. I've 80% done with tool use with support for oauth2! T
 - ✅ If one tool is missing, let's break out of the tool-loop and respond with login url(s)
 
 Almost done with oauth2-based tool use. The whole thing will be a lot more complex as we'll have datastructures for admins, users, agents, and threads, which is needed due to the fact that we need proper tool use.
+
+# Make `/message` work (july 8th, 2024)
+
+✅ Hardcode the `X_AGENT_AUTH_TOKEN` header in the proxy using a `process.env` key.
+
+✅ Finish `mergeOpenapis` (merge array)
+
+✅ Create a page for `mergeOpenapis` and then use it to merge the signup endpoints of both agents.
+
+✅ Create a `message.html` page that calls `/userSignup` for an agent with an arbitrary token and sets it to localStorage. Ensure `Authorization` is provided from `localStorage` and the html can call `message` with a good loading indicator.
+
+🙃 I have been stuck now trying to make the `message` endpoint work for almost an hour. As it's almost 1AM ill call it a day. The problem is that multiple things seem to be unstable and badly logged. I don't know anything as I haven't properly tested agent creation after i changed loads in it. Next step.... Make the agent message api work. ✅ Ok finally just before i wanna quit, i did a step back, and found out that i don't have the `.env` variables set for agent-openapi. DAMN! so dumb. but it still doesn't work.

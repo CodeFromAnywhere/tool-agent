@@ -1,4 +1,4 @@
-import { agentAdmin, agentOpenapi } from "@/sdk/client";
+import * as client from "@/sdk/client";
 import { Endpoint } from "@/client";
 import { generateRandomString } from "from-anywhere";
 
@@ -13,7 +13,9 @@ export const upsertToolAgent: Endpoint<"upsertToolAgent"> = async (context) => {
       ? generateRandomString(64)
       : agentAuthToken;
 
-  const alreadyResult = await agentOpenapi("read", { rowIds: [realAgentSlug] });
+  const alreadyResult = await client.migrateAgentOpenapi("read", {
+    rowIds: [realAgentSlug],
+  });
 
   if (!alreadyResult.isSuccessful) {
     return {
@@ -48,10 +50,13 @@ export const upsertToolAgent: Endpoint<"upsertToolAgent"> = async (context) => {
 
   // let's not take to long.
   const [updatedAgent, updatedAdmin] = await Promise.all([
-    agentOpenapi("update", { id: realAgentSlug, partialItem }),
+    client.migrateAgentOpenapi("update", { id: realAgentSlug, partialItem }),
     // at least create it, don't need to set stuff here.
     // an idea would be to also add the created agent to openapis...?
-    agentAdmin("update", { id: realAdminAuthToken, partialItem: {} }),
+    client.migrateAgentAdmin("update", {
+      id: realAdminAuthToken,
+      partialItem: {},
+    }),
   ]);
 
   if (!updatedAgent.isSuccessful) {

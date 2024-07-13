@@ -1,5 +1,5 @@
 import { Endpoint, ResponseType } from "@/client";
-import { agentOpenapi } from "@/sdk/client";
+import * as client from "@/sdk/client";
 
 export const renderAgentDetails: Endpoint<"renderAgentDetails"> = async (
   context,
@@ -16,7 +16,9 @@ export const renderAgentDetails: Endpoint<"renderAgentDetails"> = async (
   }
 
   const details = (
-    await agentOpenapi("read", { rowIds: [agentSlug.toLowerCase()] })
+    await client.migrateAgentOpenapi("read", {
+      rowIds: [agentSlug.toLowerCase()],
+    })
   ).items?.[agentSlug];
 
   if (!details) {

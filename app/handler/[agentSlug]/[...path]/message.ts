@@ -1,10 +1,5 @@
 import { Endpoint } from "@/client";
-import {
-  agentAdmin,
-  agentOpenapi,
-  agentUser,
-  agentUserThread,
-} from "@/sdk/client";
+import * as client from "@/sdk/client";
 
 import {
   OpenapiDocument,
@@ -232,7 +227,9 @@ export const message: Endpoint<"message"> = async (context) => {
     disableHistory,
   } = context;
 
-  const result = await agentOpenapi("read", { rowIds: [agentSlug] });
+  const result = await client.migrateAgentOpenapi("read", {
+    rowIds: [agentSlug],
+  });
   const agent = result.items?.[agentSlug];
 
   if (!agent) {
@@ -253,16 +250,15 @@ export const message: Endpoint<"message"> = async (context) => {
     !Authorization || Authorization.length < 64 || Authorization.length > 128;
 
   const userResult = validAuthorization
-    ? (await agentUser("read", { rowIds: [Authorization] })).items?.[
-        Authorization
-      ]
+    ? (await client.migrateAgentUser("read", { rowIds: [Authorization] }))
+        .items?.[Authorization]
     : undefined;
 
   const newAuthToken = !userResult ? generateRandomString(64) : undefined;
 
   if (newAuthToken) {
     // sign up
-    await agentUser("update", {
+    await client.migrateAgentUser("update", {
       id: newAuthToken,
       partialItem: {},
     });
@@ -276,7 +272,7 @@ export const message: Endpoint<"message"> = async (context) => {
   }
 
   const adminResult = (
-    await agentAdmin("read", { rowIds: [agent.adminAuthToken] })
+    await client.migrateAgentAdmin("read", { rowIds: [agent.adminAuthToken] })
   )?.items?.[agent.adminAuthToken];
 
   if (!adminResult) {
@@ -302,7 +298,8 @@ export const message: Endpoint<"message"> = async (context) => {
   // NB: if we have a thread with messages already, use that, otherwise, start with the system prompt
   const threadMessages =
     aThreadId && !disableHistory
-      ? ((await agentUserThread("read", { rowIds: [aThreadId] })).items?.[
+      ? ((await client.migrateAgentUserThread("read", { rowIds: [aThreadId] }))
+          .items?.[
           aThreadId
           // almost good
         ]?.messages as ChatCompletionMessageParam[])
@@ -485,14 +482,14 @@ export const message: Endpoint<"message"> = async (context) => {
   // TODO: can be done in a 'waitUntil'
   await Promise.all([
     !aThreadId
-      ? agentUser("update", {
+      ? client.migrateAgentUser("update", {
           id: Authorization,
           partialItem: {
             threadIds: (userResult?.threadIds || []).concat([randomThreadId]),
           },
         })
       : undefined,
-    agentUserThread("update", {
+    client.migrateAgentUserThread("update", {
       id: finalThreadId,
       partialItem: { messages: messages as any },
     }),

@@ -11,7 +11,7 @@ To get oauth2 working:
 */
 
 import { Endpoint } from "@/client";
-import { agentAdmin, agentOpenapi } from "@/sdk/client";
+import * as client from "@/sdk/client";
 import { SecuritySchemeObject } from "openapi-typescript";
 import { OpenapiDocument } from "openapi-util";
 import { resolveSchemaRecursive } from "openapi-util/build/resolveSchemaRecursive";
@@ -32,14 +32,16 @@ export const oauth2Callback: Endpoint<"oauth2Callback"> = async (context) => {
   if (!code || !agentSlug) {
     return { error: "No code given" };
   }
-  const agentResult = await agentOpenapi("read", { rowIds: [agentSlug] });
+  const agentResult = await client.migrateAgentOpenapi("read", {
+    rowIds: [agentSlug],
+  });
   const agent = agentResult.items?.[agentSlug];
 
   if (!agent || !agent.adminAuthToken) {
     return { error: "No agent" };
   }
   const adminResult = (
-    await agentAdmin("read", { rowIds: [agent.adminAuthToken] })
+    await client.migrateAgentAdmin("read", { rowIds: [agent.adminAuthToken] })
   )?.items?.[agent.adminAuthToken];
 
   if (!adminResult) {

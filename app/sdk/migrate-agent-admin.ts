@@ -128,22 +128,18 @@ export interface components {
             isSuccessful: boolean;
             message: string;
         };
+        /** @description Model where admin-level authorization tokens and oauth details can be stored. As there is only one such setting per admin, the key of this model is the admin authtoken. Maybe rename this to more generic 'oauth-admin' as it's not just for agents. */
         ModelItem: {
-            /** Unique name */
-            agentSlug: components["schemas"]["url-slug.schema"];
-            instructions: string;
-            /** @description OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys */
-            openaiSecretKey: string;
-            /** @description Token needed for authorizing to the agent openapi. Useful to prevent people to use your LLM for free. */
-            authToken?: string;
-            /** @description Token needed for authorizing as admin to alter or remove the agent. */
-            adminAuthToken?: string;
-            /** @enum {string} */
-            model?: "gpt-4o" | "gpt-3.5-turbo" | "gpt-3.5-turbo-16k";
-            /** @description Used for tools for the agent */
-            openapiUrl?: string;
-            /** @description Used to authenticate to the OpenAPI to use tools */
-            openapiAuthToken?: string;
+            openapis?: {
+                url: string;
+                Authorization?: string;
+            }[];
+            oauthDetails?: {
+                service?: string;
+                securitySchemeKey?: string;
+                appId?: string;
+                appSecret?: string;
+            }[];
         };
         RemoveContext: {
             /** @description Which IDs should be removed */
@@ -160,7 +156,6 @@ export interface components {
             message?: string;
             authToken?: string;
             adminAuthToken?: string;
-            databaseSlug?: string;
             openapiUrl?: string;
         };
         /** @description A list of vector indexes to be created for several columns in your schema */
@@ -175,12 +170,11 @@ export interface components {
             similarity_function: "COSINE" | "EUCLIDIAN" | "DOT_PRODUCT";
         }[];
         StandardResponse: {
+            status?: number;
             isSuccessful: boolean;
             message?: string;
             priceCredit?: number;
         };
-        /** @description Slug compatible with URLs */
-        "url-slug.schema": string;
     };
     responses: never;
     parameters: never;

@@ -160,7 +160,6 @@ export interface components {
             message?: string;
             authToken?: string;
             adminAuthToken?: string;
-            databaseSlug?: string;
             openapiUrl?: string;
         };
         /** @description A list of vector indexes to be created for several columns in your schema */
@@ -175,6 +174,7 @@ export interface components {
             similarity_function: "COSINE" | "EUCLIDIAN" | "DOT_PRODUCT";
         }[];
         StandardResponse: {
+            status?: number;
             isSuccessful: boolean;
             message?: string;
             priceCredit?: number;
