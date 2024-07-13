@@ -226,6 +226,7 @@ export const message: Endpoint<"message"> = async (context) => {
     threadId,
     disableHistory,
   } = context;
+  const userAuthToken = Authorization?.slice("Bearer ".length);
 
   const result = await client.migrateAgentOpenapi("read", {
     rowIds: [agentSlug],
@@ -247,11 +248,11 @@ export const message: Endpoint<"message"> = async (context) => {
   }
 
   const validAuthorization =
-    !Authorization || Authorization.length < 64 || Authorization.length > 128;
+    !userAuthToken || userAuthToken.length < 64 || userAuthToken.length > 128;
 
   const userResult = validAuthorization
-    ? (await client.migrateAgentUser("read", { rowIds: [Authorization] }))
-        .items?.[Authorization]
+    ? (await client.migrateAgentUser("read", { rowIds: [userAuthToken] }))
+        .items?.[userAuthToken]
     : undefined;
 
   const newAuthToken = !userResult ? generateRandomString(64) : undefined;
@@ -264,10 +265,11 @@ export const message: Endpoint<"message"> = async (context) => {
     });
   }
 
-  if (agent.authToken !== X_AGENT_AUTH_TOKEN) {
+  if (agent.agentAuthToken !== X_AGENT_AUTH_TOKEN) {
     return {
       isSuccessful: false,
-      message: "Invalid agent token.",
+      message: "Unauthorized: Invalid agent token.",
+      status: 403,
     };
   }
 
@@ -290,7 +292,7 @@ export const message: Endpoint<"message"> = async (context) => {
   const userDetails = userResult?.keys;
 
   // admin tool auth info
-  const { oauthDetails, openapis } = adminResult;
+  const { agentSlugs } = adminResult;
 
   // this should move to admin, right?
   const { instructions, model, openapiUrl } = agent;

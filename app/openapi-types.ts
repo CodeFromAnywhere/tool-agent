@@ -1,4 +1,38 @@
 export interface paths {
+    "/api/listAgents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Lists your agents */
+        post: operations["listAgents"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/removeAgent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Removes an agent */
+        post: operations["removeAgent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/upsertToolAgent": {
         parameters: {
             query?: never;
@@ -108,7 +142,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Signup as a user to this agent. Generates an authToken to which login credentials can be stored. */
-        post: operations["signup"];
+        post: operations["userSignup"];
         delete?: never;
         options?: never;
         head?: never;
@@ -127,8 +161,6 @@ export interface components {
             openaiSecretKey: string;
             /** @description Agent-wide token needed for authorizing to the agent openapi. */
             agentAuthToken: string;
-            /** @description Token needed for authorizing as admin to alter or remove the agent. */
-            adminAuthToken: string;
             /** @enum {string} */
             model?: "gpt-4o" | "gpt-3.5-turbo" | "gpt-3.5-turbo-16k";
             /** @description Used for tools for the agent */
@@ -160,7 +192,10 @@ export interface components {
                 function_call?: Record<string, never>;
                 tool_calls?: unknown[];
             }[];
+            /** @description threadId to keep talking in the same thread */
             threadId?: string;
+            /** @description In case you didn't sign up before, this is now your Authorization token. Can be used in conjunction with the threadId */
+            newAuthToken?: string;
         };
         Contact: {
             name?: string;
@@ -367,6 +402,58 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    listAgents: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Signup response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        agents?: {
+                            agentSlug: string;
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    removeAgent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    rowIds?: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        isSuccessful?: boolean;
+                    };
+                };
+            };
+        };
+    };
     upsertToolAgent: {
         parameters: {
             query?: never;
@@ -502,7 +589,7 @@ export interface operations {
             };
         };
     };
-    signup: {
+    userSignup: {
         parameters: {
             query?: never;
             header?: never;
@@ -536,6 +623,14 @@ export type MessageContext = components["schemas"]["MessageContext"]
 export type MessageResponse = components["schemas"]["MessageResponse"]
   
 export const operationUrlObject = {
+  "listAgents": {
+    "method": "post",
+    "path": "/api/listAgents"
+  },
+  "removeAgent": {
+    "method": "post",
+    "path": "/api/removeAgent"
+  },
   "upsertToolAgent": {
     "method": "post",
     "path": "/api/upsertToolAgent"
@@ -556,7 +651,7 @@ export const operationUrlObject = {
     "method": "post",
     "path": "/{agentSlug}/message"
   },
-  "signup": {
+  "userSignup": {
     "method": "post",
     "path": "/{agentSlug}/userSignup"
   }

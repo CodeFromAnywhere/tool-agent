@@ -128,18 +128,9 @@ export interface components {
             isSuccessful: boolean;
             message: string;
         };
-        /** @description Model where admin-level authorization tokens and oauth details can be stored. As there is only one such setting per admin, the key of this model is the admin authtoken. Maybe rename this to more generic 'oauth-admin' as it's not just for agents. */
+        /** @description Lists your agents. Key is admin-authtoken, value is a list of agentSlugs that you maintain. */
         ModelItem: {
-            openapis?: {
-                url: string;
-                Authorization?: string;
-            }[];
-            oauthDetails?: {
-                service?: string;
-                securitySchemeKey?: string;
-                appId?: string;
-                appSecret?: string;
-            }[];
+            agentSlugs?: string[];
         };
         RemoveContext: {
             /** @description Which IDs should be removed */

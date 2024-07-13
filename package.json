@@ -9,7 +9,7 @@
     "types": "npx openapi-fetch-typescript ./public/openapi.json ./app/openapi-types.ts OpenApiTypes",
     "watch-types": "nodemon --watch public --exec \"npm run types\"",
     "next-dev": "next dev",
-    "sdk": "bunx actionschema-migrate@0.0.11",
+    "sdk": "npx actionschema-migrate@0.0.22",
     "dev": "concurrently \"next dev\" \"npm:watch-types\""
   },
   "dependencies": {
@@ -22,7 +22,7 @@
     "openapi-for-humans-react": "0.0.50",
     "openapi-types": "^12.1.3",
     "openapi-typescript": "^6.7.5",
-    "openapi-util": "0.0.68",
+    "openapi-util": "0.0.74",
     "qs": "^6.12.1",
     "react": "^18",
     "react-dom": "^18",

@@ -30,7 +30,10 @@ export type EndpointContext<K extends keyof operations> =
   (operations[K]["requestBody"] extends {}
     ? operations[K]["requestBody"]["content"]["application/json"]
     : {}) &
-    MergeParameters<GetParameters<K>>;
+    MergeParameters<GetParameters<K>> & {
+      /** Will always be passed if present */
+      Authorization?: string;
+    };
 
 export type ResponseType<T extends keyof operations> =
   operations[T]["responses"][200]["content"]["application/json"];

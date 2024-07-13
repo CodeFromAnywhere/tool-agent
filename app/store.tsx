@@ -3,6 +3,7 @@ import * as React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { ToolAgent, components } from "./openapi-types";
+import { ModelItem } from "./sdk/migrate-agent-openapi";
 
 /**
  * If you don't have access to the `useStore` hook, maybe because you're doing something outside of react... you can directly use the storage with javascript using this function
@@ -277,7 +278,7 @@ export const createStore = <K extends object>(initialValues: K) => {
 const store = createStore({
   adminAuthToken: "",
   agents: [],
-} as { adminAuthToken: string; agents: ToolAgent[] });
+} as { adminAuthToken: string; agents: ModelItem[] });
 
 export const StoreProvider = store.StoreProvider;
 export const useStore = store.useStore;

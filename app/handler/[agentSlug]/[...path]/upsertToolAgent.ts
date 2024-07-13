@@ -1,12 +1,10 @@
 import * as client from "@/sdk/client";
 import { Endpoint } from "@/client";
-import { generateRandomString } from "from-anywhere";
+import { generateRandomString, onlyUnique2 } from "from-anywhere";
 
 export const upsertToolAgent: Endpoint<"upsertToolAgent"> = async (context) => {
-  const { adminAuthToken, agentSlug, agentAuthToken, ...rest } = context;
-
-  // no transformation
-  const realAgentSlug = agentSlug;
+  const { Authorization, agentSlug, agentAuthToken, ...rest } = context;
+  const adminAuthToken = Authorization?.slice("Bearer ".length);
 
   const realAgentAuthToken =
     !agentAuthToken || agentAuthToken.length < 64
@@ -14,7 +12,7 @@ export const upsertToolAgent: Endpoint<"upsertToolAgent"> = async (context) => {
       : agentAuthToken;
 
   const alreadyResult = await client.migrateAgentOpenapi("read", {
-    rowIds: [realAgentSlug],
+    rowIds: [agentSlug],
   });
 
   if (!alreadyResult.isSuccessful) {
@@ -23,7 +21,7 @@ export const upsertToolAgent: Endpoint<"upsertToolAgent"> = async (context) => {
       message: "Couldn't read AgentOpenapi crud:" + alreadyResult.message,
     };
   }
-  const already = alreadyResult.items?.[realAgentSlug];
+  const already = alreadyResult.items?.[agentSlug];
 
   if (
     already &&
@@ -32,7 +30,7 @@ export const upsertToolAgent: Endpoint<"upsertToolAgent"> = async (context) => {
   ) {
     return {
       isSuccessful: false,
-      message: `Unauthorized for slug '${realAgentSlug}'. Incorrect authToken`,
+      message: `Unauthorized for slug '${agentSlug}'. Incorrect authToken`,
     };
   }
 
@@ -42,20 +40,28 @@ export const upsertToolAgent: Endpoint<"upsertToolAgent"> = async (context) => {
       : generateRandomString(64);
 
   const partialItem = {
-    agentSlug: realAgentSlug,
+    agentSlug: agentSlug,
     agentAuthToken: realAgentAuthToken,
     adminAuthToken: realAdminAuthToken,
     ...rest,
   };
 
+  const agentSlugs = (
+    await client.migrateAgentAdmin("read", { rowIds: [realAdminAuthToken] })
+  ).items?.[realAdminAuthToken]?.agentSlugs;
+
+  const newAgentSlugs = (agentSlugs || [])
+    .concat(agentSlug)
+    .filter(onlyUnique2());
+
   // let's not take to long.
   const [updatedAgent, updatedAdmin] = await Promise.all([
-    client.migrateAgentOpenapi("update", { id: realAgentSlug, partialItem }),
+    client.migrateAgentOpenapi("update", { id: agentSlug, partialItem }),
     // at least create it, don't need to set stuff here.
     // an idea would be to also add the created agent to openapis...?
     client.migrateAgentAdmin("update", {
       id: realAdminAuthToken,
-      partialItem: {},
+      partialItem: { agentSlugs: newAgentSlugs },
     }),
   ]);
 

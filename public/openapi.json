@@ -11,6 +11,80 @@
   "security": [{ "apiKey": [] }],
 
   "paths": {
+    "/api/listAgents": {
+      "post": {
+        "summary": "Lists your agents",
+        "operationId": "listAgents",
+        "responses": {
+          "200": {
+            "description": "Signup response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "agents": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": { "agentSlug": { "type": "string" } },
+                        "required": ["agentSlug"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/removeAgent": {
+      "post": {
+        "summary": "Removes an agent",
+        "operationId": "removeAgent",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "rowIds": {
+                    "type": "array",
+                    "minLength": 1,
+                    "items": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "isSuccessful": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
     "/api/upsertToolAgent": {
       "post": {
         "summary": "",
@@ -128,8 +202,6 @@
 
     "/{agentSlug}/details": {
       "post": {
-        "security": [{ "apiKey": [] }],
-
         "summary": "Get details for this agent",
         "operationId": "renderAgentDetails",
         "parameters": [
@@ -187,8 +259,6 @@
         }
       ],
       "post": {
-        "security": [{ "apiKey": [] }],
-
         "summary": "Run a message in a thread of an assistant",
         "operationId": "message",
         "requestBody": {
@@ -261,8 +331,7 @@
           "agentSlug",
           "instructions",
           "openaiSecretKey",
-          "agentAuthToken",
-          "adminAuthToken"
+          "agentAuthToken"
         ],
         "properties": {
           "agentSlug": {
@@ -283,13 +352,6 @@
           "agentAuthToken": {
             "type": "string",
             "description": "Agent-wide token needed for authorizing to the agent openapi.",
-            "minLength": 64,
-            "maxLength": 128
-          },
-
-          "adminAuthToken": {
-            "type": "string",
-            "description": "Token needed for authorizing as admin to alter or remove the agent.",
             "minLength": 64,
             "maxLength": 128
           },
