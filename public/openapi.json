@@ -8,6 +8,8 @@
     "description": ""
   },
   "servers": [{ "url": "https://agent.actionschema.com" }],
+  "security": [{ "apiKey": [] }],
+
   "paths": {
     "/api/upsertToolAgent": {
       "post": {
@@ -241,15 +243,16 @@
       }
     }
   },
-  "security": [{}],
   "components": {
     "securitySchemes": {
       "apiKey": {
         "type": "http",
+        "bearerFormat": "Bearer",
         "scheme": "bearer",
-        "description": "Access token that needs to be provided to get access to any endpoint."
+        "description": "Admin Authtoken"
       }
     },
+
     "schemas": {
       "ToolAgent": {
         "type": "object",
