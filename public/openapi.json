@@ -87,9 +87,8 @@
 
     "/api/upsertToolAgent": {
       "post": {
-        "summary": "",
         "operationId": "upsertToolAgent",
-        "description": "Creates a new agent.",
+        "summary": "Creates a new agent",
         "requestBody": {
           "required": true,
           "content": {
@@ -259,7 +258,8 @@
         }
       ],
       "post": {
-        "summary": "Run a message in a thread of an assistant",
+        "summary": "Message an agent",
+        "description": "Run a message in a thread of an assistant",
         "operationId": "message",
         "requestBody": {
           "required": true,
@@ -293,7 +293,8 @@
       ],
 
       "post": {
-        "summary": "Signup as a user to this agent. Generates an authToken to which login credentials can be stored.",
+        "summary": "User signup",
+        "description": "Signup as a user to this agent. Generates an authToken to which login credentials can be stored.",
         "operationId": "userSignup",
         "responses": {
           "200": {
