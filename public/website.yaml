@@ -13,10 +13,10 @@ user.html:
   At the top there should be a form to create a new message and send it using `/message`. When sending this, immediately attach the sent message to messages, and wait for the fetch to respond and attach the resulting messages to messages as well. No need to reload `readAgentUserThread`.
 
 jsonschema.html:
-  make a form in html in which you can build up a JSON Schema of type object. use tailwindcdn to make it pretty.
+  make a form in which you can build up a JSON Schema of type object.
 
   if you select object for a property, it should embed the form again, recursively to select properties for that object.
 
   show the Generated JSON in realtime.
 
-  use tailwind to show the form and the generated JSON side by side
+  use basic html, css, and js with tailwind. use tailwind to show the form and the generated JSON side by side
