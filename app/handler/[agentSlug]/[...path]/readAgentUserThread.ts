@@ -22,6 +22,7 @@ export const readAgentUserThread = async (request: Request) => {
   const thread = (
     await client.migrateAgentUserThread("read", { rowIds: [threadId] })
   ).items?.[threadId];
+
   if (!thread) {
     return new Response("Thread not found", { status: 404 });
   }

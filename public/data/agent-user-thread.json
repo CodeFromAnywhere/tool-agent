@@ -1,7 +1,9 @@
 {
   "$schema": "https://raw.githubusercontent.com/CodeFromAnywhere/ActionSchema/main/schemas/action-schema.schema.json",
   "type": "object",
+  "required": ["messages", "agentSlug"],
   "properties": {
+    "agentSlug": { "type": "string" },
     "messages": {
       "type": "array",
       "items": {

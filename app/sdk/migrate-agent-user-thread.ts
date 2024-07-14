@@ -129,7 +129,8 @@ export interface components {
             message: string;
         };
         ModelItem: {
-            messages?: {
+            agentSlug: string;
+            messages: {
                 content: string | null | {
                     /** @enum {string} */
                     type: "image_url";

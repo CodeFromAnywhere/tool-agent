@@ -297,19 +297,20 @@ export const message: Endpoint<"message"> = async (context) => {
   // this should move to admin, right?
   const { instructions, model, openapiUrl } = agent;
 
-  // NB: if we have a thread with messages already, use that, otherwise, start with the system prompt
-  const threadMessages =
+  const agentUserThreadResult =
     aThreadId && !disableHistory
-      ? ((await client.migrateAgentUserThread("read", { rowIds: [aThreadId] }))
-          .items?.[
-          aThreadId
-          // almost good
-        ]?.messages as ChatCompletionMessageParam[])
+      ? await client.migrateAgentUserThread("read", { rowIds: [aThreadId] })
       : undefined;
 
-  const thread: ChatCompletionMessageParam[] = threadMessages || [
-    { role: "system", content: instructions },
-  ];
+  // NB: if we have a thread with messages already, use that, otherwise, start with the system prompt
+  const threadItem = aThreadId
+    ? agentUserThreadResult?.items?.[aThreadId]
+    : undefined;
+
+  const thread: ChatCompletionMessageParam[] =
+    (threadItem?.messages as ChatCompletionMessageParam[]) || [
+      { role: "system", content: instructions },
+    ];
   // NB: simply add the message to the thread. We now have our starting point.
   const threadWithRequest = thread.concat({
     content: await calculateContent(message, attachmentUrls),
@@ -493,7 +494,7 @@ export const message: Endpoint<"message"> = async (context) => {
       : undefined,
     client.migrateAgentUserThread("update", {
       id: finalThreadId,
-      partialItem: { messages: messages as any },
+      partialItem: { messages: messages as any, agentSlug },
     }),
   ]);
 
