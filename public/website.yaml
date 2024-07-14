@@ -1,4 +1,5 @@
-# yaml-language-server: $schema=https://openapi.vercel.sh/vercel.json
+# yaml-language-server: $schema=https://dui.actionschema.com/website.schema.json
+
 admin.html:
   operationIds:
     - listAgents
@@ -12,7 +13,7 @@ admin.html:
 
     On the left side of the page, there's a list of created agents (fetched using `/listAgents` endpoint)
 
-    - Every agent links to user.html?agentSlug={slug}&agentAuthToken={agentAuthToken}
+    - Every agent links to user.html?agentSlug={slug}&agentAuthToken={agentAuthToken}&instructions={instructions}
     - Every agent links to upsert.html?agentSlug={slug}
     - Every agent has a delete icon that will prompt 'are you sure' and deletes the agent using `/removeAgent`.
     - Every agent shows a button 'show details' that would render all details in the details modal
@@ -38,20 +39,37 @@ upsert.html:
 
     If localStorage:adminToken isn't present, ask for it using window.prompt and set it.
 
-user.html:
+message.html:
   operationIds:
     - readAgentUser
     - readAgentUserThread
     - message
   spec:
-    First, window.prompt the userAuthToken and set it to localstorage:userAuthToken
+    The website is written in pure HTML + CSS + JS and uses TailwindCSS for styles
 
-    Get info from url - `?agentSlug=xxxx&agentToken=xxxx&threadId=xxxx` to oauth with token (X_AGENT_AUTH_TOKEN) and Authorization bearer token (localStorage:userAuthToken) and fetch `readAgentUser`
+    On pageload...
+
+    - `window.prompt` the userAuthToken and set it to localstorage:userAuthToken if it wasn't there yet
+    - Get info from url - `?agentSlug=xxxx&agentAuthToken=xxxx&threadId=xxxx&instructions=xxx` to oauth with token (X_AGENT_AUTH_TOKEN) and Authorization bearer token (localStorage:userAuthToken) and fetch `readAgentUser`
 
     Show all threads in a menu on the left, each of them linking to ?threadId=xxxx
 
-    When clicking one, it should call `readAgentUserThread` for the threadId clicked. This results in the messages which then should be rendered at the screen.
+    - A threadId should render an ellipsis and wrap to fit on 1 line
+    - When clicking a thread, it should call `readAgentUserThread` for the threadId clicked. This results in the messages and agentSlug for that thread.
+    - At the top of the menu, theres a button 'Token' which re-opens the prompt
+    - If there's a localStorage:adminToken present, show a back-arrow going to admin.html
 
-    At the top there should be a form to create a new message and send it using `/message`. When sending this, immediately attach the sent message to messages, and wait for the fetch to respond and attach the resulting messages to messages as well. No need to reload `readAgentUserThread`.
+    In the main area of the screen all messages are rendered. This is a scrollable area.
 
-    The website is written in pure HTML + CSS + JS and uses TailwindCSS for styles
+    - `thread:{messages,agentSlug}` is either the result of `/readAgentUserThread` or it's defaulting the agentSlug coming from the query, and the messages array being 1 message that are the agent instructions.
+    - Align system and assistant messages on the left (70% width) and colored blue
+    - Align user messages on the right (70% width) and colored green
+
+    At the bottom there should be a form to create a new message and send it using `/message`.
+
+    - When sending this, immediately attach the sent message to messages
+    - Show a loading indicator during fetching which is a spinner
+    - Wait for the fetch to respond and attach the resulting messages to messages as well.
+    - No need to reload `readAgentUserThread`, but after a message has been sent in a new thread, ensure to reload `readAgentUser` and populate the threads.
+
+    Whenever the user comes back to the page, refresh all data endpoints.

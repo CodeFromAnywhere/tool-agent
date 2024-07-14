@@ -7,7 +7,7 @@
     "version": "1.0",
     "description": ""
   },
-  "servers": [{ "url": "https://agent.actionschema.com" }],
+  "servers": [{ "url": "http://localhost:3000" }],
   "security": [{ "apiKey": [] }],
 
   "paths": {
