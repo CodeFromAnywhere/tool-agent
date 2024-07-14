@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Schema Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-6">
+        <h1 class="text-2xl font-bold mb-4">JSON Schema Builder</h1>
+        <div id="schema-form"></div>
+        <button id="add-property" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Add Property
+        </button>
+        <div class="mt-8">
+            <h2 class="text-xl font-semibold mb-2">Generated JSON Schema:</h2>
+            <pre id="json-output" class="bg-gray-200 p-4 rounded-lg overflow-x-auto"></pre>
+        </div>
+    </div>
+
+    <script>
+        function createPropertyForm(parentElement, property = {}) {
+            const propertyDiv = document.createElement('div');
+            propertyDiv.className = 'mb-4 p-4 border rounded-lg';
+
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.placeholder = 'Property Name';
+            nameInput.value = property.name || '';
+            nameInput.className = 'mb-2 p-2 border rounded w-full';
+
+            const typeSelect = document.createElement('select');
+            typeSelect.className = 'mb-2 p-2 border rounded w-full';
+            ['string', 'number', 'boolean', 'object', 'array'].forEach(type => {
+                const option = document.createElement('option');
+                option.value = type;
+                option.textContent = type;
+                typeSelect.appendChild(option);
+            });
+            typeSelect.value = property.type || 'string';
+
+            const removeButton = document.createElement('button');
+            removeButton.textContent = 'Remove';
+            removeButton.className = 'bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded text-sm';
+            removeButton.onclick = () => propertyDiv.remove();
+
+            propertyDiv.appendChild(nameInput);
+            propertyDiv.appendChild(typeSelect);
+            propertyDiv.appendChild(removeButton);
+
+            const childPropertiesDiv = document.createElement('div');
+            childPropertiesDiv.className = 'ml-4';
+            propertyDiv.appendChild(childPropertiesDiv);
+
+            typeSelect.onchange = () => {
+                childPropertiesDiv.innerHTML = '';
+                if (typeSelect.value === 'object') {
+                    const addChildButton = document.createElement('button');
+                    addChildButton.textContent = 'Add Child Property';
+                    addChildButton.className = 'mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-sm';
+                    addChildButton.onclick = () => createPropertyForm(childPropertiesDiv);
+                    childPropertiesDiv.appendChild(addChildButton);
+                }
+            };
+
+            parentElement.appendChild(propertyDiv);
+        }
+
+        function generateSchema(element) {
+            const schema = {};
+            schema.type = 'object';
+            schema.properties = {};
+
+            element.querySelectorAll(':scope > div').forEach(propertyDiv => {
+                const nameInput = propertyDiv.querySelector('input');
+                const typeSelect = propertyDiv.querySelector('select');
+                const childPropertiesDiv = propertyDiv.querySelector('div');
+
+                if (nameInput.value) {
+                    schema.properties[nameInput.value] = { type: typeSelect.value };
+                    if (typeSelect.value === 'object') {
+                        schema.properties[nameInput.value] = generateSchema(childPropertiesDiv);
+                    }
+                }
+            });
+
+            return schema;
+        }
+
+        function updateOutput() {
+            const schema = generateSchema(document.getElementById('schema-form'));
+            document.getElementById('json-output').textContent = JSON.stringify(schema, null, 2);
+        }
+
+        document.getElementById('add-property').onclick = () => {
+            createPropertyForm(document.getElementById('schema-form'));
+            updateOutput();
+        };
+
+        document.getElementById('schema-form').addEventListener('input', updateOutput);
+        document.getElementById('schema-form').addEventListener('change', updateOutput);
+    </script>
+</body>
+
+</html>

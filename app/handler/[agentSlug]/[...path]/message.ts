@@ -485,7 +485,7 @@ export const message: Endpoint<"message"> = async (context) => {
   await Promise.all([
     !aThreadId
       ? client.migrateAgentUser("update", {
-          id: Authorization,
+          id: userAuthToken,
           partialItem: {
             threadIds: (userResult?.threadIds || []).concat([randomThreadId]),
           },

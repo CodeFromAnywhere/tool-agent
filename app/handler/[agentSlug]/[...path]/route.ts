@@ -358,7 +358,7 @@ const resolveOpenapiAppRequest = async (
 /** function creator to DRY ...*/
 const getHandler = (method: string) => (request: Request) =>
   resolveOpenapiAppRequest(request, method, {
-    //prefixParameterName: "agentSlug",
+    // prefixParameterName: "agentSlug",
     openapi: openapi as OpenapiDocument,
     functions: {
       listAgents,
