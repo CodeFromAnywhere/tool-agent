@@ -132,7 +132,8 @@ const resolveOpenapiAppRequest = async (
   const defaultHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Access-Control-Allow-Headers":
+      "Content-Type, Authorization, X_AGENT_AUTH_TOKEN",
   };
   if (method === "options") {
     // preflight stuff
@@ -140,7 +141,8 @@ const resolveOpenapiAppRequest = async (
       status: 200,
       headers: {
         ...defaultHeaders,
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Headers":
+          "Content-Type, Authorization, X_AGENT_AUTH_TOKEN",
       },
     });
   }

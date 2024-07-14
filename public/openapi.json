@@ -219,6 +219,54 @@
       }
     },
 
+    "/{agentSlug}/message": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "agentSlug",
+          "schema": { "type": "string" },
+          "required": true
+        },
+        {
+          "in": "header",
+          "name": "X_AGENT_AUTH_TOKEN",
+          "schema": { "type": "string" },
+          "required": true,
+          "description": "Agent-wide authorization token to prevent runaway token usage."
+        },
+        {
+          "in": "header",
+          "name": "Authorization",
+          "schema": { "type": "string", "minLength": 64 },
+          "required": true,
+          "description": "User-level authorization that can be retreived via the signup endpoint"
+        }
+      ],
+      "post": {
+        "summary": "Message an agent",
+        "description": "Run a message in a thread of an assistant",
+        "operationId": "message",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MessageContext" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OpenAPI",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MessageResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+
     "/{agentSlug}/oauth2Callback": {
       "get": {
         "summary": "Callback for oauth",
@@ -334,54 +382,6 @@
                     }
                   }
                 }
-              }
-            }
-          }
-        }
-      }
-    },
-
-    "/{agentSlug}/message": {
-      "parameters": [
-        {
-          "in": "path",
-          "name": "agentSlug",
-          "schema": { "type": "string" },
-          "required": true
-        },
-        {
-          "in": "header",
-          "name": "X_AGENT_AUTH_TOKEN",
-          "schema": { "type": "string" },
-          "required": true,
-          "description": "Agent-wide authorization token to prevent runaway token usage."
-        },
-        {
-          "in": "header",
-          "name": "Authorization",
-          "schema": { "type": "string", "minLength": 64 },
-          "required": true,
-          "description": "User-level authorization that can be retreived via the signup endpoint"
-        }
-      ],
-      "post": {
-        "summary": "Message an agent",
-        "description": "Run a message in a thread of an assistant",
-        "operationId": "message",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/MessageContext" }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OpenAPI",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/MessageResponse" }
               }
             }
           }

@@ -107,6 +107,33 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/{agentSlug}/message": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Agent-wide authorization token to prevent runaway token usage. */
+                X_AGENT_AUTH_TOKEN: string;
+                /** @description User-level authorization that can be retreived via the signup endpoint */
+                Authorization: string;
+            };
+            path: {
+                agentSlug: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Message an agent
+         * @description Run a message in a thread of an assistant
+         */
+        post: operations["message"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/{agentSlug}/oauth2Callback": {
         parameters: {
             query?: never;
@@ -157,33 +184,6 @@ export interface paths {
         put?: never;
         /** Get details for this agent */
         post: operations["renderAgentDetails"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/{agentSlug}/message": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Agent-wide authorization token to prevent runaway token usage. */
-                X_AGENT_AUTH_TOKEN: string;
-                /** @description User-level authorization that can be retreived via the signup endpoint */
-                Authorization: string;
-            };
-            path: {
-                agentSlug: string;
-            };
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Message an agent
-         * @description Run a message in a thread of an assistant
-         */
-        post: operations["message"];
         delete?: never;
         options?: never;
         head?: never;
@@ -647,6 +647,37 @@ export interface operations {
             };
         };
     };
+    message: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Agent-wide authorization token to prevent runaway token usage. */
+                X_AGENT_AUTH_TOKEN: string;
+                /** @description User-level authorization that can be retreived via the signup endpoint */
+                Authorization: string;
+            };
+            path: {
+                agentSlug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MessageContext"];
+            };
+        };
+        responses: {
+            /** @description OpenAPI */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MessageResponse"];
+                };
+            };
+        };
+    };
     oauth2Callback: {
         parameters: {
             query?: {
@@ -727,37 +758,6 @@ export interface operations {
             };
         };
     };
-    message: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Agent-wide authorization token to prevent runaway token usage. */
-                X_AGENT_AUTH_TOKEN: string;
-                /** @description User-level authorization that can be retreived via the signup endpoint */
-                Authorization: string;
-            };
-            path: {
-                agentSlug: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["MessageContext"];
-            };
-        };
-        responses: {
-            /** @description OpenAPI */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MessageResponse"];
-                };
-            };
-        };
-    };
     userSignup: {
         parameters: {
             query?: never;
@@ -817,6 +817,10 @@ export const operationUrlObject = {
     "method": "post",
     "path": "/api/readAgentUserThread"
   },
+  "message": {
+    "method": "post",
+    "path": "/{agentSlug}/message"
+  },
   "oauth2Callback": {
     "method": "get",
     "path": "/{agentSlug}/oauth2Callback"
@@ -828,10 +832,6 @@ export const operationUrlObject = {
   "renderAgentDetails": {
     "method": "post",
     "path": "/{agentSlug}/details"
-  },
-  "message": {
-    "method": "post",
-    "path": "/{agentSlug}/message"
   },
   "userSignup": {
     "method": "post",
