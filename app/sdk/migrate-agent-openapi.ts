@@ -135,7 +135,7 @@ export interface components {
             /** @description OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys */
             openaiSecretKey: string;
             /** @description Token needed for authorizing to the agent openapi. Useful to prevent people to use your LLM for free. */
-            agentAuthToken?: string;
+            agentAuthToken: string;
             /** @description Token needed for authorizing as admin to alter or remove the agent. */
             adminAuthToken?: string;
             /** @enum {string} */

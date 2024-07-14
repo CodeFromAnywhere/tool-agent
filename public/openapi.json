@@ -24,13 +24,11 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "agents": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "additionalProperties": false,
-                        "properties": { "agentSlug": { "type": "string" } },
-                        "required": ["agentSlug"]
+                    "items": {
+                      "type": "object",
+                      "properties": {},
+                      "additionalProperties": {
+                        "$ref": "#/components/schemas/ToolAgent"
                       }
                     }
                   }
@@ -104,6 +102,62 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UpsertToolAgentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/readAgentUser": {
+      "post": {
+        "summary": "Read Agent User",
+        "description": "Retrieves the agent user information based on the provided authorization token.",
+        "operationId": "readAgentUser",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "keys": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "appId": {
+                            "type": "string"
+                          },
+                          "openapiUrl": {
+                            "type": "string"
+                          },
+                          "secret": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["openapiUrl", "secret"]
+                      }
+                    },
+                    "threadIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
                 }
               }
             }

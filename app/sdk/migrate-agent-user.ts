@@ -135,6 +135,7 @@ export interface components {
                 openapiUrl: string;
                 secret: string;
             }[];
+            /** @description List of threads available, newest last */
             threadIds?: string[];
         };
         RemoveContext: {

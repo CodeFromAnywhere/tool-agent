@@ -2,7 +2,12 @@
   "$schema": "https://raw.githubusercontent.com/CodeFromAnywhere/ActionSchema/main/schemas/action-schema.schema.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["agentSlug", "instructions", "openaiSecretKey"],
+  "required": [
+    "agentSlug",
+    "instructions",
+    "openaiSecretKey",
+    "agentAuthToken"
+  ],
   "properties": {
     "agentSlug": {
       "type": "string",

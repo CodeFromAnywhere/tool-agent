@@ -19,6 +19,7 @@ import { removeAgent } from "./removeAgent";
 import { JSONSchema7 } from "json-schema";
 import { mergeObjectsArray, notEmpty, onlyUnique2 } from "from-anywhere";
 import { JSONSchemaType } from "ajv";
+import { readAgentUser } from "./readAgentUser";
 
 /** Retreives the right body from the request based on the openapi and operation */
 const getRequestOperationBody = async (
@@ -114,12 +115,19 @@ const resolveOpenapiAppRequest = async (
     prefixParameterName?: string;
 
     openapi: OpenapiDocument;
+    /** Typescript functions that get passed all context in a flat object */
     functions: {
       [functionName: string]: (jsonBody: any) => any | Promise<any>;
     };
+    /** Request/response endpoints that need to be used directly without validation */
+    endpoints: {
+      [functionName: string]: (
+        request: Request,
+      ) => Response | Promise<Response>;
+    };
   },
 ) => {
-  const { functions, openapi, prefixParameterName } = config;
+  const { functions, openapi, prefixParameterName, endpoints } = config;
   const defaultHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -222,6 +230,15 @@ const resolveOpenapiAppRequest = async (
     });
   }
 
+  const operationId =
+    operation.operationId || match.path.slice(1) + "=" + method;
+
+  const endpoint = endpoints[operationId];
+  if (!!endpoint) {
+    // pass Request/Response endpoints
+    return endpoint(request);
+  }
+
   const parameters = pathItem.parameters || operation?.parameters;
 
   const documentLocation = undefined;
@@ -309,9 +326,6 @@ const resolveOpenapiAppRequest = async (
     );
   }
 
-  const operationId =
-    operation.operationId || match.path.slice(1) + "=" + method;
-
   const fn = functions[operationId];
 
   if (!fn) {
@@ -369,6 +383,7 @@ const getHandler = (method: string) => (request: Request) =>
       renderAgentOpenapi,
       upsertToolAgent,
     },
+    endpoints: { readAgentUser },
   });
 
 export const GET = getHandler("get");

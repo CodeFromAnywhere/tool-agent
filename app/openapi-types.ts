@@ -42,7 +42,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Creates a new agent. */
+        /** Creates a new agent */
         post: operations["upsertToolAgent"];
         delete?: never;
         options?: never;
@@ -122,7 +122,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Run a message in a thread of an assistant */
+        /**
+         * Message an agent
+         * @description Run a message in a thread of an assistant
+         */
         post: operations["message"];
         delete?: never;
         options?: never;
@@ -141,7 +144,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Signup as a user to this agent. Generates an authToken to which login credentials can be stored. */
+        /**
+         * User signup
+         * @description Signup as a user to this agent. Generates an authToken to which login credentials can be stored.
+         */
         post: operations["userSignup"];
         delete?: never;
         options?: never;
@@ -418,9 +424,9 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        agents?: {
-                            agentSlug: string;
-                        }[];
+                        items?: {
+                            [key: string]: components["schemas"]["ToolAgent"] | undefined;
+                        };
                     };
                 };
             };
