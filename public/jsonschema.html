@@ -9,99 +9,119 @@
 </head>
 
 <body class="bg-gray-100 p-8">
-    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-6">
-        <h1 class="text-2xl font-bold mb-4">JSON Schema Builder</h1>
-        <div id="schema-form"></div>
-        <button id="add-property" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Add Property
-        </button>
-        <div class="mt-8">
-            <h2 class="text-xl font-semibold mb-2">Generated JSON Schema:</h2>
-            <pre id="json-output" class="bg-gray-200 p-4 rounded-lg overflow-x-auto"></pre>
+    <div class="container mx-auto">
+        <h1 class="text-3xl font-bold mb-6">JSON Schema Builder</h1>
+        <div class="flex space-x-4">
+            <div class="w-1/2 bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4">Schema Builder</h2>
+                <div id="schema-form">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">Root Object Name:</label>
+                        <input type="text" id="root-name"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            value="root">
+                    </div>
+                    <div id="properties-container"></div>
+                    <button id="add-property"
+                        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Add
+                        Property</button>
+                </div>
+            </div>
+            <div class="w-1/2 bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4">Generated JSON Schema</h2>
+                <pre id="json-output" class="bg-gray-100 p-4 rounded-lg overflow-auto max-h-[calc(100vh-200px)]"></pre>
+            </div>
         </div>
     </div>
 
     <script>
-        function createPropertyForm(parentElement, property = {}) {
+        function createPropertyForm(container, path = '') {
             const propertyDiv = document.createElement('div');
-            propertyDiv.className = 'mb-4 p-4 border rounded-lg';
+            propertyDiv.className = 'mb-4 p-4 border border-gray-200 rounded-lg';
+            propertyDiv.innerHTML = `
+                <div class="flex space-x-2 mb-2">
+                    <input type="text" placeholder="Property Name" class="property-name flex-grow rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    <select class="property-type rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <option value="string">String</option>
+                        <option value="number">Number</option>
+                        <option value="boolean">Boolean</option>
+                        <option value="object">Object</option>
+                        <option value="array">Array</option>
+                    </select>
+                </div>
+                <div class="nested-properties hidden"></div>
+                <button class="remove-property mt-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">Remove</button>
+            `;
 
-            const nameInput = document.createElement('input');
-            nameInput.type = 'text';
-            nameInput.placeholder = 'Property Name';
-            nameInput.value = property.name || '';
-            nameInput.className = 'mb-2 p-2 border rounded w-full';
+            const typeSelect = propertyDiv.querySelector('.property-type');
+            const nestedProperties = propertyDiv.querySelector('.nested-properties');
 
-            const typeSelect = document.createElement('select');
-            typeSelect.className = 'mb-2 p-2 border rounded w-full';
-            ['string', 'number', 'boolean', 'object', 'array'].forEach(type => {
-                const option = document.createElement('option');
-                option.value = type;
-                option.textContent = type;
-                typeSelect.appendChild(option);
-            });
-            typeSelect.value = property.type || 'string';
-
-            const removeButton = document.createElement('button');
-            removeButton.textContent = 'Remove';
-            removeButton.className = 'bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded text-sm';
-            removeButton.onclick = () => propertyDiv.remove();
-
-            propertyDiv.appendChild(nameInput);
-            propertyDiv.appendChild(typeSelect);
-            propertyDiv.appendChild(removeButton);
-
-            const childPropertiesDiv = document.createElement('div');
-            childPropertiesDiv.className = 'ml-4';
-            propertyDiv.appendChild(childPropertiesDiv);
-
-            typeSelect.onchange = () => {
-                childPropertiesDiv.innerHTML = '';
+            typeSelect.addEventListener('change', () => {
                 if (typeSelect.value === 'object') {
-                    const addChildButton = document.createElement('button');
-                    addChildButton.textContent = 'Add Child Property';
-                    addChildButton.className = 'mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-sm';
-                    addChildButton.onclick = () => createPropertyForm(childPropertiesDiv);
-                    childPropertiesDiv.appendChild(addChildButton);
+                    nestedProperties.innerHTML = '';
+                    nestedProperties.classList.remove('hidden');
+                    const addNestedPropertyBtn = document.createElement('button');
+                    addNestedPropertyBtn.textContent = 'Add Nested Property';
+                    addNestedPropertyBtn.className = 'mt-2 px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50';
+                    addNestedPropertyBtn.addEventListener('click', () => createPropertyForm(nestedProperties, path + '.'));
+                    nestedProperties.appendChild(addNestedPropertyBtn);
+                } else {
+                    nestedProperties.classList.add('hidden');
+                    nestedProperties.innerHTML = '';
                 }
-            };
+                updateJSON();
+            });
 
-            parentElement.appendChild(propertyDiv);
+            propertyDiv.querySelector('.remove-property').addEventListener('click', () => {
+                container.removeChild(propertyDiv);
+                updateJSON();
+            });
+
+            propertyDiv.querySelector('.property-name').addEventListener('input', updateJSON);
+
+            container.appendChild(propertyDiv);
+            updateJSON();
         }
 
-        function generateSchema(element) {
-            const schema = {};
-            schema.type = 'object';
-            schema.properties = {};
+        function updateJSON() {
+            const schema = {
+                type: 'object',
+                properties: {}
+            };
 
-            element.querySelectorAll(':scope > div').forEach(propertyDiv => {
-                const nameInput = propertyDiv.querySelector('input');
-                const typeSelect = propertyDiv.querySelector('select');
-                const childPropertiesDiv = propertyDiv.querySelector('div');
+            const rootName = document.getElementById('root-name').value || 'root';
+            schema.properties[rootName] = buildSchemaObject(document.getElementById('properties-container'));
 
-                if (nameInput.value) {
-                    schema.properties[nameInput.value] = { type: typeSelect.value };
-                    if (typeSelect.value === 'object') {
-                        schema.properties[nameInput.value] = generateSchema(childPropertiesDiv);
+            document.getElementById('json-output').textContent = JSON.stringify(schema, null, 2);
+        }
+
+        function buildSchemaObject(container) {
+            const obj = {
+                type: 'object',
+                properties: {}
+            };
+
+            container.querySelectorAll(':scope > div').forEach(propertyDiv => {
+                const name = propertyDiv.querySelector('.property-name').value;
+                const type = propertyDiv.querySelector('.property-type').value;
+
+                if (name) {
+                    if (type === 'object') {
+                        obj.properties[name] = buildSchemaObject(propertyDiv.querySelector('.nested-properties'));
+                    } else {
+                        obj.properties[name] = { type: type };
                     }
                 }
             });
 
-            return schema;
+            return obj;
         }
 
-        function updateOutput() {
-            const schema = generateSchema(document.getElementById('schema-form'));
-            document.getElementById('json-output').textContent = JSON.stringify(schema, null, 2);
-        }
+        document.getElementById('add-property').addEventListener('click', () => createPropertyForm(document.getElementById('properties-container')));
+        document.getElementById('root-name').addEventListener('input', updateJSON);
 
-        document.getElementById('add-property').onclick = () => {
-            createPropertyForm(document.getElementById('schema-form'));
-            updateOutput();
-        };
-
-        document.getElementById('schema-form').addEventListener('input', updateOutput);
-        document.getElementById('schema-form').addEventListener('change', updateOutput);
+        // Initialize with one property
+        createPropertyForm(document.getElementById('properties-container'));
     </script>
 </body>
 
