@@ -17,7 +17,10 @@ export const listAgents: Endpoint<"listAgents"> = async (context) => {
   const agentSlugs = readAgentAdminResult.items?.[adminAuthToken]?.agentSlugs;
 
   if (!agentSlugs) {
-    return { isSuccessful: false, message: readAgentAdminResult.message };
+    return {
+      isSuccessful: false,
+      message: `No agentslugs: ${readAgentAdminResult.message}`,
+    };
   }
 
   const agentOpenapiResult = await client.migrateAgentOpenapi("read", {
@@ -25,7 +28,10 @@ export const listAgents: Endpoint<"listAgents"> = async (context) => {
   });
 
   if (!agentOpenapiResult.items) {
-    return { isSuccessful: false, message: agentOpenapiResult.message };
+    return {
+      isSuccessful: false,
+      message: `No agents: ${agentOpenapiResult.message}`,
+    };
   }
 
   return {
