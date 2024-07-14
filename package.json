@@ -6,7 +6,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "types": "npx openapi-fetch-typescript ./openapi.json ./app/openapi-types.ts OpenApiTypes",
+    "types": "npx openapi-fetch-typescript ./public/openapi.json ./app/openapi-types.ts OpenApiTypes",
     "watch-types": "nodemon --watch public --exec \"npm run types\"",
     "next-dev": "next dev",
     "sdk": "npx actionschema-migrate@0.0.22",

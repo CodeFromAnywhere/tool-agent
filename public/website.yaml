@@ -10,8 +10,23 @@ admin.html: On this page the admin can see all their agents.
 
   On top of the page, there's a button 'new agent' that goes to upsert.html
 
+  Make a mobile-friendly layout using tailwind css
+
+upsert.html:
+  On this page the admin can create a new agent, or update an existing one.
+
+  Render the form to submit upsertToolAgent.
+
+  Check if ?agentSlug query parameter exists, and if so, fetch `listAgents` using adminToken in `localStorage:adminToken`. Find the agent there. If found, prefil the form.
+
+  Use tailwindcss and make the layout mobile friendly.
+
+  If localStorage:adminToken isn't present, ask for it using window.prompt and set it.
+
 user.html:
-  Get info from url - `?agentSlug=$&token=$&threadId=$` to oauth with token (X_AGENT_AUTH_TOKEN) and Authorization bearer token (given by user) and list all your threads (call `readAgentUser`).
+  Get info from url - `?agentSlug=xxxx&token=xxxx&threadId=xxxx` to oauth with token (X_AGENT_AUTH_TOKEN) and Authorization bearer token (given by user) and fetch `readAgentUser`
+
+  Show all threads in a menu on the left, each of them linking to ?threadId=xxxx
 
   When clicking one, it should call `readAgentUserThread` for the threadId clicked. This results in the messages which then should be rendered at the screen.
 

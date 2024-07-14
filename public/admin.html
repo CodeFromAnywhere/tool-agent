@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-8">Agent Admin Panel</h1>
+        <button id="newAgentBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8">
+            New Agent
+        </button>
+        <div id="agentList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </div>
+
+    <script>
+        const API_URL = 'https://agent.actionschema.com';
+        let adminToken = localStorage.getItem('adminToken');
+
+        async function getAdminToken() {
+            if (!adminToken) {
+                adminToken = window.prompt("Please enter your admin token:");
+                if (adminToken) {
+                    localStorage.setItem('adminToken', adminToken);
+                } else {
+                    alert("Admin token is required to proceed.");
+                    return null;
+                }
+            }
+            return adminToken;
+        }
+
+        async function listAgents() {
+            const token = await getAdminToken();
+            if (!token) return;
+
+            try {
+                const response = await axios.post(`${API_URL}/api/listAgents`, {}, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                displayAgents(response.data.items);
+            } catch (error) {
+                console.error('Error fetching agents:', error);
+                alert('Failed to fetch agents. Please check your admin token and try again.');
+            }
+        }
+
+        function displayAgents(agents) {
+            const agentList = document.getElementById('agentList');
+            agentList.innerHTML = '';
+
+            for (const [slug, agent] of Object.entries(agents)) {
+                const agentCard = document.createElement('div');
+                agentCard.className = 'bg-white shadow-md rounded-lg p-4';
+                agentCard.innerHTML = `
+                    <h2 class="text-xl font-semibold mb-2">${agent.agentSlug}</h2>
+                    <div class="flex justify-between items-center mt-4">
+                        <a href="user.html?agentSlug=${slug}" class="text-blue-500 hover:underline">User View</a>
+                        <a href="upsert.html?agentSlug=${slug}" class="text-green-500 hover:underline">Edit</a>
+                        <button onclick="deleteAgent('${slug}')" class="text-red-500 hover:text-red-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                agentList.appendChild(agentCard);
+            }
+        }
+
+        async function deleteAgent(slug) {
+            if (!confirm(`Are you sure you want to delete the agent "${slug}"?`)) return;
+
+            const token = await getAdminToken();
+            if (!token) return;
+
+            try {
+                const response = await axios.post(`${API_URL}/api/removeAgent`, {
+                    rowIds: [slug]
+                }, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.data.isSuccessful) {
+                    alert('Agent deleted successfully');
+                    listAgents();
+                } else {
+                    alert('Failed to delete agent');
+                }
+            } catch (error) {
+                console.error('Error deleting agent:', error);
+                alert('Failed to delete agent. Please try again.');
+            }
+        }
+
+        document.getElementById('newAgentBtn').addEventListener('click', () => {
+            window.location.href = 'upsert.html';
+        });
+
+        listAgents();
+    </script>
+</body>
+
+</html>

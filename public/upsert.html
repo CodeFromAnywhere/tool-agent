@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upsert Agent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-8">Upsert Agent</h1>
+        <form id="upsertForm" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="agentSlug">
+                    Agent Slug
+                </label>
+                <input
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="agentSlug" type="text" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="instructions">
+                    Instructions
+                </label>
+                <textarea
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="instructions" required></textarea>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="openaiSecretKey">
+                    OpenAI Secret Key
+                </label>
+                <input
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="openaiSecretKey" type="password" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="agentAuthToken">
+                    Agent Auth Token
+                </label>
+                <input
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="agentAuthToken" type="password" required minlength="64" maxlength="128">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="model">
+                    Model
+                </label>
+                <select
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="model">
+                    <option value="gpt-4o">gpt-4o</option>
+                    <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                    <option value="gpt-3.5-turbo-16k">gpt-3.5-turbo-16k</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="openapiUrl">
+                    OpenAPI URL
+                </label>
+                <input
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="openapiUrl" type="url">
+            </div>
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="openapiAuthToken">
+                    OpenAPI Auth Token
+                </label>
+                <input
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="openapiAuthToken" type="password">
+            </div>
+            <div class="flex items-center justify-between">
+                <button
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    type="submit">
+                    Upsert Agent
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const API_URL = 'https://agent.actionschema.com';
+
+        function getAdminToken() {
+            let token = localStorage.getItem('adminToken');
+            if (!token) {
+                token = window.prompt('Please enter your admin token:');
+                if (token) {
+                    localStorage.setItem('adminToken', token);
+                } else {
+                    alert('Admin token is required to proceed.');
+                    return null;
+                }
+            }
+            return token;
+        }
+
+        async function fetchAgentData(agentSlug) {
+            const adminToken = getAdminToken();
+            if (!adminToken) return;
+
+            try {
+                const response = await fetch(`${API_URL}/api/listAgents`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch agents');
+                }
+
+                const data = await response.json();
+                return data.items[agentSlug];
+            } catch (error) {
+                console.error('Error fetching agent data:', error);
+                alert('Failed to fetch agent data. Please check your admin token and try again.');
+            }
+        }
+
+        function populateForm(agent) {
+            document.getElementById('agentSlug').value = agent.agentSlug;
+            document.getElementById('instructions').value = agent.instructions;
+            document.getElementById('openaiSecretKey').value = agent.openaiSecretKey;
+            document.getElementById('agentAuthToken').value = agent.agentAuthToken;
+            document.getElementById('model').value = agent.model || '';
+            document.getElementById('openapiUrl').value = agent.openapiUrl || '';
+            document.getElementById('openapiAuthToken').value = agent.openapiAuthToken || '';
+        }
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            const adminToken = getAdminToken();
+            if (!adminToken) return;
+
+            const formData = {
+                agentSlug: document.getElementById('agentSlug').value,
+                instructions: document.getElementById('instructions').value,
+                openaiSecretKey: document.getElementById('openaiSecretKey').value,
+                agentAuthToken: document.getElementById('agentAuthToken').value,
+                model: document.getElementById('model').value,
+                openapiUrl: document.getElementById('openapiUrl').value,
+                openapiAuthToken: document.getElementById('openapiAuthToken').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/api/upsertToolAgent`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${adminToken}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to upsert agent');
+                }
+
+                const result = await response.json();
+                alert(result.message);
+            } catch (error) {
+                console.error('Error upserting agent:', error);
+                alert('Failed to upsert agent. Please try again.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const agentSlug = urlParams.get('agentSlug');
+
+            if (agentSlug) {
+                const agentData = await fetchAgentData(agentSlug);
+                if (agentData) {
+                    populateForm(agentData);
+                }
+            }
+
+            document.getElementById('upsertForm').addEventListener('submit', handleSubmit);
+        });
+    </script>
+</body>
+
+</html>
