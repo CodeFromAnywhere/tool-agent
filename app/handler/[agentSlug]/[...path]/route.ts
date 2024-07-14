@@ -20,6 +20,7 @@ import { JSONSchema7 } from "json-schema";
 import { mergeObjectsArray, notEmpty, onlyUnique2 } from "from-anywhere";
 import { JSONSchemaType } from "ajv";
 import { readAgentUser } from "./readAgentUser";
+import { readAgentUserThread } from "./readAgentUserThread";
 
 /** Retreives the right body from the request based on the openapi and operation */
 const getRequestOperationBody = async (
@@ -383,7 +384,7 @@ const getHandler = (method: string) => (request: Request) =>
       renderAgentOpenapi,
       upsertToolAgent,
     },
-    endpoints: { readAgentUser },
+    endpoints: { readAgentUser, readAgentUserThread },
   });
 
 export const GET = getHandler("get");

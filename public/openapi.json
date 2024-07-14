@@ -184,6 +184,40 @@
         }
       }
     },
+    "/api/readAgentUserThread": {
+      "post": {
+        "summary": "Read Agent User Thread",
+        "description": "Retrieves the thread information based on the provided authorization token and thread ID.",
+        "operationId": "readAgentUserThread",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "messages": { "$ref": "#/components/schemas/MessagesArray" }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": { "text/plain": { "schema": { "type": "string" } } }
+          },
+          "404": {
+            "description": "Not found",
+            "content": { "text/plain": { "schema": { "type": "string" } } }
+          },
+          "422": {
+            "description": "Invalid parameters",
+            "content": { "text/plain": { "schema": { "type": "string" } } }
+          }
+        }
+      }
+    },
 
     "/{agentSlug}/oauth2Callback": {
       "get": {
@@ -490,6 +524,18 @@
         "required": ["message"]
       },
 
+      "MessagesArray": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "content": { "type": "string" },
+            "role": { "type": "string" },
+            "function_call": { "type": "object" },
+            "tool_calls": { "type": "array" }
+          }
+        }
+      },
       "MessageResponse": {
         "type": "object",
         "properties": {
@@ -498,16 +544,7 @@
           },
 
           "messages": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "content": { "type": "string" },
-                "role": { "type": "string" },
-                "function_call": { "type": "object" },
-                "tool_calls": { "type": "array" }
-              }
-            }
+            "$ref": "#/components/schemas/MessagesArray"
           },
 
           "threadId": {

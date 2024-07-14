@@ -87,6 +87,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/readAgentUserThread": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Read Agent User Thread
+         * @description Retrieves the thread information based on the provided authorization token and thread ID.
+         */
+        post: operations["readAgentUserThread"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/{agentSlug}/oauth2Callback": {
         parameters: {
             query?: never;
@@ -227,14 +247,15 @@ export interface components {
             /** @description Urls to files. Not all models support all file types. */
             attachmentUrls?: string[];
         };
+        MessagesArray: {
+            content?: string;
+            role?: string;
+            function_call?: Record<string, never>;
+            tool_calls?: unknown[];
+        }[];
         MessageResponse: {
             isSuccessful: boolean;
-            messages?: {
-                content?: string;
-                role?: string;
-                function_call?: Record<string, never>;
-                tool_calls?: unknown[];
-            }[];
+            messages?: components["schemas"]["MessagesArray"];
             /** @description threadId to keep talking in the same thread */
             threadId?: string;
             /** @description In case you didn't sign up before, this is now your Authorization token. Can be used in conjunction with the threadId */
@@ -577,6 +598,55 @@ export interface operations {
             };
         };
     };
+    readAgentUserThread: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        messages?: components["schemas"]["MessagesArray"];
+                    };
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/plain": string;
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/plain": string;
+                };
+            };
+            /** @description Invalid parameters */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/plain": string;
+                };
+            };
+        };
+    };
     oauth2Callback: {
         parameters: {
             query?: {
@@ -719,6 +789,7 @@ export type ToolAgent = components["schemas"]["ToolAgent"]
 export type UrlSlug = components["schemas"]["UrlSlug"]
 export type UpsertToolAgentResponse = components["schemas"]["UpsertToolAgentResponse"]
 export type MessageContext = components["schemas"]["MessageContext"]
+export type MessagesArray = components["schemas"]["MessagesArray"]
 export type MessageResponse = components["schemas"]["MessageResponse"]
   
 export const operationUrlObject = {
@@ -741,6 +812,10 @@ export const operationUrlObject = {
   "readAgentUser": {
     "method": "post",
     "path": "/api/readAgentUser"
+  },
+  "readAgentUserThread": {
+    "method": "post",
+    "path": "/api/readAgentUserThread"
   },
   "oauth2Callback": {
     "method": "get",
