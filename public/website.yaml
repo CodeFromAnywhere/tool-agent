@@ -1,9 +1,14 @@
 admin.html: On this page the admin can see all their agents.
 
-  First use window.prompt to get admin token prefilled from localStorage, that is saved to localStorage after. Then browse created agents using `/listAgents` endpoint.
+  First use window.prompt to get admin token prefilled from localStorage, that is saved to localStorage after (named 'adminToken').
 
-  - Every agent links to user.html?agentSlug={slug}.
-  - Every agent has a delete icon that will prompt 'are you sure' and deletes the agent using /removeAgent.
+  Then browse created agents using `/listAgents` endpoint.
+
+  - Every agent links to user.html?agentSlug={slug}
+  - Every agent links to upsert.html?agentSlug={slug}
+  - Every agent has a delete icon that will prompt 'are you sure' and deletes the agent using `/removeAgent`.
+
+  On top of the page, there's a button 'new agent' that goes to upsert.html
 
 user.html:
   Get info from url - `?agentSlug=$&token=$&threadId=$` to oauth with token (X_AGENT_AUTH_TOKEN) and Authorization bearer token (given by user) and list all your threads (call `readAgentUser`).

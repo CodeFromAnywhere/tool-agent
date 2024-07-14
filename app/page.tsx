@@ -1,5 +1,4 @@
 "use client";
-import openapi from "../public/openapi.json";
 import { Suspense } from "react";
 import { StoreProvider } from "./store";
 import { Overview } from "./Overview";

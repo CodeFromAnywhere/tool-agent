@@ -1,4 +1,21 @@
 export interface paths {
+    "/openapi.json": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get openapi */
+        get: operations["getOpenapi"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/listAgents": {
         parameters: {
             query?: never;
@@ -44,6 +61,26 @@ export interface paths {
         put?: never;
         /** Creates a new agent */
         post: operations["upsertToolAgent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/readAgentUser": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Read Agent User
+         * @description Retrieves the agent user information based on the provided authorization token.
+         */
+        post: operations["readAgentUser"];
         delete?: never;
         options?: never;
         head?: never;
@@ -408,6 +445,26 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    getOpenapi: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OpenAPI */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["openapi.schema"];
+                };
+            };
+        };
+    };
     listAgents: {
         parameters: {
             query?: never;
@@ -480,6 +537,42 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UpsertToolAgentResponse"];
+                };
+            };
+        };
+    };
+    readAgentUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        keys?: {
+                            appId?: string;
+                            openapiUrl: string;
+                            secret: string;
+                        }[];
+                        threadIds?: string[];
+                    };
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/plain": string;
                 };
             };
         };
@@ -629,6 +722,10 @@ export type MessageContext = components["schemas"]["MessageContext"]
 export type MessageResponse = components["schemas"]["MessageResponse"]
   
 export const operationUrlObject = {
+  "getOpenapi": {
+    "method": "get",
+    "path": "/openapi.json"
+  },
   "listAgents": {
     "method": "post",
     "path": "/api/listAgents"
@@ -640,6 +737,10 @@ export const operationUrlObject = {
   "upsertToolAgent": {
     "method": "post",
     "path": "/api/upsertToolAgent"
+  },
+  "readAgentUser": {
+    "method": "post",
+    "path": "/api/readAgentUser"
   },
   "oauth2Callback": {
     "method": "get",

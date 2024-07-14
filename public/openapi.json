@@ -11,6 +11,25 @@
   "security": [{ "apiKey": [] }],
 
   "paths": {
+    "/openapi.json": {
+      "get": {
+        "summary": "Get openapi",
+        "operationId": "getOpenapi",
+
+        "responses": {
+          "200": {
+            "description": "OpenAPI",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "https://raw.githubusercontent.com/CodeFromAnywhere/ActionSchema/main/schemas/openapi.schema.json"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/listAgents": {
       "post": {
         "summary": "Lists your agents",

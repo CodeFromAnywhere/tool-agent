@@ -2,7 +2,6 @@
 
 import { OpenapiForms } from "openapi-for-humans-react";
 import { useStore } from "../../store";
-import openapi from "../../../public/openapi.json";
 import { useRouter } from "next/navigation";
 export default function AgentPage(props: { params: { agentSlug: string } }) {
   const [agents, setDatabases] = useStore("agents");
