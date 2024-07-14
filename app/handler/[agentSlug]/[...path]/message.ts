@@ -7,8 +7,9 @@ import {
   getOperationRequestInit,
   getOperations,
   ParsedOperation,
+  OpenapiSchemaObject,
 } from "openapi-util";
-import { resolveSchemaRecursive } from "openapi-util/build/resolveSchemaRecursive";
+import { resolveSchemaRecursive } from "openapi-util";
 import { O, generateRandomString, notEmpty, tryParseJson } from "from-anywhere";
 
 // TODO: abstract away openai
@@ -81,6 +82,8 @@ export const getOperationAvailable = (context: {
   //tbd via generated types of schemas
   adminOauthDetails: any[];
   userKeys: any[];
+  /** sometimes we already have the token */
+  openapiAuthToken?: string;
 }): {
   isAvailable: boolean;
   message: string;
@@ -88,8 +91,14 @@ export const getOperationAvailable = (context: {
   userSecret?: string;
   operation?: ParsedOperation;
 } => {
-  const { openapi, operationId, operations, adminOauthDetails, userKeys } =
-    context;
+  const {
+    openapi,
+    operationId,
+    operations,
+    adminOauthDetails,
+    userKeys,
+    openapiAuthToken,
+  } = context;
 
   const operation = operations?.find((x) => x.id === operationId);
 
@@ -98,6 +107,15 @@ export const getOperationAvailable = (context: {
     return {
       isAvailable: false,
       message: "Message llm result: operation not found",
+    };
+  }
+
+  if (openapiAuthToken) {
+    return {
+      operation,
+      userSecret: openapiAuthToken,
+      isAvailable: true,
+      message: "Authorized directly",
     };
   }
 
@@ -173,15 +191,13 @@ export const getOperationAvailable = (context: {
  */
 const parseTool = (
   tool: OpenAI.Chat.Completions.ChatCompletionMessageToolCall,
-  operations: ParsedOperation[] | undefined,
+  operations: ParsedOperation[],
   /** Should be dereferenced */
   openapi: OpenapiDocument | undefined,
+  openapiAuthToken?: string,
 ) => {
   const operationId = tool.function.name;
 
-  if (!operations) {
-    return;
-  }
   const { isAvailable, message, loginUrl, userSecret, operation } =
     getOperationAvailable({
       adminOauthDetails: [],
@@ -189,19 +205,16 @@ const parseTool = (
       openapi,
       operationId,
       operations,
+      openapiAuthToken,
     });
 
-  if (!operation) {
-    return;
-  }
-
-  const { method, path } = operation;
-
-  const formContext = getFormContextFromOpenapi({
-    method,
-    path,
-    openapi,
-  });
+  const formContext = operation
+    ? getFormContextFromOpenapi({
+        method: operation.method,
+        path: operation.path,
+        openapi,
+      })
+    : undefined;
 
   // if we do, tool execution is ok
 
@@ -247,10 +260,10 @@ export const message: Endpoint<"message"> = async (context) => {
     };
   }
 
-  const validAuthorization =
+  const isInvalidAuthorization =
     !userAuthToken || userAuthToken.length < 64 || userAuthToken.length > 128;
 
-  const userResult = validAuthorization
+  const userResult = !isInvalidAuthorization
     ? (await client.migrateAgentUser("read", { rowIds: [userAuthToken] }))
         .items?.[userAuthToken]
     : undefined;
@@ -259,9 +272,10 @@ export const message: Endpoint<"message"> = async (context) => {
 
   if (newAuthToken) {
     // sign up
+    console.log("sign up");
     await client.migrateAgentUser("update", {
       id: newAuthToken,
-      partialItem: {},
+      partialItem: { threadIds: [], keys: [] },
     });
   }
 
@@ -284,9 +298,7 @@ export const message: Endpoint<"message"> = async (context) => {
     };
   }
 
-  const firstThreadId = userResult?.threadIds?.[0];
-
-  const aThreadId = threadId || firstThreadId;
+  const aThreadId = threadId;
 
   // user tool auth info
   const userDetails = userResult?.keys;
@@ -295,7 +307,7 @@ export const message: Endpoint<"message"> = async (context) => {
   const { agentSlugs } = adminResult;
 
   // this should move to admin, right?
-  const { instructions, model, openapiUrl } = agent;
+  const { instructions, model, openapiUrl, openapiAuthToken } = agent;
 
   const agentUserThreadResult =
     aThreadId && !disableHistory
@@ -331,23 +343,57 @@ export const message: Endpoint<"message"> = async (context) => {
 
   const operations = dereferencedOpenapi
     ? await getOperations(dereferencedOpenapi)
-    : undefined;
+    : [];
+
+  if (!operations) {
+    return { isSuccessful: false, message: "Couldn't find operations" };
+  }
 
   const tools = operations
-    ?.map(
-      (item) =>
-        ({
-          type: "function",
-          function: {
-            name: item.id,
-            description: item.operation.description,
-            parameters: item.resolvedRequestBodySchema,
-          },
-        }) as ChatCompletionTool,
-    )
+    .map((item) => {
+      const parameterProperties = item.parameters?.reduce(
+        (previous, current) => ({
+          ...previous,
+          [current.name]: current.schema as OpenapiSchemaObject | undefined,
+        }),
+        {} as { [key: string]: OpenapiSchemaObject | undefined },
+      );
+
+      const parameterSchema = parameterProperties
+        ? { type: "object", properties: parameterProperties }
+        : undefined;
+
+      // NB: Merge schemas if they are both objects
+      // this may not be sufficient for every api, incase it requires non-objects as input.
+      const fullSchema =
+        parameterSchema &&
+        item.resolvedRequestBodySchema &&
+        item.resolvedRequestBodySchema.type === "object"
+          ? {
+              ...item.resolvedRequestBodySchema,
+              properties: {
+                ...(item.resolvedRequestBodySchema.properties || {}),
+                ...parameterSchema.properties,
+              },
+            }
+          : item.resolvedRequestBodySchema || parameterSchema;
+
+      return {
+        type: "function",
+        function: {
+          name: item.id,
+          description: item.operation.description,
+
+          parameters: fullSchema,
+        },
+      } as ChatCompletionTool;
+    })
     .filter(notEmpty);
 
-  let messages: ChatCompletionMessageParam[] = threadWithRequest;
+  console.dir({ tools }, { depth: 599 });
+  let messages: ChatCompletionMessageParam[] = [...threadWithRequest];
+
+  //console.log({ messages });
 
   const completion = await chatCompletionEndpoint({
     tools,
@@ -357,6 +403,8 @@ export const message: Endpoint<"message"> = async (context) => {
   });
 
   let completionMessage = completion.choices[0]?.message;
+
+  // console.log({ completionMessage });
 
   if (!completionMessage) {
     return { isSuccessful: false, message: "No response" };
@@ -374,31 +422,48 @@ export const message: Endpoint<"message"> = async (context) => {
 
   if (completionMessage.tool_calls) {
     while (completionMessage.tool_calls) {
-      // console.log("TOOLCALL REQ:", completionMessage.tool_calls);
-
       const parsedTools = completionMessage.tool_calls
-        .map(
-          // TODO: break this up into preparation + auth-step, and execution.
-          (tool) => parseTool(tool, operations, dereferencedOpenapi),
+        .map((tool) =>
+          parseTool(tool, operations, dereferencedOpenapi, openapiAuthToken),
         )
         .filter(notEmpty);
+      // console.log("TOOLCALL REQ:", completionMessage.tool_calls, {
+      //   parsedTools,
+      // });
 
       const unavailableTools = parsedTools.filter((x) => !x.isAvailable);
 
       if (unavailableTools.length > 0) {
         // one or more tools aren't available. Let's get login link(s).
 
-        completionMessage = {
-          role: "assistant",
-          content: `You don't have access to all required tools. Please login. (URL COMING SOON)`,
-        };
+        const unavailableMessages = [
+          ...completionMessage.tool_calls.map((tool) => ({
+            tool_call_id: tool.id,
+            role: "tool" as "tool",
+            content: "{}",
+          })),
+          {
+            role: "assistant" as "assistant",
+            content: `You don't have access to all required tools. Please login. (URL COMING SOON)`,
+          },
+        ];
+
+        // console.log("Unavailable tools", {
+        //   unavailableTools,
+        //   unavailableMessages,
+        // });
+
+        messages = messages.concat(unavailableMessages);
         // 'break' with a new completionMessage without tool_calls will force the while loop to stop.
         break;
       }
 
       // By now, this should be all tools; they should all be available at this point.
       const availableTools = parsedTools.filter((x) => x.isAvailable);
-
+      // console.log({
+      //   toolcallsN: completionMessage.tool_calls.length,
+      //   parsedToolsN: parsedTools.length,
+      // });
       const toolOutputs = (
         await Promise.all(
           availableTools.map(async (item) => {
@@ -413,10 +478,18 @@ export const message: Endpoint<"message"> = async (context) => {
             } = item;
             //url, fetchRequestInit, bodyData
 
+            if (!operation || !formContext) {
+              console.log("available tool without operation or formContext", {
+                tool,
+                isAvailable,
+                operation,
+                formContext,
+              });
+              return;
+            }
             const bodyData = tryParseJson<O>(tool.function.arguments);
 
             const data = {
-              // TODO: to be found in user creds
               httpBearerToken: userSecret,
               ...bodyData,
             };
@@ -426,6 +499,7 @@ export const message: Endpoint<"message"> = async (context) => {
 
             if (!servers || !servers[0]) {
               // must have server
+              console.log("no sever for ", tool);
               return;
             }
             const { fetchRequestInit, url } = getOperationRequestInit({
@@ -437,6 +511,7 @@ export const message: Endpoint<"message"> = async (context) => {
               securitySchemes,
             });
 
+            console.log("CALLING", { url, fetchRequestInit });
             const response = await fetch(url!, fetchRequestInit)
               .then(async (response) => {
                 const text = await response.text();
@@ -461,8 +536,8 @@ export const message: Endpoint<"message"> = async (context) => {
 
       messages = messages.concat(toolOutputs);
 
-      console.log("Messages with tool outputs", { messages });
-
+      // console.log({ toolOutputs }, "Messages with tool outputs");
+      //console.dir({ messages }, { depth: 5 });
       const completion = await chatCompletionEndpoint({
         tools,
         messages,
@@ -483,11 +558,12 @@ export const message: Endpoint<"message"> = async (context) => {
   const finalThreadId = aThreadId || randomThreadId;
 
   // TODO: can be done in a 'waitUntil'
-  await Promise.all([
+  const promises = await Promise.all([
     !aThreadId
       ? client.migrateAgentUser("update", {
           id: userAuthToken,
           partialItem: {
+            // add thread
             threadIds: (userResult?.threadIds || []).concat([randomThreadId]),
           },
         })
@@ -498,12 +574,21 @@ export const message: Endpoint<"message"> = async (context) => {
     }),
   ]);
 
-  return {
+  //console.log({ promises });
+
+  const responseMessages = messages.slice(threadWithRequest.length) as any;
+
+  console.dir({ responseMessages }, { depth: 5 });
+  const response = {
     isSuccessful: true,
-    message: "Responded",
     threadId: finalThreadId,
-    newAuthToken,
     // NB: return only the responses
-    messages: messages.slice(threadWithRequest.length) as any,
+    messages: responseMessages,
   };
+
+  if (newAuthToken) {
+    (response as any).newAuthToken = newAuthToken;
+  }
+
+  return response;
 };

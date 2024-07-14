@@ -60,7 +60,7 @@
                 agentCard.innerHTML = `
                     <h2 class="text-xl font-semibold mb-2">${agent.agentSlug}</h2>
                     <div class="flex justify-between items-center mt-4">
-                        <a href="message.html?agentSlug=${slug}&agentToken=${agent.agentAuthToken}&instructions=${encodeURIComponent(agent.instructions)}" class="text-blue-500 hover:underline">User View</a>
+                        <a href="message.html?agentSlug=${slug}&agentAuthToken=${agent.agentAuthToken}&instructions=${encodeURIComponent(agent.instructions)}" class="text-blue-500 hover:underline">User View</a>
                         <a href="upsert.html?agentSlug=${slug}" class="text-green-500 hover:underline">Edit</a>
                         <button onclick="deleteAgent('${slug}')" class="text-red-500 hover:text-red-700">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

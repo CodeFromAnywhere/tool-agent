@@ -7,7 +7,6 @@ import {
   resolveReferenceBrowser,
   tryValidateSchema,
 } from "openapi-util";
-import { resolveReferenceOrContinue } from "openapi-util/build/node/resolveReferenceOrContinue";
 import openapi from "../../../../public/openapi.json";
 import { message } from "./message";
 import { userSignup } from "./userSignup";
@@ -21,6 +20,7 @@ import { mergeObjectsArray, notEmpty, onlyUnique2 } from "from-anywhere";
 import { JSONSchemaType } from "ajv";
 import { readAgentUser } from "./readAgentUser";
 import { readAgentUserThread } from "./readAgentUserThread";
+import { resolveReferenceOrContinue } from "@/util/resolveReferenceOrContinue";
 
 /** Retreives the right body from the request based on the openapi and operation */
 const getRequestOperationBody = async (

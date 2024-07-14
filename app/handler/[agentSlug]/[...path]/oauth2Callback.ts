@@ -14,7 +14,7 @@ import { Endpoint } from "@/client";
 import * as client from "@/sdk/client";
 import { SecuritySchemeObject } from "openapi-typescript";
 import { OpenapiDocument } from "openapi-util";
-import { resolveSchemaRecursive } from "openapi-util/build/resolveSchemaRecursive";
+import { resolveSchemaRecursive } from "openapi-util";
 
 export const json = (data: any) => {
   return new Response(JSON.stringify(data), {

@@ -120,3 +120,25 @@ Almost done with oauth2-based tool use. The whole thing will be a lot more compl
 ✅ Create a `message.html` page that calls `/userSignup` for an agent with an arbitrary token and sets it to localStorage. Ensure `Authorization` is provided from `localStorage` and the html can call `message` with a good loading indicator.
 
 🙃 I have been stuck now trying to make the `message` endpoint work for almost an hour. As it's almost 1AM ill call it a day. The problem is that multiple things seem to be unstable and badly logged. I don't know anything as I haven't properly tested agent creation after i changed loads in it. Next step.... Make the agent message api work. ✅ Ok finally just before i wanna quit, i did a step back, and found out that i don't have the `.env` variables set for agent-openapi. DAMN! so dumb. but it still doesn't work.
+
+# Agent OpenAPI Listing and UX (july 14th, 2024)
+
+- ✅ Add security to `openapi.json` just like crud-openapi and add `reference.html`
+- ✅ Add listAgents endpoint which `/read`s that (proxying it)
+- ✅ Add removeAgent endpoint which just forwards to `/remove`
+- ✅ Figure out where we put the collection of agents of an admin
+- ✅ Deploy
+- ✅ Test admin in `reference.html` (create, list, remove) **fixed env**
+- ✅ Fix crud-openapi `/remove` endpoint: Invalid Input\n\n#/required: must have required property 'databaseSlug'"
+- ✅ With `listAgents` also respond with agent details such as the agentAuthToken
+- ✅ Make endpoint `readAgentUser` that simply proxies to `https://data.actionschema.com/migrate-agent-user/read` but in the openapi use the authorization
+- ✅ Made descriptions in `website.yaml`
+- ✅ Add `agentSlug` to thread model
+- ✅ Created `writeEndpoint` via interface
+
+# `message.html` bugs (july 14th, 2024)
+
+- ✅ `400 An assistant message with 'tool_calls' must be followed by tool messages responding to each 'tool_call_id'. The following tool_call_ids did not have response messages: call_7ZwnnpQH45T0d28LUtnFap2D`
+- ✅ 'agentUser/read' takes forever. why????
+- ✅ Fix message endpoint by testing it from the interface, fixing the 500s
+- ✅ Make whole thing work from localhost so its easy to test

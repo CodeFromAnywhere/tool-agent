@@ -3,7 +3,7 @@ import { O, removeOptionalKeysFromObjectStrings } from "from-anywhere";
 import { OpenapiSchemaObject } from "from-anywhere/types";
 import { JSONSchema7 } from "json-schema";
 import { SchemaObject } from "openapi-typescript";
-import { resolveSchemaRecursive } from "openapi-util/build/resolveSchemaRecursive";
+import { resolveSchemaRecursive } from "openapi-util";
 import openapi from "../../../../public/openapi.json";
 import { OpenapiDocument } from "openapi-util";
 

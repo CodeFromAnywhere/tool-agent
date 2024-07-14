@@ -7,8 +7,12 @@ export const readAgentUser = async (request: Request) => {
   if (!userAuth) {
     return new Response("No Authorization token provided", { status: 403 });
   }
-  const item = (await client.migrateAgentUser("read", { rowIds: [userAuth] }))
-    .items?.[userAuth];
+
+  const agentUserResponse = await client.migrateAgentUser("read", {
+    rowIds: [userAuth],
+  });
+  const item = agentUserResponse.items?.[userAuth];
+
   if (!item) {
     return new Response("User not found", { status: 403 });
   }

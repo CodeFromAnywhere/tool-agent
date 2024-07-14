@@ -1,5 +1,3 @@
-
-
 export const createClient = <
   operations extends {
     [key: string]: {
@@ -36,9 +34,8 @@ export const createClient = <
     : never;
 
   // Typescript magic from: https://stackoverflow.com/questions/63542526/merge-discriminated-union-of-object-types-in-typescript
-  type MergeIntersection<U> = UnionToIntersection<U> extends infer O
-    ? { [K in keyof O]: O[K] }
-    : never;
+  type MergeIntersection<U> =
+    UnionToIntersection<U> extends infer O ? { [K in keyof O]: O[K] } : never;
 
   type MergeParameters<P> = MergeIntersection<Extract<P, {}>>;
 
@@ -128,6 +125,8 @@ export const createClient = <
         })
         .catch((error) => {
           console.log({
+            fullUrl,
+
             explanation:
               "Your request could not be executed, you may be disconnected or the server may not be available. ",
             error,

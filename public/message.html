@@ -68,7 +68,7 @@
             await fetchAgentUser();
 
             if (currentThreadId) {
-                await fetchThreadMessages();
+                await fetchThreadMessages(currentThreadId);
             } else if (instructions) {
                 displayMessage({ role: 'system', content: instructions });
             }
@@ -102,13 +102,13 @@
 
         async function loadThread(threadId) {
             currentThreadId = threadId;
-            await fetchThreadMessages();
+            await fetchThreadMessages(threadId);
             history.pushState(null, '', `?agentSlug=${currentAgentSlug}&agentAuthToken=${currentAgentAuthToken}&threadId=${threadId}`);
         }
 
-        async function fetchThreadMessages() {
+        async function fetchThreadMessages(threadId) {
             try {
-                const response = await axios.post(`${API_BASE_URL}/api/readAgentUserThread`, null, {
+                const response = await axios.post(`${API_BASE_URL}/api/readAgentUserThread`, { threadId }, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('userAuthToken')}`,
                         'X_AGENT_AUTH_TOKEN': currentAgentAuthToken
@@ -122,7 +122,7 @@
 
         function displayMessages(messages) {
             const messageArea = document.getElementById('messageArea');
-            messageArea.innerHTML = '';
+            //messageArea.innerHTML = '';
             messages.forEach(displayMessage);
         }
 

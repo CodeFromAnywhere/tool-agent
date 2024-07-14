@@ -605,7 +605,13 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    threadId?: string;
+                };
+            };
+        };
         responses: {
             /** @description Successful response */
             200: {

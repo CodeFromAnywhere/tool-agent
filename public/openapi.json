@@ -189,6 +189,16 @@
         "summary": "Read Agent User Thread",
         "description": "Retrieves the thread information based on the provided authorization token and thread ID.",
         "operationId": "readAgentUserThread",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": { "threadId": { "type": "string" } }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful response",

@@ -14,7 +14,8 @@ export const readAgentUserThread = async (request: Request) => {
     return new Response("User not found", { status: 403 });
   }
 
-  const threadId = new URL(request.url).searchParams.get("threadId");
+  const body = await request.json();
+  const threadId = body?.threadId;
   if (!threadId) {
     return new Response("No thread given", { status: 422 });
   }
