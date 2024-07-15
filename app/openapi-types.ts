@@ -716,6 +716,15 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            /** @description OAuth2 Callback Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
             /** @description Redirect */
             302: {
                 headers: {

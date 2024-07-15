@@ -294,7 +294,17 @@
 
         "responses": {
           "404": { "description": "Service not found" },
-          "302": { "description": "Redirect" }
+          "302": { "description": "Redirect" },
+          "200": {
+            "description": "OAuth2 Callback Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
         }
       }
     },
