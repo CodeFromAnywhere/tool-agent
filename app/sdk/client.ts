@@ -5,6 +5,7 @@ import { operationUrlObject as migrateAgentOpenapiOperationUrlObject, operations
 import { operationUrlObject as migrateAgentUserThreadOperationUrlObject, operations as migrateAgentUserThreadOperations } from "./migrate-agent-user-thread";
 import { operationUrlObject as migrateAgentUserOperationUrlObject, operations as migrateAgentUserOperations } from "./migrate-agent-user";
 import { operationUrlObject as migrateOauthAdminOperationUrlObject, operations as migrateOauthAdminOperations } from "./migrate-oauth-admin";
+import { operationUrlObject as migrateOauthStateOperationUrlObject, operations as migrateOauthStateOperations } from "./migrate-oauth-state";
 
 
  
@@ -67,6 +68,19 @@ import { operationUrlObject as migrateOauthAdminOperationUrlObject, operations a
       Accept: "application/json",
       "Content-Type": "application/json",
       Authorization: "Bearer " + process.env.OAUTH_ADMIN_CRUD_AUTH_TOKEN
+    },
+    timeoutSeconds: 60,
+  });
+  
+
+ 
+  //@ts-ignore
+  export const migrateOauthState = createClient<migrateOauthStateOperations>(migrateOauthStateOperationUrlObject, {
+    baseUrl: "https://data.actionschema.com/migrate-oauth-state",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + process.env.OAUTH_STATE_CRUD_AUTH_TOKEN
     },
     timeoutSeconds: 60,
   });

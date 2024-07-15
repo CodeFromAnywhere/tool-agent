@@ -502,6 +502,7 @@ export const message: Endpoint<"message"> = async (context) => {
               console.log("no sever for ", tool);
               return;
             }
+
             const { fetchRequestInit, url } = getOperationRequestInit({
               path,
               method,

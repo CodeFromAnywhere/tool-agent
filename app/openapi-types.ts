@@ -134,7 +134,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/{agentSlug}/oauth2Callback": {
+    "/oauth/{service}/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Login to service
+         * @description Login for oauth2 by redirecting to the resource
+         */
+        get: operations["oauth2Login"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/oauth/{service}/callback": {
         parameters: {
             query?: never;
             header?: never;
@@ -684,15 +704,46 @@ export interface operations {
             };
         };
     };
+    oauth2Login: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Which service oauth is calling back */
+                service: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Redirect */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     oauth2Callback: {
         parameters: {
-            query?: {
+            query: {
                 /** @description The code that can be used to call the access token url */
-                code?: string;
+                code: string;
+                /** @description State that can be given in the initial login url so we can match it. */
+                state?: string;
             };
             header?: never;
             path: {
-                agentSlug: string;
+                /** @description Which service oauth is calling back */
+                service: string;
             };
             cookie?: never;
         };
@@ -827,9 +878,13 @@ export const operationUrlObject = {
     "method": "post",
     "path": "/{agentSlug}/message"
   },
+  "oauth2Login": {
+    "method": "get",
+    "path": "/oauth/{service}/login"
+  },
   "oauth2Callback": {
     "method": "get",
-    "path": "/{agentSlug}/oauth2Callback"
+    "path": "/oauth/{service}/callback"
   },
   "renderAgentOpenapi": {
     "method": "get",

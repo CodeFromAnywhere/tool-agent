@@ -128,27 +128,11 @@ export interface components {
             isSuccessful: boolean;
             message: string;
         };
-        /** @description Agent User contains one row per user. The store cannot be seen by admins and contains all secrets for all oauth apps and regular Authorizations, the user has logged into. */
+        /** @description Login state key value store tying to the userAuthToken and service you logged into */
         ModelItem: {
-            /** @description List of access tokens the user has authenticated for */
-            keys?: {
-                /** @description Useful for quick access */
-                openapiUrl?: string;
-                /** @description slug representation for the API */
-                service?: string;
-                /** @description The access token string as issued by the authorization server. */
-                access_token: string;
-                /** @description The type of token this is, typically just the string 'Bearer'. */
-                token_type: string;
-                /** @description The lifetime in seconds of the access token. */
-                expires_in: number;
-                /** @description The refresh token, which can be used to obtain new access tokens using the same authorization grant. */
-                refresh_token?: string;
-                /** @description A space-separated list of scopes that the access token is valid for. */
-                scope?: string;
-            }[];
-            /** @description List of threads available, newest last */
-            threadIds?: string[];
+            userAuthToken?: string;
+            adminAuthToken?: string;
+            service?: string;
         };
         RemoveContext: {
             /** @description Which IDs should be removed */

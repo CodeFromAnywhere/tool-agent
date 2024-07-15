@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/CodeFromAnywhere/ActionSchema/main/schemas/action-schema.schema.json",
+  "type": "object",
+  "description": "Login state key value store tying to the userAuthToken and service you logged into",
+  "additionalProperties": false,
+  "required": [],
+  "properties": {
+    "userAuthToken": { "type": "string" },
+    "adminAuthToken": { "type": "string" },
+    "service": { "type": "string" }
+  }
+}

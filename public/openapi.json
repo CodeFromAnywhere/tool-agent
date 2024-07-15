@@ -277,23 +277,51 @@
       }
     },
 
-    "/{agentSlug}/oauth2Callback": {
+    "/oauth/{service}/login": {
+      "get": {
+        "summary": "Login to service",
+        "operationId": "oauth2Login",
+        "description": "Login for oauth2 by redirecting to the resource",
+        "parameters": [
+          {
+            "name": "service",
+            "in": "path",
+            "schema": { "type": "string" },
+            "required": true,
+            "description": "Which service oauth is calling back"
+          }
+        ],
+
+        "responses": {
+          "404": { "description": "Service not found" },
+          "302": { "description": "Redirect" }
+        }
+      }
+    },
+    "/oauth/{service}/callback": {
       "get": {
         "summary": "Callback for oauth",
         "operationId": "oauth2Callback",
         "description": "Callback for oauth2",
-
         "parameters": [
           {
+            "name": "service",
             "in": "path",
-            "name": "agentSlug",
             "schema": { "type": "string" },
-            "required": true
+            "required": true,
+            "description": "Which service oauth is calling back"
           },
           {
             "description": "The code that can be used to call the access token url",
             "in": "query",
             "name": "code",
+            "schema": { "type": "string" },
+            "required": true
+          },
+          {
+            "description": "State that can be given in the initial login url so we can match it.",
+            "in": "query",
+            "name": "state",
             "schema": { "type": "string" },
             "required": false
           }
