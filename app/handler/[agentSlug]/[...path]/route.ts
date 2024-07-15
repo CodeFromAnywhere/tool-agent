@@ -21,6 +21,8 @@ import { JSONSchemaType } from "ajv";
 import { readAgentUser } from "./readAgentUser";
 import { readAgentUserThread } from "./readAgentUserThread";
 import { resolveReferenceOrContinue } from "@/util/resolveReferenceOrContinue";
+import { oauth2Callback } from "./oauth2Callback";
+import { oauth2Login } from "./oauth2Login";
 
 /** Retreives the right body from the request based on the openapi and operation */
 const getRequestOperationBody = async (
@@ -386,7 +388,12 @@ const getHandler = (method: string) => (request: Request) =>
       renderAgentOpenapi,
       upsertToolAgent,
     },
-    endpoints: { readAgentUser, readAgentUserThread },
+    endpoints: {
+      readAgentUser,
+      readAgentUserThread,
+      oauth2Callback,
+      oauth2Login,
+    },
   });
 
 export const GET = getHandler("get");
