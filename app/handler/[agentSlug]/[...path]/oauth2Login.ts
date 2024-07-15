@@ -44,6 +44,8 @@ export const oauth2Login = async (request: Request) => {
     })
   )?.items?.[adminToken];
 
+  console.log({ adminResult });
+
   const oauthDetail = adminResult?.oauthDetails?.find(
     (item) => item.service === service,
   );
@@ -62,6 +64,7 @@ export const oauth2Login = async (request: Request) => {
     !oauthDetail.securitySchemeKey ||
     !oauthDetail.service
   ) {
+    console.log({ authorizationUrl, oauthDetail });
     return new Response("Service not found", { status: 404 });
   }
 
@@ -88,9 +91,6 @@ export const oauth2Login = async (request: Request) => {
   //   }
 
   // const scopes = securitySchema.flows.authorizationCode?.scopes
-
-  // todo:
-  const redirectUri = url.origin;
 
   // todo:
   const scopes: string[] = [];
@@ -120,7 +120,7 @@ export const oauth2Login = async (request: Request) => {
     return new Response("Setting state went wrong", { status: 500 });
   }
 
-  const fullAuthorizationUrl = `${authorizationUrl}?response_type=code&client_id=${oauthDetail.appId}&state=${oauthState}&redirect_uri=${redirectUri}&scope=${scope}`;
+  const fullAuthorizationUrl = `${authorizationUrl}?response_type=code&client_id=${oauthDetail.appId}&state=${oauthState}&scope=${scope}`; //&redirect_uri=${redirectUri}
 
   return new Response("Redirecting...", {
     status: 302,
