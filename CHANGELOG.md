@@ -142,3 +142,20 @@ Almost done with oauth2-based tool use. The whole thing will be a lot more compl
 - ✅ 'agentUser/read' takes forever. why????
 - ✅ Fix message endpoint by testing it from the interface, fixing the 500s
 - ✅ Make whole thing work from localhost so its easy to test
+- ✅ ensure it uses the secret of the openapi if it just has it
+- ✅ `parameters: item.resolvedRequestBodySchema` is not sufficient, we also need query params and headers to be able to be given
+- ✅ https://openapi-util.actionschema.com/summarizeOpenapi?openapiUrl=https://openapi.vercel.sh is not working!!!!
+- ✅ Make `getOpenapiCombination` agent fully work via interface
+
+# GitHub OAuth Login (july 14th, 2024)
+
+Make github signup oauth openapi and its frontend, redirecting someone if there's no authtoken with a callback that sets the authtoken somehow. This is direct signup, gathering credentials and with ability to add ratelimit per user. Very important, also for crud admin. Also for actionschema demo (login after submitting query).
+
+- ✅ implemented /oauth/{service}/login and /oauth/{service}/callback with new oauth datamodels
+- ✅ added providers
+- ✅ add github secret to my admin
+- ✅ test it locally and in prod. **It works!** 🎉
+- ✅ Altered the agent website prompt to use it in the right way
+- ✅ Added redirect feature
+
+It took me more than a month to implement but I now have a working oauth2 implementation that logs me in into github!

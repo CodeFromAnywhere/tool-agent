@@ -16,6 +16,8 @@ export const oauth2Login = async (request: Request) => {
   const url = new URL(request.url);
   const service = url.pathname.split("/").slice(2, 3).join("/");
   const Authorization = request.headers.get("Authorization");
+  const redirectUrl = url.searchParams.get("redirectUrl");
+
   let bearerAuthToken = Authorization?.slice("Bearer ".length);
 
   const adminToken = process.env.CRUD_ADMIN_TOKEN;
@@ -113,6 +115,7 @@ export const oauth2Login = async (request: Request) => {
       adminAuthToken: adminToken,
       service,
       userAuthToken: bearerAuthToken,
+      redirectUrl: redirectUrl || undefined,
     },
   });
 
@@ -120,7 +123,7 @@ export const oauth2Login = async (request: Request) => {
     return new Response("Setting state went wrong", { status: 500 });
   }
 
-  const fullAuthorizationUrl = `${authorizationUrl}?response_type=code&client_id=${oauthDetail.appId}&state=${oauthState}&scope=${scope}`; //&redirect_uri=${redirectUri}
+  const fullAuthorizationUrl = `${authorizationUrl}?response_type=code&client_id=${oauthDetail.appId}&state=${oauthState}&scope=${scope}`;
 
   return new Response("Redirecting...", {
     status: 302,

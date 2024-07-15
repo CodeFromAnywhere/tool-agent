@@ -132,6 +132,8 @@ export interface components {
         ModelItem: {
             userAuthToken?: string;
             adminAuthToken?: string;
+            /** @description Can be another redirect url than what the authorization service redirects back to. */
+            redirectUrl?: string;
             service?: string;
         };
         RemoveContext: {

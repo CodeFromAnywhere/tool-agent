@@ -706,7 +706,10 @@ export interface operations {
     };
     oauth2Login: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Redirect here after logging in. Optional */
+                redirectUrl?: string;
+            };
             header?: never;
             path: {
                 /** @description Which service oauth is calling back */

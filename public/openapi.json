@@ -289,6 +289,13 @@
             "schema": { "type": "string" },
             "required": true,
             "description": "Which service oauth is calling back"
+          },
+          {
+            "name": "redirectUrl",
+            "in": "query",
+            "schema": { "type": "string" },
+            "required": false,
+            "description": "Redirect here after logging in. Optional"
           }
         ],
 

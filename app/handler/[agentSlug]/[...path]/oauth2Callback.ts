@@ -147,7 +147,13 @@ export const oauth2Callback = async (request: Request) => {
     status: 302,
 
     // TODO: Figure out how I can ensure that a new authToken gets attached to the browser localStorage or so. In both endpoints we are redirecting
-    headers: { Location: `${url.origin}?authToken=${stateItem.userAuthToken}` },
+
+    // A better way would be to create a state endpoint that I add a key to so I can call that on the frontend and get the userAuthToken (so i can set it to localstorage after redirect, without it ending up in browser history)
+    headers: {
+      Location:
+        stateItem.redirectUrl ||
+        `${url.origin}?authToken=${stateItem.userAuthToken}`,
+    },
   });
 };
 
