@@ -1,0 +1,49 @@
+{
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "This data represents all providers of utility on the web that ActionSchema can integrate with. It will need to start manually, but should quickly be able to grow dynamically by allowing others to add different 3rd party integratable software to it by making a PR. The idea is that, not only do we allow for easy login into hundreds of integrations, it should also be possible to at some point automate the process of creating your own oauth apps for these services, for different use-cases."
+    }
+  },
+  "additionalProperties": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "categories",
+      "categoryStack",
+      "auth_mode",
+      "authorization_url",
+      "token_url",
+      "createOauthApp",
+      "openapiUrl",
+      "description",
+      "docsUrl"
+    ],
+    "properties": {
+      "description": { "type": "string" },
+      "openapiUrl": { "type": "string" },
+      "docsUrl": { "type": "string" },
+      "signupUrl": { "type": "string" },
+      "loginUrl": { "type": "string" },
+      "billingUrl": { "type": "string" },
+      "apiManagementUrl": { "type": "string" },
+      "createOauthAppUrl": { "type": "string" },
+      "authorization_url": { "type": "string" },
+      "token_url": { "type": "string" },
+      "refresh_url": { "type": "string" },
+
+      "categories": { "type": "array", "items": { "type": "string" } },
+      "categoryStack": { "type": "array", "items": { "type": "string" } },
+      "auth_mode": { "type": "string", "enum": ["OAUTH2"] },
+
+      "region": { "type": "string" },
+      "ratelimit": { "type": "string" },
+      "pricing": { "type": "string" },
+
+      "webhook_routing_script": { "type": "string" },
+      "token_response_metadata": { "type": "array" },
+      "proxy": { "type": "object" }
+    }
+  }
+}
