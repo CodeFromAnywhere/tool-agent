@@ -1,20 +1,4 @@
 export interface paths {
-    "/create": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/read": {
         parameters: {
             query?: never;
@@ -31,7 +15,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/update": {
+    "/create": {
         parameters: {
             query?: never;
             header?: never;
@@ -40,7 +24,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["update"];
+        post: operations["create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -63,31 +47,51 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["update"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /** @description Slug compatible with URLs */
-        UrlSlug: string;
+        ModelItem: {
+            /** Unique name */
+            agentSlug: components["schemas"]["url-slug.schema"];
+            instructions: string;
+            /** @description OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys */
+            openaiSecretKey: string;
+            /** @description Token needed for authorizing to the agent openapi. Useful to prevent people to use your LLM for free. */
+            agentAuthToken: string;
+            /** @description Token needed for authorizing as admin to alter or remove the agent. */
+            adminAuthToken?: string;
+            /** @enum {string} */
+            model?: "gpt-4o" | "gpt-3.5-turbo" | "gpt-3.5-turbo-16k";
+            /** @description Used for tools for the agent */
+            openapiUrl?: string;
+            /** @description Used to authenticate to the OpenAPI to use tools */
+            openapiAuthToken?: string;
+        };
+        CreateContext: {
+            items: components["schemas"]["ModelItem"][];
+        };
         CreateResponse: {
             isSuccessful: boolean;
             message: string;
             /** @description The rowIds created */
             result?: string[];
-        };
-        CreateContext: {
-            items: components["schemas"]["ModelItem"][];
-        };
-        Sort: {
-            /** @enum {string} */
-            sortDirection: "ascending" | "descending";
-            objectParameterKey: string;
-        };
-        Filter: {
-            /** @enum {string} */
-            operator: "equal" | "notEqual" | "endsWith" | "startsWith" | "includes" | "includesLetters" | "greaterThan" | "lessThan" | "greaterThanOrEqual" | "lessThanOrEqual" | "isIncludedIn" | "isFalsy" | "isTruthy";
-            value: string;
-            objectParameterKey: string;
         };
         ReadResponse: {
             isSuccessful: boolean;
@@ -118,6 +122,17 @@ export interface components {
             objectParameterKeys?: string[];
             ignoreObjectParameterKeys?: string[];
         };
+        Sort: {
+            /** @enum {string} */
+            sortDirection: "ascending" | "descending";
+            objectParameterKey: string;
+        };
+        Filter: {
+            /** @enum {string} */
+            operator: "equal" | "notEqual" | "endsWith" | "startsWith" | "includes" | "includesLetters" | "greaterThan" | "lessThan" | "greaterThanOrEqual" | "lessThanOrEqual" | "isIncludedIn" | "isFalsy" | "isTruthy";
+            value: string;
+            objectParameterKey: string;
+        };
         UpdateContext: {
             /** @description The id (indexed key) of the item to update. Update that functions as upsert. If the id didn't exist, it will be created. */
             id: string;
@@ -128,23 +143,6 @@ export interface components {
             isSuccessful: boolean;
             message: string;
         };
-        ModelItem: {
-            /** Unique name */
-            agentSlug: components["schemas"]["url-slug.schema"];
-            instructions: string;
-            /** @description OpenAI Secret key. To create one, visit: https://platform.openai.com/api-keys */
-            openaiSecretKey: string;
-            /** @description Token needed for authorizing to the agent openapi. Useful to prevent people to use your LLM for free. */
-            agentAuthToken: string;
-            /** @description Token needed for authorizing as admin to alter or remove the agent. */
-            adminAuthToken?: string;
-            /** @enum {string} */
-            model?: "gpt-4o" | "gpt-3.5-turbo" | "gpt-3.5-turbo-16k";
-            /** @description Used for tools for the agent */
-            openapiUrl?: string;
-            /** @description Used to authenticate to the OpenAPI to use tools */
-            openapiAuthToken?: string;
-        };
         RemoveContext: {
             /** @description Which IDs should be removed */
             rowIds: string[];
@@ -154,30 +152,6 @@ export interface components {
             message: string;
             /** @description The number of items deleted */
             deleteCount?: number;
-        };
-        CreateDatabaseResponse: {
-            isSuccessful: boolean;
-            message?: string;
-            authToken?: string;
-            adminAuthToken?: string;
-            openapiUrl?: string;
-        };
-        /** @description A list of vector indexes to be created for several columns in your schema */
-        VectorIndexColumns: {
-            propertyKey: string;
-            /** @enum {string} */
-            model: "text-embedding-ada-002" | "text-embedding-3-small" | "text-embedding-3-large";
-            /** @enum {string} */
-            region: "us-east-1" | "eu-west-1" | "us-central1";
-            dimension_count: number;
-            /** @enum {string} */
-            similarity_function: "COSINE" | "EUCLIDIAN" | "DOT_PRODUCT";
-        }[];
-        StandardResponse: {
-            status?: number;
-            isSuccessful: boolean;
-            message?: string;
-            priceCredit?: number;
         };
         /** @description Slug compatible with URLs */
         "url-slug.schema": string;
@@ -190,30 +164,6 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateContext"];
-            };
-        };
-        responses: {
-            /** @description OpenAPI */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CreateResponse"];
-                };
-            };
-        };
-    };
     read: {
         parameters: {
             query?: never;
@@ -238,7 +188,7 @@ export interface operations {
             };
         };
     };
-    update: {
+    create: {
         parameters: {
             query?: never;
             header?: never;
@@ -247,7 +197,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateContext"];
+                "application/json": components["schemas"]["CreateContext"];
             };
         };
         responses: {
@@ -257,7 +207,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UpdateResponse"];
+                    "application/json": components["schemas"]["CreateResponse"];
                 };
             };
         };
@@ -286,41 +236,61 @@ export interface operations {
             };
         };
     };
+    update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateContext"];
+            };
+        };
+        responses: {
+            /** @description OpenAPI */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdateResponse"];
+                };
+            };
+        };
+    };
 }
 
   
-export type UrlSlug = components["schemas"]["UrlSlug"]
-export type CreateResponse = components["schemas"]["CreateResponse"]
+export type ModelItem = components["schemas"]["ModelItem"]
 export type CreateContext = components["schemas"]["CreateContext"]
-export type Sort = components["schemas"]["Sort"]
-export type Filter = components["schemas"]["Filter"]
+export type CreateResponse = components["schemas"]["CreateResponse"]
 export type ReadResponse = components["schemas"]["ReadResponse"]
 export type ReadContext = components["schemas"]["ReadContext"]
+export type Sort = components["schemas"]["Sort"]
+export type Filter = components["schemas"]["Filter"]
 export type UpdateContext = components["schemas"]["UpdateContext"]
 export type UpdateResponse = components["schemas"]["UpdateResponse"]
-export type ModelItem = components["schemas"]["ModelItem"]
 export type RemoveContext = components["schemas"]["RemoveContext"]
 export type RemoveResponse = components["schemas"]["RemoveResponse"]
-export type CreateDatabaseResponse = components["schemas"]["CreateDatabaseResponse"]
-export type VectorIndexColumns = components["schemas"]["VectorIndexColumns"]
-export type StandardResponse = components["schemas"]["StandardResponse"]
 
 export const operationUrlObject = {
-  "create": {
-    "method": "post",
-    "path": "/create"
-  },
   "read": {
     "method": "post",
     "path": "/read"
   },
-  "update": {
+  "create": {
     "method": "post",
-    "path": "/update"
+    "path": "/create"
   },
   "remove": {
     "method": "post",
     "path": "/remove"
+  },
+  "update": {
+    "method": "post",
+    "path": "/update"
   }
 }
 export const operationKeys = Object.keys(operationUrlObject);

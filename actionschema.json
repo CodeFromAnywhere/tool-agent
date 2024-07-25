@@ -5,7 +5,7 @@
   "relativeOutputPath": "app/sdk",
   "openapis": [
     {
-      "openapiUrl": "public/openapi.json",
+      "openapiUrlOrPath": "public/openapi.json",
       "envKeyName": "AGENT_OPENAPI_AUTH",
       "slug": "api"
     }

@@ -65,7 +65,6 @@ export const createClient = <
     operation: K,
     body?: EndpointContext<K>,
 
-    /** NB: always use getPersonConfig for this! */
     customConfiguration?: {
       baseUrl?: string;
       headers?: { [key: string]: string };
