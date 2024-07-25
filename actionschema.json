@@ -7,7 +7,7 @@
     {
       "openapiUrl": "public/openapi.json",
       "envKeyName": "AGENT_OPENAPI_AUTH",
-      "slug": "agent-openapi"
+      "slug": "api"
     }
   ]
 }

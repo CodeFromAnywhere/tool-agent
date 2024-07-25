@@ -230,29 +230,29 @@
     },
 
     "/{agentSlug}/message": {
-      "parameters": [
-        {
-          "in": "path",
-          "name": "agentSlug",
-          "schema": { "type": "string" },
-          "required": true
-        },
-        {
-          "in": "header",
-          "name": "X_AGENT_AUTH_TOKEN",
-          "schema": { "type": "string" },
-          "required": true,
-          "description": "Agent-wide authorization token to prevent runaway token usage."
-        },
-        {
-          "in": "header",
-          "name": "Authorization",
-          "schema": { "type": "string", "minLength": 64 },
-          "required": true,
-          "description": "User-level authorization that can be retreived via the signup endpoint"
-        }
-      ],
       "post": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "agentSlug",
+            "schema": { "type": "string" },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "X_AGENT_AUTH_TOKEN",
+            "schema": { "type": "string" },
+            "required": true,
+            "description": "Agent-wide authorization token to prevent runaway token usage."
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "schema": { "type": "string", "minLength": 64 },
+            "required": true,
+            "description": "User-level authorization that can be retreived via the signup endpoint"
+          }
+        ],
         "summary": "Message an agent",
         "description": "Run a message in a thread of an assistant",
         "operationId": "message",
@@ -277,99 +277,18 @@
       }
     },
 
-    "/oauth/{service}/login": {
-      "get": {
-        "summary": "Login to service",
-        "operationId": "oauth2Login",
-        "description": "Login for oauth2 by redirecting to the resource",
-        "parameters": [
-          {
-            "name": "service",
-            "in": "path",
-            "schema": { "type": "string" },
-            "required": true,
-            "description": "Which service oauth is calling back"
-          },
-          {
-            "name": "redirectUrl",
-            "in": "query",
-            "schema": { "type": "string" },
-            "required": false,
-            "description": "Redirect here after logging in. Optional"
-          }
-        ],
-
-        "responses": {
-          "404": { "description": "Service not found" },
-          "302": { "description": "Redirect" },
-          "200": {
-            "description": "OAuth2 Callback Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/oauth/{service}/callback": {
-      "get": {
-        "summary": "Callback for oauth",
-        "operationId": "oauth2Callback",
-        "description": "Callback for oauth2",
-        "parameters": [
-          {
-            "name": "service",
-            "in": "path",
-            "schema": { "type": "string" },
-            "required": true,
-            "description": "Which service oauth is calling back"
-          },
-          {
-            "description": "The code that can be used to call the access token url",
-            "in": "query",
-            "name": "code",
-            "schema": { "type": "string" },
-            "required": true
-          },
-          {
-            "description": "State that can be given in the initial login url so we can match it.",
-            "in": "query",
-            "name": "state",
-            "schema": { "type": "string" },
-            "required": false
-          }
-        ],
-
-        "responses": {
-          "200": {
-            "description": "OAuth2 Callback Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "access_token": { "type": "string" },
-                    "token_type": { "type": "string" },
-                    "scope": { "type": "string" },
-                    "error": { "type": "string" }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-
     "/{agentSlug}/openapi.json": {
       "get": {
         "summary": "Get openapi for this agent alone",
         "operationId": "renderAgentOpenapi",
-
+        "parameters": [
+          {
+            "in": "path",
+            "name": "agentSlug",
+            "schema": { "type": "string" },
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "OpenAPI",
@@ -398,15 +317,7 @@
             }
           }
         }
-      },
-      "parameters": [
-        {
-          "in": "path",
-          "name": "agentSlug",
-          "schema": { "type": "string" },
-          "required": true
-        }
-      ]
+      }
     },
 
     "/{agentSlug}/details": {
@@ -445,19 +356,18 @@
     },
 
     "/{agentSlug}/userSignup": {
-      "parameters": [
-        {
-          "in": "path",
-          "name": "agentSlug",
-          "schema": { "type": "string" },
-          "required": true
-        }
-      ],
-
       "post": {
         "summary": "User signup",
         "description": "Signup as a user to this agent. Generates an authToken to which login credentials can be stored.",
         "operationId": "userSignup",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "agentSlug",
+            "schema": { "type": "string" },
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "Authorization Token",

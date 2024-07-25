@@ -1,4 +1,5 @@
 {
+  "$comment": "Can probably go!",
   "$schema": "https://raw.githubusercontent.com/CodeFromAnywhere/ActionSchema/main/schemas/action-schema.schema.json",
   "type": "object",
   "description": "Agent User contains one row per user. The store cannot be seen by admins and contains all secrets for all oauth apps and regular Authorizations, the user has logged into.",

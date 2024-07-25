@@ -107,11 +107,11 @@ export const createClient = <
             );
           }
           if (!response.headers.get("Content-Type")?.includes("json")) {
-            const headers = Array.from(response.headers.keys()).map((key) => ({
-              [key]: response.headers.get(key),
-            }));
+            response.headers.forEach((value, key) => {
+            console.log({key,value})
+            });
 
-            console.log("No JSON?", headers);
+            console.log("No JSON?");
           }
           const responseText = await response.text();
 
