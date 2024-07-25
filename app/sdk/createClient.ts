@@ -1,3 +1,5 @@
+
+
 export const createClient = <
   operations extends {
     [key: string]: {
@@ -34,8 +36,9 @@ export const createClient = <
     : never;
 
   // Typescript magic from: https://stackoverflow.com/questions/63542526/merge-discriminated-union-of-object-types-in-typescript
-  type MergeIntersection<U> =
-    UnionToIntersection<U> extends infer O ? { [K in keyof O]: O[K] } : never;
+  type MergeIntersection<U> = UnionToIntersection<U> extends infer O
+    ? { [K in keyof O]: O[K] }
+    : never;
 
   type MergeParameters<P> = MergeIntersection<Extract<P, {}>>;
 
@@ -72,6 +75,7 @@ export const createClient = <
     const details = operationUrlObject[operation];
     const headers = customConfiguration?.headers || config?.headers;
     const baseUrl = customConfiguration?.baseUrl || config?.baseUrl;
+
     if (!details) {
       throw new Error("No details found for operation:" + String(operation));
     }
@@ -104,7 +108,7 @@ export const createClient = <
           }
           if (!response.headers.get("Content-Type")?.includes("json")) {
             response.headers.forEach((value, key) => {
-              console.log({ key, value });
+            console.log({key,value})
             });
 
             console.log("No JSON?");
