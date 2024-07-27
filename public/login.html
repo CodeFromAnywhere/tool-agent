@@ -7,16 +7,23 @@
     <title>Login Page</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: #3498db;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
+        .loader {
+            border-top-color: #3498db;
+            -webkit-animation: spinner 1.5s linear infinite;
+            animation: spinner 1.5s linear infinite;
         }
 
-        @keyframes spin {
+        @-webkit-keyframes spinner {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spinner {
             0% {
                 transform: rotate(0deg);
             }
@@ -28,15 +35,17 @@
     </style>
 </head>
 
-<body class="bg-gray-100 flex items-center justify-center h-screen">
-    <div id="loading" class="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50">
-        <div class="spinner"></div>
+<body class="bg-gray-100 h-screen flex items-center justify-center">
+    <div id="loading"
+        class="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden bg-gray-700 opacity-75 flex flex-col items-center justify-center">
+        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+        <h2 class="text-center text-white text-xl font-semibold">Loading...</h2>
+        <p class="w-1/3 text-center text-white">This may take a few seconds, please don't close this page.</p>
     </div>
 
-    <div id="error" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-        role="alert">
-        <strong class="font-bold">Error!</strong>
-        <span id="errorMessage" class="block sm:inline"></span>
+    <div id="error" class="hidden bg-white p-8 rounded shadow-md w-96">
+        <h2 class="text-2xl font-bold mb-4 text-red-600">Error</h2>
+        <p id="errorMessage" class="text-gray-700"></p>
     </div>
 
     <script>
@@ -45,47 +54,52 @@
         const authUrl = `https://auth.actionschema.com/client/authorize?client_id=${clientId}`;
 
         function showLoading() {
-            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('loading').style.display = 'flex';
         }
 
         function hideLoading() {
-            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('loading').style.display = 'none';
         }
 
         function showError(message) {
-            const errorElement = document.getElementById('error');
-            const errorMessageElement = document.getElementById('errorMessage');
-            errorMessageElement.textContent = message;
-            errorElement.classList.remove('hidden');
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('errorMessage').textContent = message;
         }
 
-        async function handleAuthentication() {
+        async function exchangeToken(code) {
+            const formData = new FormData();
+            formData.append('code', code);
+
+            try {
+                const response = await fetch('https://auth.actionschema.com/client/exchangeToken', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Token exchange failed');
+                }
+
+                const data = await response.json();
+                localStorage.setItem('authToken', data.access_token);
+                window.location.href = redirectPage;
+            } catch (error) {
+                hideLoading();
+                showError(error.message);
+            }
+        }
+
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        async function init() {
             showLoading();
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get('code');
-
+            const code = getQueryParam('code');
             if (code) {
-                try {
-                    const response = await fetch('https://auth.actionschema.com/client/access_token', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: `code=${code}`,
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Failed to obtain access token');
-                    }
-
-                    const data = await response.json();
-                    localStorage.setItem('authToken', data.access_token);
-                    window.location.href = redirectPage;
-                } catch (error) {
-                    hideLoading();
-                    showError(error.message);
-                }
+                await exchangeToken(code);
             } else {
                 const authToken = localStorage.getItem('authToken');
                 if (authToken) {
@@ -96,7 +110,7 @@
             }
         }
 
-        handleAuthentication();
+        init();
     </script>
 </body>
 
