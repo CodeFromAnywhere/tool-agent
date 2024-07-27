@@ -8,6 +8,11 @@
     "agentSlugs": {
       "type": "array",
       "items": { "type": "string" }
+    },
+    "threadIds": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of threads available, newest last"
     }
   }
 }

@@ -3,5 +3,3 @@ agent-admin: Model where admin-level authorization tokens and oauth details can 
 agent-openapi: Individual agents that can be messaged
 
 agent-user-thread: A user of an agent can have multiple threads with messages.
-
-agent-user: Agent User contains one row per user. The store cannot be seen by admins and contains all secrets for all oauth apps and regular Authorizations, the user has logged into.

@@ -7,11 +7,6 @@ admin.html:
 
   spec: On this page the admin can see all their agents.
 
-    - If there's no adminToken in localStorage, redirect to login via `/oauth/github/login`
-    - If there's a `?authToken=xxx`, set it to localStorage to use as bearer Authorization token.
-
-    First use window.prompt to get admin token prefilled from localStorage, that is saved to localStorage after (named 'adminToken').
-
     On top of the page, there's a button 'new agent' that goes to upsert.html
 
     On the left side of the page, there's a list of created agents (fetched using `/listAgents` endpoint)

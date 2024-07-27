@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div id="loading" class="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50">
+        <div class="spinner"></div>
+    </div>
+
+    <div id="error" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+        role="alert">
+        <strong class="font-bold">Error!</strong>
+        <span id="errorMessage" class="block sm:inline"></span>
+    </div>
+
+    <script>
+        const clientId = 'sLEECkssaeLiugwI';
+        const redirectPage = 'admin.html';
+        const authUrl = `https://auth.actionschema.com/client/authorize?client_id=${clientId}`;
+
+        function showLoading() {
+            document.getElementById('loading').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.add('hidden');
+        }
+
+        function showError(message) {
+            const errorElement = document.getElementById('error');
+            const errorMessageElement = document.getElementById('errorMessage');
+            errorMessageElement.textContent = message;
+            errorElement.classList.remove('hidden');
+        }
+
+        async function handleAuthentication() {
+            showLoading();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+
+            if (code) {
+                try {
+                    const response = await fetch('https://auth.actionschema.com/client/access_token', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `code=${code}`,
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to obtain access token');
+                    }
+
+                    const data = await response.json();
+                    localStorage.setItem('authToken', data.access_token);
+                    window.location.href = redirectPage;
+                } catch (error) {
+                    hideLoading();
+                    showError(error.message);
+                }
+            } else {
+                const authToken = localStorage.getItem('authToken');
+                if (authToken) {
+                    window.location.href = redirectPage;
+                } else {
+                    window.location.href = authUrl;
+                }
+            }
+        }
+
+        handleAuthentication();
+    </script>
+</body>
+
+</html>

@@ -3,11 +3,13 @@ import openapi from "../public/openapi.json";
 
 const isDev = process.env.__VERCEL_DEV_RUNNING === "1";
 
+/** Adds prune functionality to the openapi endpoint, which may be useful. */
 export const GET = async (request: Request) => {
   const operationIds = new URL(request.url).searchParams
     .get("operationIds")
     ?.split(",")
     .map((x) => x.trim());
+
   const pruned = operationIds
     ? await pruneOpenapi(openapi as OpenapiDocument, operationIds)
     : openapi;
