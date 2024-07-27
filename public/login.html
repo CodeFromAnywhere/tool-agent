@@ -66,12 +66,12 @@
             document.getElementById('errorMessage').textContent = message;
         }
 
-        async function exchangeToken(code) {
+        async function exchangeCode(code) {
             const formData = new FormData();
             formData.append('code', code);
 
             try {
-                const response = await fetch('https://auth.actionschema.com/client/exchangeToken', {
+                const response = await fetch('https://auth.actionschema.com/client/exchangeCode', {
                     method: 'POST',
                     body: formData
                 });
@@ -99,7 +99,7 @@
 
             const code = getQueryParam('code');
             if (code) {
-                await exchangeToken(code);
+                await exchangeCode(code);
             } else {
                 const authToken = localStorage.getItem('authToken');
                 if (authToken) {
