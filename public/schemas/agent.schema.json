@@ -1,0 +1,12 @@
+{
+  "$schema": "https://spec.actionschema.com/actionschema.json",
+  "type": "object",
+  "$comment": "See what openai did, take lessons, and come up with the best public definition of an agent",
+  "properties": {
+    "instructions": { "type": "string" },
+    "completionOpenapiUrl": {
+      "type": "string",
+      "description": "URL leading to an OpenAPI definition that has a completion endpoint in there. This allows you to use any model."
+    }
+  }
+}

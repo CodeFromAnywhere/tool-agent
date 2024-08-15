@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=https://migrate.actionschema.com/migration-context.schema.json
+# This way of describing things as opposed to using JSON is very favourable: it can handle newlines and is easier to write, and much more readable. We can easily keep plain english definitions in a structured format this way.
+agentConfig:
+  openapiUrl: https://migrate.actionschema.com/openapi.json
+  slugPrefix: agent
+  agents:
+    harry:
+      model: gpt4o
+      instructions: Hey you are harry
+      operationIds:
+        - a
+        - b
+data:
+  pets: A model to store pet information
+  owners: A model to store the owners of the pets
+openapis:
+  - slug: bo
+    openapiUrlOrPath: https://bo.openapi.com/openapi.json
+    envKeyName: BO_SEC
+    operationIds:
+      - a
+      - b
+      - c
+backend:
+  api/listPets:
+    operationIds: readPets
+    specification: mozo
+
+frontend:
+  theme: It must be matrix style
+  sitemap:
+    public/index.html:
+      operationIds: a, b, c
+      specification: It must be cool

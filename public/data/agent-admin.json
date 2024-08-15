@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/CodeFromAnywhere/ActionSchema/main/schemas/action-schema.schema.json",
+  "$schema": "https://spec.actionschema.com/actionschema.json",
   "type": "object",
   "description": "Lists your agents. Key is admin-authtoken, value is a list of agentSlugs that you maintain.",
   "additionalProperties": false,

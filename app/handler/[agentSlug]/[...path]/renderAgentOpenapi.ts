@@ -2,7 +2,6 @@ import { Endpoint, ResponseType } from "@/client";
 import { O, removeOptionalKeysFromObjectStrings } from "from-anywhere";
 import { OpenapiSchemaObject } from "from-anywhere/types";
 import { JSONSchema7 } from "json-schema";
-import { SchemaObject } from "openapi-typescript";
 import { resolveSchemaRecursive } from "openapi-util";
 import openapi from "../../../../public/openapi.json";
 import { OpenapiDocument } from "openapi-util";
@@ -12,7 +11,7 @@ export const withoutProperties = (
   properties: string[],
 ) => {
   if (!schema.properties) {
-    return schema as SchemaObject;
+    return schema as JSONSchema7;
   }
 
   const newProperties = removeOptionalKeysFromObjectStrings(
@@ -23,7 +22,7 @@ export const withoutProperties = (
   return {
     ...schema,
     properties: newProperties as JSONSchema7["properties"],
-  } as SchemaObject;
+  } as JSONSchema7;
 };
 
 export const replaceRefs = (schema: OpenapiSchemaObject, refs: O) => {
@@ -42,7 +41,7 @@ export const replaceRefs = (schema: OpenapiSchemaObject, refs: O) => {
 };
 
 /** Renames all refs to #/components/schemas/ instead of #/definitions */
-export const renameRefs = (schema: SchemaObject | undefined) => {
+export const renameRefs = (schema: JSONSchema7 | undefined) => {
   if (!schema) {
     return schema;
   }

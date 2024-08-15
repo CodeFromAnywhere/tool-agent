@@ -3,12 +3,13 @@ import * as client from "@/sdk/client";
 
 import {
   OpenapiDocument,
-  getFormContextFromOpenapi,
   getOperationRequestInit,
   getOperations,
   ParsedOperation,
   OpenapiSchemaObject,
+  OpenapiSecuritySchemeObject,
 } from "openapi-util";
+
 import { resolveSchemaRecursive } from "openapi-util";
 import { O, generateRandomString, notEmpty, tryParseJson } from "from-anywhere";
 
@@ -20,7 +21,6 @@ import {
   ChatCompletionTool,
   ChatCompletionToolMessageParam,
 } from "openai/resources/index.mjs";
-import { SecuritySchemeObject } from "openapi-typescript";
 
 const chatCompletionEndpoint = (context: {
   chatCompletionEndpoint: string;
@@ -100,7 +100,7 @@ export const getOperationAvailable = (context: {
     openapiAuthToken,
   } = context;
 
-  const operation = operations?.find((x) => x.id === operationId);
+  const operation = operations?.find((x) => x.operationId === operationId);
 
   if (!operation) {
     // This should never happen, and should be reported somehow
@@ -145,7 +145,7 @@ export const getOperationAvailable = (context: {
 
   const securitySchema = firstKey
     ? (openapi?.components?.securitySchemes?.[firstKey] as
-        | SecuritySchemeObject
+        | OpenapiSecuritySchemeObject
         | undefined)
     : undefined;
 
@@ -381,7 +381,7 @@ export const message: Endpoint<"message"> = async (context) => {
       return {
         type: "function",
         function: {
-          name: item.id,
+          name: item.operationId,
           description: item.operation.description,
 
           parameters: fullSchema,

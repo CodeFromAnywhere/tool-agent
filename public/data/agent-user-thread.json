@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/CodeFromAnywhere/ActionSchema/main/schemas/action-schema.schema.json",
+  "$schema": "https://spec.actionschema.com/actionschema.json",
   "type": "object",
   "required": ["messages", "agentSlug"],
   "properties": {
