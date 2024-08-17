@@ -159,3 +159,7 @@ Make github signup oauth openapi and its frontend, redirecting someone if there'
 - ✅ Added redirect feature
 
 It took me more than a month to implement but I now have a working oauth2 implementation that logs me in into github!
+
+# For now putting this on inactive (august 17th, 2024)
+
+`agent-openapi` is superseeded by `openapi-chat-completion`

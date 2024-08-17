@@ -1,3 +1,7 @@
+# ⚠️⚠️⚠️ For now putting this on inactive (august 17th, 2024) ⚠️⚠️⚠️
+
+`agent-openapi` is superseeded by [`openapi-chat-completion`](https://chat.actionschema.com)
+
 # Agent OpenAPI
 
 Turn your agents into tools for other agents.

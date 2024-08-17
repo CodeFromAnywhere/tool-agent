@@ -30,7 +30,9 @@ const chatCompletionEndpoint = (context: {
 }) => {
   const { chatCompletionAuthToken, chatCompletionEndpoint, messages, tools } =
     context;
-  const openai = new OpenAI({ apiKey: chatCompletionAuthToken });
+  const openai = new OpenAI({
+    apiKey: chatCompletionAuthToken,
+  });
 
   // TODO: rather than using the openai sdk, use 'agentic' or similar: https://github.com/transitive-bullshit/agentic
   return openai.chat.completions.create({
