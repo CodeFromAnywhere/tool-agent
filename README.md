@@ -1,5 +1,7 @@
 ⚠️⚠️⚠️ WIP - Don't Use This. Check back in 2025! ⚠️⚠️⚠️
 
+~ I am first working on more foundational work for high quality agents using tools.
+
 # Purpose
 
 - Registry for searchable, evaluated agents, accessible through openapi.
