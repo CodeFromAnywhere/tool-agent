@@ -163,3 +163,5 @@ It took me more than a month to implement but I now have a working oauth2 implem
 # For now putting this on inactive (august 17th, 2024)
 
 `agent-openapi` is superseeded by `openapi-chat-completion`
+
+# Renamed to `tool-agent` and redefined purpose (agust 29th 2024)

@@ -1,50 +1,24 @@
-# ⚠️⚠️⚠️ For now putting this on inactive (august 17th, 2024) ⚠️⚠️⚠️
+# Purpose
 
-`agent-openapi` is superseeded by [`openapi-chat-completion`](https://chat.actionschema.com)
+- Registry for searchable, evaluated agents, accessible through openapi.
+- Easy access at website https://agent.actionschema.com/{slug} and it's also a basePath for chat completion API now.
+- Create a fully private agent-setup. User only sees https://boardapp.nl/chat/{agent-name} to chat with the agent for that particular company.
+- Hides implementation for foundation model creation while having the ability to make this open source.
+- Allows to serve your settings (system prompt + secrets) as freemium API to users.
 
-# Agent OpenAPI
+Configurable per slug:
 
-Turn your agents into tools for other agents.
+- It should add the IP/user-level paywall ratelimit
+- It should add LLM key, OpenAPI secret (if not oauth) and OpenAPI url
+- System prompt, model choice, basePath, etc
 
-## Getting started
+<!-- On `openapi-chat-completion` OpenAPIs are now open and exposed to the user. This is extremely powerful, but it's possible to hide and create a basemodel too. All we need to do is create a kv store that maps a slug to the openapi (and partial profile), and then it's a matter of using https://chat.actionschema.com/{slug} as a basepath. From here you can chat with it, and https://chat.actionschema.com/{slug}/chat/completions and https://chat.actionschema.com/{slug}/openapi.json would be available too.
 
-See https://agent.actionschema.com
+This adds complexity, but also cleans up the interface a lot, and creates a lot of IP for the creator of the agent. Maybe even including the API key! Nevertheless we can still link to the openapi for the free version.
 
-## Why?
+🤔🔥 `openapi-chat-completion` is an internal tool behind login without state. `openapi-agent` can become a profile registry on top of it, adding state, exposed at https://agent.actionschema.com/{slug} baseUrl.
 
-LLM Assistants can be incredibly powerful as a single tool, but there's no easy way to turn an agent into a tool for another agent.
+TODO:
 
-The Agent OpenAPI serves an OpenAPI for talking to an agent, so it can be discovered publicly, and can be used as a tool for other agents.
-
-![](agent-openapi.drawio.png)
-
-## Orchestration Agent
-
-With the above tooling, we can now create an agent that orchestrates certain taks to downstream agents. Taking response time limitations out of the equation, this "agent stacking" pattern can be done in a deeply nested way.
-
-![](orchestration-agent.drawio.png)
-
-![](agent-stacking.drawio.png)
-
-## Goals
-
-- Easy maintenance of your agents
-- API access to your agents
-- Provide an openapi, and details for each agent
-- Provide message api that executes the tools
-- High degree of modularity
-- Remove need for adding an agent; as long as you provide the openapi, the agent should be made available with some default instructions.
-
-## Non-goals
-
-- Testing agents
-- Support for propriatary features like openai code-interpreter or file-search
-
-## Future ideas
-
-### Assistant Aggregator
-
-- Get all assistant OpenAPIs
-- Normalise them into an overarching datastructure
-- Use that as client instead of "openai"
-- Let the user decide wich assistant api to use (and ability to use their own)
+- Not sure if this is the right moment. Maybe finish chat first, making it super stable and focussing on api tool use stability.
+ -->
